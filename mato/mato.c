@@ -8,6 +8,14 @@
 
 #include "mato.h"
 
+/// \file mato.c
+/// Implementation of the Mato control framework.
+
+
+/// The structure describes a single individual subscription to some channel of some module.
+/// Each subscription is identified by a computational node unique identifier (id_subscription)
+/// has one of the supported subscription types, pointer to a callback function of the subscriber
+/// and the module_id of the subscriber module.
 typedef struct {
     int subscription_id;
     subscription_type type;
@@ -15,6 +23,11 @@ typedef struct {
     int subscriber_module_id;
 } subscription;
 
+/// The structure holds one message that was posted by a module to one of its output channels.
+/// It contains the module_id of the posting module, the channel number where the message was posted,
+/// the length of the data and pointer to malloc-ed data buffer that holds the actual data,
+/// and the number of references, i.e. how many users (typically modules) have received the data
+/// pointer and must return it back.
 typedef struct {
     int module_id;
     int channel_id;
@@ -23,6 +36,7 @@ typedef struct {
     int references;
 } channel_data;
 
+/// A constructor for the channel_data structure.
 channel_data *new_channel_data(int module_id, int channel_id, int length, void *data)
 {
     channel_data *cd = (channel_data *)malloc(sizeof(channel_data));
@@ -34,35 +48,81 @@ channel_data *new_channel_data(int module_id, int channel_id, int length, void *
     return cd;
 }
 
+/// Set to one when the framework is initialized and cleared when any part of the program wants to terminate the whole program.
+/// After it is set to zero, all threads are expected to terminated soon. When all threads terminate, the application terminates.
 volatile int program_runs;
+
+/// Contains the number of threads that are running. Use the functions mato_inc_thread_count() and mato_dec_thread_count().
 volatile int threads_started;
 
 //global framework data
 
+/// Contains list of names of all module instances. 
+/// The GArray is indexed by module_id. After a particular module is deleted,
+/// its module_id and the location in this array will remain unused.
 GArray *module_names;   // [module_id]
+
+/// Contains list of types of all module instances.
+/// The GArray is indexed by module_id. After a particular module is deleted,
+/// its module_id and the location in this array will remain unused.
 GArray *module_types;    // [module_id]
+
+/// Contains pointers to instance_data of all module instances as returned by their create_instance_callback.
+/// The GArray is indexed by module_id. After a particular module is deleted,
+/// its module_id and the location in this array will remain unused.
 GArray *instance_data;   // [module_id]
+
+/// Contains module_specification structures for all type names. The keys in this hashtable are the 
+/// module types. The value is a pointer to module_specification structure as provided by the 
+/// argument to mato_register_new_type_of_module() function that is typically called from the init
+/// function of a module type.
 GHashTable *module_specifications;  // [type_name]
+
+/// Data of all messages that are maintained by the framework at any point of time are kept in this
+/// GArray. It is indexed by module_id and contains GArrays indexed by channel number of the particular
+/// module instance. Finally, the elements of the nested GArray are GLists - the list of all messages
+/// of the particular module in its particular channel that are still needed by the framework or
+/// any other module and thus have not been deallocated. Each time a module posts a new message
+/// to its channel, it is added to that list. The message is removed from the list when it has
+/// have been forwarded to all the subscribers, no subscriber or another module has borrowed a pointer
+/// to it and a new message from the module on the same channel has already arrived.
 GArray *buffers;  // [module_id][channel_id] -> g_list (the most recent data buffer is at the beginning)
 
+/// A counter for assigning a new module_id for newly created module instances.
 int next_free_module_id;
+
+/// A counter for assining a new subscription_id for newly registered subscriptions.
 int next_free_subscription_id;
                         
+/// Contains all descriptions of subscriptions, instances of subscription structures.
+/// The GArray is indexed by the module_id and contains GArrays indexed by channel number
+/// Finally, the nested GArray elements are again GArrays containing all subscriptions
+/// to that particular channel of that particular module.
 GArray *subscriptions;  // [module_id][channel_id][subscription_index] - contains "subcription"s
 
+/// Used for mutual exclusion when accessing framework structures from functions that can be called from different threads.
 pthread_mutex_t framework_mutex;
+
+/// New messages that are posted by the modules are allocated in dynamic memory. Pointers to that memory enter this pipe
+/// and are picked up by a message redistribution loop that takes care of them in a serial manner. Handling of each message
+/// is supposed to be done very quickly - assuming the subscriber callbacks return quickly. In the future release, we expect
+/// each subscriber callback to be called in a separate thread taken from a thread pool.
 int post_data_pipe[2];
 
+/// Enter mutually-exclusive area accessing internal framework data structures.
 void lock_framework()
 {
     pthread_mutex_lock(&framework_mutex);
 }
 
+/// Leave mutually-exclusive area with a protected acces to internal framework data structures.
 void unlock_framework()
 {
     pthread_mutex_unlock(&framework_mutex);    
 }
 
+/// Decrements the number of references to a particular buffer and deallocates the buffer itself as well
+/// as the structure describing the buffer. It also removes it from the list of the framework-maintained messages.
 GList *decrement_references(GList *data_buffers, channel_data *to_be_decremented)
 {
     to_be_decremented->references--;
@@ -75,6 +135,7 @@ GList *decrement_references(GList *data_buffers, channel_data *to_be_decremented
     return data_buffers;
 }
 
+/// The main loop of the framework thread that takes care of redistributing all the messages posted by the modules.
 void *mato_thread(void *arg)
 {
     channel_data *cd;
@@ -175,6 +236,7 @@ void *mato_thread(void *arg)
     mato_dec_thread_count();
 }
 
+/// Initializes the framework. It must be the first function of the framework to be called. It should be called only once. 
 void mato_init()
 {
     program_runs = 1;
@@ -210,14 +272,14 @@ void mato_register_new_type_of_module(char *type, module_specification *specific
     unlock_framework();
 }
 
-// is not thread-safe
-int get_free_module_id()
-{
+/// Returns the next available module_id.
+int get_free_module_id() // is not thread-safe
+{ 
     return next_free_module_id++;
 }
 
-// is not thread-safe
-int get_free_subscription_id()
+/// Returns the next available subscription_id.
+int get_free_subscription_id() // is not thread-safe
 {
     return next_free_subscription_id++;
 }
@@ -475,6 +537,7 @@ void mato_release_data(int id_module, int channel, void *data)
     unlock_framework();
 }
 
+/// A constructor for the module_info structure.
 module_info *new_module_info(int module_id, char *module_name, char *module_type)
 {
     module_info *info = (module_info *)malloc(sizeof(module_info));
@@ -536,6 +599,7 @@ void mato_data_buffer_usage(int module_id, int channel, int *number_of_allocated
     unlock_framework();
 }
 
+/// Increment the number of threads running. This should be called by each thread that has been started.
 void mato_inc_thread_count()
 {
     lock_framework();
@@ -543,6 +607,7 @@ void mato_inc_thread_count()
     unlock_framework();
 }
 
+/// Decrement the number of threads running. It should be called by each thread that terminates.
 void mato_dec_thread_count()
 {
     lock_framework();

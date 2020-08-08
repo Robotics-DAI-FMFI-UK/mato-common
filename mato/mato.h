@@ -86,6 +86,10 @@ int mato_create_new_module_instance(const char *module_type, const char *module_
 /// Start the framework and all modules. This is typically called after all module instances have been created.
 void mato_start();
 
+/// Start a newly created instance of a particular module. This is typically used when the module instance
+/// is created later than when the framework has already been started.
+void mato_start_module(int module_id);
+
 /// Allows to dynamically delete a module instance that was previously created.
 void mato_delete_module_instance(int module_id);
 
