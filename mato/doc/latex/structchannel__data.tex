@@ -1,5 +1,10 @@
 \hypertarget{structchannel__data}{}\doxysection{channel\+\_\+data Struct Reference}
 \label{structchannel__data}\index{channel\_data@{channel\_data}}
+
+
+The structure holds one message that was posted by a module to one of its output channels.  
+
+
 \doxysubsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
@@ -20,6 +25,11 @@ int {\bfseries references}
 \end{DoxyCompactItemize}
 
 
+\doxysubsection{Detailed Description}
+The structure holds one message that was posted by a module to one of its output channels. 
+
+It contains the module\+\_\+id of the posting module, the channel number where the message was posted, the length of the data and pointer to malloc-\/ed data buffer that holds the actual data, and the number of references, i.\+e. how many users (typically modules) have received the data pointer and must return it back. 
+
 The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 
-mato.\+c\end{DoxyCompactItemize}
+\mbox{\hyperlink{mato_8c}{mato.\+c}}\end{DoxyCompactItemize}

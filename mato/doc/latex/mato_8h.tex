@@ -8,6 +8,13 @@ Include dependency graph for mato.\+h\+:\nopagebreak
 \includegraphics[width=131pt]{mato_8h__incl}
 \end{center}
 \end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=131pt]{mato_8h__dep__incl}
+\end{center}
+\end{figure}
 \doxysubsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
@@ -23,14 +30,14 @@ typedef enum subscription\+\_\+type\+\_\+enum {\bfseries subscription\+\_\+type}
 \item 
 typedef void $\ast$($\ast$ \mbox{\hyperlink{mato_8h_ad20873465b8c85f182244c5a553f2837}{create\+\_\+instance\+\_\+callback}}) (int module\+\_\+id)
 \begin{DoxyCompactList}\small\item\em Create instance data of a module and initialize it. \end{DoxyCompactList}\item 
-typedef void($\ast$ \mbox{\hyperlink{mato_8h_a5cdf8c706be95dbe5dc32dda2d0aacdf}{start\+\_\+instance\+\_\+callback}}) (void $\ast$instance\+\_\+data)
+typedef void($\ast$ \mbox{\hyperlink{mato_8h_a5cdf8c706be95dbe5dc32dda2d0aacdf}{start\+\_\+instance\+\_\+callback}}) (void $\ast$\mbox{\hyperlink{mato_8c_a0e0d7e8d878428833528a1123d6558c5}{instance\+\_\+data}})
 \begin{DoxyCompactList}\small\item\em Start the module instance. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{mato_8h_a19ec8ae2c73a767ac23bcc3c861e8b53}\label{mato_8h_a19ec8ae2c73a767ac23bcc3c861e8b53}} 
-typedef void($\ast$ \mbox{\hyperlink{mato_8h_a19ec8ae2c73a767ac23bcc3c861e8b53}{delete\+\_\+instance\+\_\+callback}}) (void $\ast$instance\+\_\+data)
+typedef void($\ast$ \mbox{\hyperlink{mato_8h_a19ec8ae2c73a767ac23bcc3c861e8b53}{delete\+\_\+instance\+\_\+callback}}) (void $\ast$\mbox{\hyperlink{mato_8c_a0e0d7e8d878428833528a1123d6558c5}{instance\+\_\+data}})
 \begin{DoxyCompactList}\small\item\em A request to delete the module instance has been made. This callback should deallocate the instance data. \end{DoxyCompactList}\item 
-typedef void($\ast$ \mbox{\hyperlink{mato_8h_a984f52f0434bb9e42814bf9c74f4791d}{global\+\_\+message\+\_\+callback}}) (void $\ast$instance\+\_\+data, int module\+\_\+id\+\_\+sender, int message\+\_\+id, int msg\+\_\+length, void $\ast$message\+\_\+data)
+typedef void($\ast$ \mbox{\hyperlink{mato_8h_a984f52f0434bb9e42814bf9c74f4791d}{global\+\_\+message\+\_\+callback}}) (void $\ast$\mbox{\hyperlink{mato_8c_a0e0d7e8d878428833528a1123d6558c5}{instance\+\_\+data}}, int module\+\_\+id\+\_\+sender, int message\+\_\+id, int msg\+\_\+length, void $\ast$message\+\_\+data)
 \begin{DoxyCompactList}\small\item\em When some other module or the main program has sent a global message, this callback of each module is called immediatelly -\/ from the thread of the sender. \end{DoxyCompactList}\item 
-typedef void($\ast$ \mbox{\hyperlink{mato_8h_a9345221b935d9505595c583b54d31e86}{subscriber\+\_\+callback}}) (void $\ast$instance\+\_\+data, int sender\+\_\+module\+\_\+id, int data\+\_\+length, void $\ast$new\+\_\+data\+\_\+ptr)
+typedef void($\ast$ \mbox{\hyperlink{mato_8h_a9345221b935d9505595c583b54d31e86}{subscriber\+\_\+callback}}) (void $\ast$\mbox{\hyperlink{mato_8c_a0e0d7e8d878428833528a1123d6558c5}{instance\+\_\+data}}, int sender\+\_\+module\+\_\+id, int data\+\_\+length, void $\ast$new\+\_\+data\+\_\+ptr)
 \begin{DoxyCompactList}\small\item\em Modules that subscribe to the data on channels of other module instances provide this callback. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Enumerations}
 \begin{DoxyCompactItemize}
@@ -44,7 +51,6 @@ enum {\bfseries subscription\+\_\+type\+\_\+enum} \{ {\bfseries direct\+\_\+data
 \doxysubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{mato_8h_a96f8e9e3c32c9abdab14dabd590fae87}\label{mato_8h_a96f8e9e3c32c9abdab14dabd590fae87}} 
 void \mbox{\hyperlink{mato_8h_a96f8e9e3c32c9abdab14dabd590fae87}{mato\+\_\+init}} ()
 \begin{DoxyCompactList}\small\item\em Initialize the whole framework. Should be called first from the main program. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{mato_8h_a43f0570e3ab59d7a021e93113437dcaf}{mato\+\_\+register\+\_\+new\+\_\+type\+\_\+of\+\_\+module}} (char $\ast$type, \mbox{\hyperlink{structmodule__specification}{module\+\_\+specification}} $\ast$specification)
@@ -54,6 +60,8 @@ int \mbox{\hyperlink{mato_8h_a411a20bcfa908edbebe617fe5cc54667}{mato\+\_\+create
 \mbox{\Hypertarget{mato_8h_a02ef7e731c9c9eaa342352a7e802c183}\label{mato_8h_a02ef7e731c9c9eaa342352a7e802c183}} 
 void \mbox{\hyperlink{mato_8h_a02ef7e731c9c9eaa342352a7e802c183}{mato\+\_\+start}} ()
 \begin{DoxyCompactList}\small\item\em Start the framework and all modules. This is typically called after all module instances have been created. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{mato_8h_a62a0865fa5114c0a254435a1369531cf}{mato\+\_\+start\+\_\+module}} (int module\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Start a newly created instance of a particular module. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{mato_8h_a6e94d7d4dc09ad58485227e60df20035}\label{mato_8h_a6e94d7d4dc09ad58485227e60df20035}} 
 void \mbox{\hyperlink{mato_8h_a6e94d7d4dc09ad58485227e60df20035}{mato\+\_\+delete\+\_\+module\+\_\+instance}} (int module\+\_\+id)
 \begin{DoxyCompactList}\small\item\em Allows to dynamically delete a module instance that was previously created. \end{DoxyCompactList}\item 
@@ -97,10 +105,8 @@ void \mbox{\hyperlink{mato_8h_aeafc9d85e29a73b9b5423cd661bd54c2}{mato\+\_\+free\
 \begin{DoxyCompactList}\small\item\em Free the list of modules returned by either of the two functions \mbox{\hyperlink{mato_8h_ac8c86d7dbb7acd09f1884c2e80ec698c}{mato\+\_\+get\+\_\+list\+\_\+of\+\_\+modules()}} or \mbox{\hyperlink{mato_8h_ac8c86d7dbb7acd09f1884c2e80ec698c}{mato\+\_\+get\+\_\+list\+\_\+of\+\_\+modules()}}. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{mato_8h_ab49165685fd95d2e9f70f484e367c6f2}{mato\+\_\+data\+\_\+buffer\+\_\+usage}} (int module\+\_\+id, int channel, int $\ast$number\+\_\+of\+\_\+allocated\+\_\+buffers, int $\ast$total\+\_\+sum\+\_\+of\+\_\+ref\+\_\+count)
 \begin{DoxyCompactList}\small\item\em Provide a diagnostic information on use of the buffers by a particular channel of a particular module. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato_8h_a6b31044a7afec17426ec4d4e3354aa9f}\label{mato_8h_a6b31044a7afec17426ec4d4e3354aa9f}} 
 void \mbox{\hyperlink{mato_8h_a6b31044a7afec17426ec4d4e3354aa9f}{mato\+\_\+inc\+\_\+thread\+\_\+count}} ()
 \begin{DoxyCompactList}\small\item\em Each module instance (or other part of the program) that creates a new thread should call this funciton for each newly created thread. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato_8h_a480acc181ff3a7d7c925d64e3d4a7442}\label{mato_8h_a480acc181ff3a7d7c925d64e3d4a7442}} 
 void \mbox{\hyperlink{mato_8h_a480acc181ff3a7d7c925d64e3d4a7442}{mato\+\_\+dec\+\_\+thread\+\_\+count}} ()
 \begin{DoxyCompactList}\small\item\em Each thread that terminates should call this function just before it quits. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{mato_8h_a314629d6f743c699b26a534175986865}\label{mato_8h_a314629d6f743c699b26a534175986865}} 
@@ -137,7 +143,7 @@ Each module should define this callback. This instance will be from now on alway
 \index{mato.h@{mato.h}!global\_message\_callback@{global\_message\_callback}}
 \index{global\_message\_callback@{global\_message\_callback}!mato.h@{mato.h}}
 \doxysubsubsection{\texorpdfstring{global\_message\_callback}{global\_message\_callback}}
-{\footnotesize\ttfamily typedef void($\ast$ global\+\_\+message\+\_\+callback) (void $\ast$instance\+\_\+data, int module\+\_\+id\+\_\+sender, int message\+\_\+id, int msg\+\_\+length, void $\ast$message\+\_\+data)}
+{\footnotesize\ttfamily typedef void($\ast$ global\+\_\+message\+\_\+callback) (void $\ast$\mbox{\hyperlink{mato_8c_a0e0d7e8d878428833528a1123d6558c5}{instance\+\_\+data}}, int module\+\_\+id\+\_\+sender, int message\+\_\+id, int msg\+\_\+length, void $\ast$message\+\_\+data)}
 
 
 
@@ -148,7 +154,7 @@ When some other module or the main program has sent a global message, this callb
 \index{mato.h@{mato.h}!start\_instance\_callback@{start\_instance\_callback}}
 \index{start\_instance\_callback@{start\_instance\_callback}!mato.h@{mato.h}}
 \doxysubsubsection{\texorpdfstring{start\_instance\_callback}{start\_instance\_callback}}
-{\footnotesize\ttfamily typedef void($\ast$ start\+\_\+instance\+\_\+callback) (void $\ast$instance\+\_\+data)}
+{\footnotesize\ttfamily typedef void($\ast$ start\+\_\+instance\+\_\+callback) (void $\ast$\mbox{\hyperlink{mato_8c_a0e0d7e8d878428833528a1123d6558c5}{instance\+\_\+data}})}
 
 
 
@@ -158,7 +164,7 @@ Typically, a module instance will create a new thread that will take care of the
 \index{mato.h@{mato.h}!subscriber\_callback@{subscriber\_callback}}
 \index{subscriber\_callback@{subscriber\_callback}!mato.h@{mato.h}}
 \doxysubsubsection{\texorpdfstring{subscriber\_callback}{subscriber\_callback}}
-{\footnotesize\ttfamily typedef void($\ast$ subscriber\+\_\+callback) (void $\ast$instance\+\_\+data, int sender\+\_\+module\+\_\+id, int data\+\_\+length, void $\ast$new\+\_\+data\+\_\+ptr)}
+{\footnotesize\ttfamily typedef void($\ast$ subscriber\+\_\+callback) (void $\ast$\mbox{\hyperlink{mato_8c_a0e0d7e8d878428833528a1123d6558c5}{instance\+\_\+data}}, int sender\+\_\+module\+\_\+id, int data\+\_\+length, void $\ast$new\+\_\+data\+\_\+ptr)}
 
 
 
@@ -197,7 +203,17 @@ The function returns the new module id. \mbox{\Hypertarget{mato_8h_ab49165685fd9
 
 Provide a diagnostic information on use of the buffers by a particular channel of a particular module. 
 
-If this starts growing, the callbacks take too much time to process data and should be refactored. \mbox{\Hypertarget{mato_8h_af356c7284b6f1d6be285de40d9e23b77}\label{mato_8h_af356c7284b6f1d6be285de40d9e23b77}} 
+If this starts growing, the callbacks take too much time to process data and should be refactored. \mbox{\Hypertarget{mato_8h_a480acc181ff3a7d7c925d64e3d4a7442}\label{mato_8h_a480acc181ff3a7d7c925d64e3d4a7442}} 
+\index{mato.h@{mato.h}!mato\_dec\_thread\_count@{mato\_dec\_thread\_count}}
+\index{mato\_dec\_thread\_count@{mato\_dec\_thread\_count}!mato.h@{mato.h}}
+\doxysubsubsection{\texorpdfstring{mato\_dec\_thread\_count()}{mato\_dec\_thread\_count()}}
+{\footnotesize\ttfamily void mato\+\_\+dec\+\_\+thread\+\_\+count (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Each thread that terminates should call this function just before it quits. 
+
+Each thread that terminates should call this function just before it quits. \mbox{\Hypertarget{mato_8h_af356c7284b6f1d6be285de40d9e23b77}\label{mato_8h_af356c7284b6f1d6be285de40d9e23b77}} 
 \index{mato.h@{mato.h}!mato\_get\_data@{mato\_get\_data}}
 \index{mato\_get\_data@{mato\_get\_data}!mato.h@{mato.h}}
 \doxysubsubsection{\texorpdfstring{mato\_get\_data()}{mato\_get\_data()}}
@@ -227,7 +243,27 @@ The list should be freed by calling \mbox{\hyperlink{mato_8h_aeafc9d85e29a73b9b5
 
 Retrieve the list of currently running modules of the specified type. 
 
-The list should be freed by calling \mbox{\hyperlink{mato_8h_aeafc9d85e29a73b9b5423cd661bd54c2}{mato\+\_\+free\+\_\+list\+\_\+of\+\_\+modules()}} when it is not needed anymore. \mbox{\Hypertarget{mato_8h_a43f0570e3ab59d7a021e93113437dcaf}\label{mato_8h_a43f0570e3ab59d7a021e93113437dcaf}} 
+The list should be freed by calling \mbox{\hyperlink{mato_8h_aeafc9d85e29a73b9b5423cd661bd54c2}{mato\+\_\+free\+\_\+list\+\_\+of\+\_\+modules()}} when it is not needed anymore. \mbox{\Hypertarget{mato_8h_a6b31044a7afec17426ec4d4e3354aa9f}\label{mato_8h_a6b31044a7afec17426ec4d4e3354aa9f}} 
+\index{mato.h@{mato.h}!mato\_inc\_thread\_count@{mato\_inc\_thread\_count}}
+\index{mato\_inc\_thread\_count@{mato\_inc\_thread\_count}!mato.h@{mato.h}}
+\doxysubsubsection{\texorpdfstring{mato\_inc\_thread\_count()}{mato\_inc\_thread\_count()}}
+{\footnotesize\ttfamily void mato\+\_\+inc\+\_\+thread\+\_\+count (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Each module instance (or other part of the program) that creates a new thread should call this funciton for each newly created thread. 
+
+Each module instance (or other part of the program) that creates a new thread should call this funciton for each newly created thread. \mbox{\Hypertarget{mato_8h_a96f8e9e3c32c9abdab14dabd590fae87}\label{mato_8h_a96f8e9e3c32c9abdab14dabd590fae87}} 
+\index{mato.h@{mato.h}!mato\_init@{mato\_init}}
+\index{mato\_init@{mato\_init}!mato.h@{mato.h}}
+\doxysubsubsection{\texorpdfstring{mato\_init()}{mato\_init()}}
+{\footnotesize\ttfamily void mato\+\_\+init (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Initialize the whole framework. Should be called first from the main program. 
+
+Initialize the whole framework. Should be called first from the main program. \mbox{\Hypertarget{mato_8h_a43f0570e3ab59d7a021e93113437dcaf}\label{mato_8h_a43f0570e3ab59d7a021e93113437dcaf}} 
 \index{mato.h@{mato.h}!mato\_register\_new\_type\_of\_module@{mato\_register\_new\_type\_of\_module}}
 \index{mato\_register\_new\_type\_of\_module@{mato\_register\_new\_type\_of\_module}!mato.h@{mato.h}}
 \doxysubsubsection{\texorpdfstring{mato\_register\_new\_type\_of\_module()}{mato\_register\_new\_type\_of\_module()}}
@@ -237,7 +273,17 @@ The list should be freed by calling \mbox{\hyperlink{mato_8h_aeafc9d85e29a73b9b5
 
 Register a new module type. 
 
-This is typically called from the init() function of each module type, which should be called directly from the main program. 
+This is typically called from the init() function of each module type, which should be called directly from the main program. \mbox{\Hypertarget{mato_8h_a62a0865fa5114c0a254435a1369531cf}\label{mato_8h_a62a0865fa5114c0a254435a1369531cf}} 
+\index{mato.h@{mato.h}!mato\_start\_module@{mato\_start\_module}}
+\index{mato\_start\_module@{mato\_start\_module}!mato.h@{mato.h}}
+\doxysubsubsection{\texorpdfstring{mato\_start\_module()}{mato\_start\_module()}}
+{\footnotesize\ttfamily void mato\+\_\+start\+\_\+module (\begin{DoxyParamCaption}\item[{int}]{module\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+Start a newly created instance of a particular module. 
+
+This is typically used when the module instance is created later than when the framework has already been started. 
 
 \doxysubsection{Variable Documentation}
 \mbox{\Hypertarget{mato_8h_a0f80851fe27966d69a2a0dfbafdb7160}\label{mato_8h_a0f80851fe27966d69a2a0dfbafdb7160}} 
@@ -250,4 +296,8 @@ This is typically called from the init() function of each module type, which sho
 
 This variable is set to non-\/zero when the program is about to terminate. 
 
-All threads should terminate at the earliest possbility 
+All threads should terminate at the earliest possbility
+
+This variable is set to non-\/zero when the program is about to terminate.
+
+After it is set to zero, all threads are expected to terminated soon. When all threads terminate, the application terminates. 

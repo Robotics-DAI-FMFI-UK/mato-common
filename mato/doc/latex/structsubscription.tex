@@ -1,5 +1,10 @@
 \hypertarget{structsubscription}{}\doxysection{subscription Struct Reference}
 \label{structsubscription}\index{subscription@{subscription}}
+
+
+The structure describes a single individual subscription to some channel of some module.  
+
+
 \doxysubsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
@@ -17,6 +22,11 @@ int {\bfseries subscriber\+\_\+module\+\_\+id}
 \end{DoxyCompactItemize}
 
 
+\doxysubsection{Detailed Description}
+The structure describes a single individual subscription to some channel of some module. 
+
+Each subscription is identified by a computational node unique identifier (id\+\_\+subscription) has one of the supported subscription types, pointer to a callback function of the subscriber and the module\+\_\+id of the subscriber module. 
+
 The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 
-mato.\+c\end{DoxyCompactItemize}
+\mbox{\hyperlink{mato_8c}{mato.\+c}}\end{DoxyCompactItemize}
