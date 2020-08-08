@@ -1,0 +1,354 @@
+\hypertarget{mato_8c}{}\doxysection{mato.\+c File Reference}
+\label{mato_8c}\index{mato.c@{mato.c}}
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$glib.\+h$>$}\newline
+{\ttfamily \#include $<$pthread.\+h$>$}\newline
+{\ttfamily \#include $<$unistd.\+h$>$}\newline
+{\ttfamily \#include $<$errno.\+h$>$}\newline
+{\ttfamily \#include $<$inttypes.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}mato.\+h\char`\"{}}\newline
+Include dependency graph for mato.\+c\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{mato_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structsubscription}{subscription}}
+\begin{DoxyCompactList}\small\item\em The structure describes a single individual subscription to some channel of some module. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structchannel__data}{channel\+\_\+data}}
+\begin{DoxyCompactList}\small\item\em The structure holds one message that was posted by a module to one of its output channels. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{mato_8c_a81ccbf2e8be46ef287e2df22d8fe831f}\label{mato_8c_a81ccbf2e8be46ef287e2df22d8fe831f}} 
+\mbox{\hyperlink{structchannel__data}{channel\+\_\+data}} $\ast$ \mbox{\hyperlink{mato_8c_a81ccbf2e8be46ef287e2df22d8fe831f}{new\+\_\+channel\+\_\+data}} (int module\+\_\+id, int channel\+\_\+id, int length, void $\ast$data)
+\begin{DoxyCompactList}\small\item\em A constructor for the \mbox{\hyperlink{structchannel__data}{channel\+\_\+data}} structure. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{mato_8c_a438cf6032d01d451d50cf8cd7b14d8f0}\label{mato_8c_a438cf6032d01d451d50cf8cd7b14d8f0}} 
+void \mbox{\hyperlink{mato_8c_a438cf6032d01d451d50cf8cd7b14d8f0}{lock\+\_\+framework}} ()
+\begin{DoxyCompactList}\small\item\em Enter mutually-\/exclusive area accessing internal framework data structures. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{mato_8c_a39c60cf29218c107f4115b73270a5114}\label{mato_8c_a39c60cf29218c107f4115b73270a5114}} 
+void \mbox{\hyperlink{mato_8c_a39c60cf29218c107f4115b73270a5114}{unlock\+\_\+framework}} ()
+\begin{DoxyCompactList}\small\item\em Leave mutually-\/exclusive area with a protected acces to internal framework data structures. \end{DoxyCompactList}\item 
+G\+List $\ast$ \mbox{\hyperlink{mato_8c_a948891305b2d86ead8d8b9e98ee992ea}{decrement\+\_\+references}} (G\+List $\ast$data\+\_\+buffers, \mbox{\hyperlink{structchannel__data}{channel\+\_\+data}} $\ast$to\+\_\+be\+\_\+decremented)
+\begin{DoxyCompactList}\small\item\em Decrements the number of references to a particular buffer and deallocates the buffer itself as well as the structure describing the buffer. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{mato_8c_a9608b6c522f70f11ad48fe9cde8d97a6}\label{mato_8c_a9608b6c522f70f11ad48fe9cde8d97a6}} 
+void $\ast$ \mbox{\hyperlink{mato_8c_a9608b6c522f70f11ad48fe9cde8d97a6}{mato\+\_\+thread}} (void $\ast$arg)
+\begin{DoxyCompactList}\small\item\em The main loop of the framework thread that takes care of redistributing all the messages posted by the modules. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{mato_8c_a96f8e9e3c32c9abdab14dabd590fae87}{mato\+\_\+init}} ()
+\begin{DoxyCompactList}\small\item\em Initializes the framework. It must be the first function of the framework to be called. It should be called only once. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{mato_8c_a43f0570e3ab59d7a021e93113437dcaf}{mato\+\_\+register\+\_\+new\+\_\+type\+\_\+of\+\_\+module}} (char $\ast$type, \mbox{\hyperlink{structmodule__specification}{module\+\_\+specification}} $\ast$specification)
+\begin{DoxyCompactList}\small\item\em Register a new module type. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{mato_8c_ae97dbf0eeadf4345327dcf392d02c30c}\label{mato_8c_ae97dbf0eeadf4345327dcf392d02c30c}} 
+int \mbox{\hyperlink{mato_8c_ae97dbf0eeadf4345327dcf392d02c30c}{get\+\_\+free\+\_\+module\+\_\+id}} ()
+\begin{DoxyCompactList}\small\item\em Returns the next available module\+\_\+id. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{mato_8c_aa96455f34de227205787b911dbe51847}\label{mato_8c_aa96455f34de227205787b911dbe51847}} 
+int \mbox{\hyperlink{mato_8c_aa96455f34de227205787b911dbe51847}{get\+\_\+free\+\_\+subscription\+\_\+id}} ()
+\begin{DoxyCompactList}\small\item\em Returns the next available subscription\+\_\+id. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{mato_8c_a411a20bcfa908edbebe617fe5cc54667}{mato\+\_\+create\+\_\+new\+\_\+module\+\_\+instance}} (const char $\ast$module\+\_\+type, const char $\ast$module\+\_\+name)
+\begin{DoxyCompactList}\small\item\em The main program (or other module) can call this function to request creation of a module instance. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{mato_8c_a62a0865fa5114c0a254435a1369531cf}{mato\+\_\+start\+\_\+module}} (int module\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Start a newly created instance of a particular module. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{mato_8c_a02ef7e731c9c9eaa342352a7e802c183}\label{mato_8c_a02ef7e731c9c9eaa342352a7e802c183}} 
+void \mbox{\hyperlink{mato_8c_a02ef7e731c9c9eaa342352a7e802c183}{mato\+\_\+start}} ()
+\begin{DoxyCompactList}\small\item\em Start the framework and all modules. This is typically called after all module instances have been created. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{mato_8c_a6e94d7d4dc09ad58485227e60df20035}\label{mato_8c_a6e94d7d4dc09ad58485227e60df20035}} 
+void \mbox{\hyperlink{mato_8c_a6e94d7d4dc09ad58485227e60df20035}{mato\+\_\+delete\+\_\+module\+\_\+instance}} (int module\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Allows to dynamically delete a module instance that was previously created. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{mato_8c_aa753d75335e7a6ae0e00a6dcdbdb1412}\label{mato_8c_aa753d75335e7a6ae0e00a6dcdbdb1412}} 
+int \mbox{\hyperlink{mato_8c_aa753d75335e7a6ae0e00a6dcdbdb1412}{mato\+\_\+get\+\_\+module\+\_\+id}} (const char $\ast$module\+\_\+name)
+\begin{DoxyCompactList}\small\item\em Translate a module name of some existing module instance to its module id. Returns -\/1, if module name is not known. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{mato_8c_a2e839c2dcf0c134166ceca799e7987fd}\label{mato_8c_a2e839c2dcf0c134166ceca799e7987fd}} 
+char $\ast$ \mbox{\hyperlink{mato_8c_a2e839c2dcf0c134166ceca799e7987fd}{mato\+\_\+get\+\_\+module\+\_\+name}} (int module\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Determine the name of a module with the specified module\+\_\+id. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{mato_8c_a28a6ba77196f8504bab5f3da059c5d5b}\label{mato_8c_a28a6ba77196f8504bab5f3da059c5d5b}} 
+char $\ast$ \mbox{\hyperlink{mato_8c_a28a6ba77196f8504bab5f3da059c5d5b}{mato\+\_\+get\+\_\+module\+\_\+type}} (int module\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Determine the type of a module with the specified module\+\_\+id. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{mato_8c_af07c3febed32408feb8a11c4d66c2251}\label{mato_8c_af07c3febed32408feb8a11c4d66c2251}} 
+int \mbox{\hyperlink{mato_8c_af07c3febed32408feb8a11c4d66c2251}{mato\+\_\+subscribe}} (int subscriber\+\_\+module\+\_\+id, int subscribed\+\_\+module\+\_\+id, int channel, \mbox{\hyperlink{mato_8h_a9345221b935d9505595c583b54d31e86}{subscriber\+\_\+callback}} callback, int subscription\+\_\+type)
+\begin{DoxyCompactList}\small\item\em Subscribe on a channel of some module instance. Returns a number that represents this subscription (a subscription\+\_\+id). \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{mato_8c_a14f9462b777a24c86af37b64d84142d0}\label{mato_8c_a14f9462b777a24c86af37b64d84142d0}} 
+void \mbox{\hyperlink{mato_8c_a14f9462b777a24c86af37b64d84142d0}{mato\+\_\+unsubscribe}} (int module\+\_\+id, int channel, int subscription\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Given a subscription\+\_\+id, cancel the ongoing subscription to a channel of some module instance. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{mato_8c_a7c5249cc4fbb65587357c130ab618427}\label{mato_8c_a7c5249cc4fbb65587357c130ab618427}} 
+void $\ast$ \mbox{\hyperlink{mato_8c_a7c5249cc4fbb65587357c130ab618427}{mato\+\_\+get\+\_\+data\+\_\+buffer}} (int size)
+\begin{DoxyCompactList}\small\item\em Allocate a memory for a new message to be posted with post\+\_\+data. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{mato_8c_aebd06bdcd1d952465c8c222c663d76fb}\label{mato_8c_aebd06bdcd1d952465c8c222c663d76fb}} 
+void \mbox{\hyperlink{mato_8c_aebd06bdcd1d952465c8c222c663d76fb}{mato\+\_\+post\+\_\+data}} (int id\+\_\+of\+\_\+posting\+\_\+module, int channel, int data\+\_\+length, void $\ast$data)
+\begin{DoxyCompactList}\small\item\em A module instance posts a new message to its own output data channel by calling this function. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{mato_8c_ae76f55dbca38f9a69095cda5f089a80b}\label{mato_8c_ae76f55dbca38f9a69095cda5f089a80b}} 
+int \mbox{\hyperlink{mato_8c_ae76f55dbca38f9a69095cda5f089a80b}{mato\+\_\+send\+\_\+global\+\_\+message}} (int module\+\_\+id\+\_\+sender, int message\+\_\+id, int msg\+\_\+length, void $\ast$message\+\_\+data)
+\begin{DoxyCompactList}\small\item\em The main program or any module instance can post a global message to be posted to all modules immediatelly in the same thread by calling this function. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{mato_8c_af356c7284b6f1d6be285de40d9e23b77}{mato\+\_\+get\+\_\+data}} (int id\+\_\+module, int channel, int $\ast$data\+\_\+length, void $\ast$$\ast$data)
+\begin{DoxyCompactList}\small\item\em Retrieve the most recently posted data of some channel of some module instance. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{mato_8c_af3c84af45ac99910057189ede367d72d}{mato\+\_\+borrow\+\_\+data}} (int id\+\_\+module, int channel, int $\ast$data\+\_\+length, void $\ast$$\ast$data)
+\begin{DoxyCompactList}\small\item\em Retrieve the most recently posted data of some channel of some module instance. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{mato_8c_aedcb803fd4a991e805e6c3813c829a35}\label{mato_8c_aedcb803fd4a991e805e6c3813c829a35}} 
+void \mbox{\hyperlink{mato_8c_aedcb803fd4a991e805e6c3813c829a35}{mato\+\_\+release\+\_\+data}} (int id\+\_\+module, int channel, void $\ast$data)
+\begin{DoxyCompactList}\small\item\em Return a borrowed pointer that was obtained either by \mbox{\hyperlink{mato_8h_af3c84af45ac99910057189ede367d72d}{mato\+\_\+borrow\+\_\+data()}} or by a callback in the borrowed\+\_\+pointer mode. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{mato_8c_a4a5a67da5a8cdf9665a6bc86f5fd67e4}\label{mato_8c_a4a5a67da5a8cdf9665a6bc86f5fd67e4}} 
+\mbox{\hyperlink{structmodule__info}{module\+\_\+info}} $\ast$ \mbox{\hyperlink{mato_8c_a4a5a67da5a8cdf9665a6bc86f5fd67e4}{new\+\_\+module\+\_\+info}} (int module\+\_\+id, char $\ast$module\+\_\+name, char $\ast$module\+\_\+type)
+\begin{DoxyCompactList}\small\item\em A constructor for the \mbox{\hyperlink{structmodule__info}{module\+\_\+info}} structure. \end{DoxyCompactList}\item 
+G\+Array $\ast$ \mbox{\hyperlink{mato_8c_a5c6a3a9b7e7969e9d9324b1d937ff2a5}{mato\+\_\+get\+\_\+list\+\_\+of\+\_\+all\+\_\+modules}} ()
+\begin{DoxyCompactList}\small\item\em Retrieve the list of currently running modules. \end{DoxyCompactList}\item 
+G\+Array $\ast$ \mbox{\hyperlink{mato_8c_ac8c86d7dbb7acd09f1884c2e80ec698c}{mato\+\_\+get\+\_\+list\+\_\+of\+\_\+modules}} (char $\ast$type)
+\begin{DoxyCompactList}\small\item\em Retrieve the list of currently running modules of the specified type. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{mato_8c_aeafc9d85e29a73b9b5423cd661bd54c2}\label{mato_8c_aeafc9d85e29a73b9b5423cd661bd54c2}} 
+void \mbox{\hyperlink{mato_8c_aeafc9d85e29a73b9b5423cd661bd54c2}{mato\+\_\+free\+\_\+list\+\_\+of\+\_\+modules}} (G\+Array $\ast$a)
+\begin{DoxyCompactList}\small\item\em Free the list of modules returned by either of the two functions \mbox{\hyperlink{mato_8h_ac8c86d7dbb7acd09f1884c2e80ec698c}{mato\+\_\+get\+\_\+list\+\_\+of\+\_\+modules()}} or \mbox{\hyperlink{mato_8h_ac8c86d7dbb7acd09f1884c2e80ec698c}{mato\+\_\+get\+\_\+list\+\_\+of\+\_\+modules()}}. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{mato_8c_ab49165685fd95d2e9f70f484e367c6f2}{mato\+\_\+data\+\_\+buffer\+\_\+usage}} (int module\+\_\+id, int channel, int $\ast$number\+\_\+of\+\_\+allocated\+\_\+buffers, int $\ast$total\+\_\+sum\+\_\+of\+\_\+ref\+\_\+count)
+\begin{DoxyCompactList}\small\item\em Provide a diagnostic information on use of the buffers by a particular channel of a particular module. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{mato_8c_a6b31044a7afec17426ec4d4e3354aa9f}{mato\+\_\+inc\+\_\+thread\+\_\+count}} ()
+\begin{DoxyCompactList}\small\item\em Increment the number of threads running. This should be called by each thread that has been started. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{mato_8c_a480acc181ff3a7d7c925d64e3d4a7442}{mato\+\_\+dec\+\_\+thread\+\_\+count}} ()
+\begin{DoxyCompactList}\small\item\em Decrement the number of threads running. It should be called by each thread that terminates. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{mato_8c_a314629d6f743c699b26a534175986865}\label{mato_8c_a314629d6f743c699b26a534175986865}} 
+int \mbox{\hyperlink{mato_8c_a314629d6f743c699b26a534175986865}{mato\+\_\+threads\+\_\+running}} ()
+\begin{DoxyCompactList}\small\item\em The number of threads currently running in the system. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+volatile int \mbox{\hyperlink{mato_8c_a0f80851fe27966d69a2a0dfbafdb7160}{program\+\_\+runs}}
+\begin{DoxyCompactList}\small\item\em Set to one when the framework is initialized and cleared when any part of the program wants to terminate the whole program. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{mato_8c_a23868df494ffd83e64765b50b2f59de0}\label{mato_8c_a23868df494ffd83e64765b50b2f59de0}} 
+volatile int \mbox{\hyperlink{mato_8c_a23868df494ffd83e64765b50b2f59de0}{threads\+\_\+started}}
+\begin{DoxyCompactList}\small\item\em Contains the number of threads that are running. Use the functions \mbox{\hyperlink{mato_8c_a6b31044a7afec17426ec4d4e3354aa9f}{mato\+\_\+inc\+\_\+thread\+\_\+count()}} and \mbox{\hyperlink{mato_8c_a480acc181ff3a7d7c925d64e3d4a7442}{mato\+\_\+dec\+\_\+thread\+\_\+count()}}. \end{DoxyCompactList}\item 
+G\+Array $\ast$ \mbox{\hyperlink{mato_8c_a7ccdd7e11e9c4bbf1887270e9d74779a}{module\+\_\+names}}
+\begin{DoxyCompactList}\small\item\em Contains list of names of all module instances. \end{DoxyCompactList}\item 
+G\+Array $\ast$ \mbox{\hyperlink{mato_8c_a2f565b6876bed976cee1f43eaa6d6787}{module\+\_\+types}}
+\begin{DoxyCompactList}\small\item\em Contains list of types of all module instances. \end{DoxyCompactList}\item 
+G\+Array $\ast$ \mbox{\hyperlink{mato_8c_a0e0d7e8d878428833528a1123d6558c5}{instance\+\_\+data}}
+\begin{DoxyCompactList}\small\item\em Contains pointers to instance\+\_\+data of all module instances as returned by their create\+\_\+instance\+\_\+callback. \end{DoxyCompactList}\item 
+G\+Hash\+Table $\ast$ \mbox{\hyperlink{mato_8c_a8cc125cf88b5a24be8ced43b9f710a19}{module\+\_\+specifications}}
+\begin{DoxyCompactList}\small\item\em Contains \mbox{\hyperlink{structmodule__specification}{module\+\_\+specification}} structures for all type names. \end{DoxyCompactList}\item 
+G\+Array $\ast$ \mbox{\hyperlink{mato_8c_a2822a291e85d87882c86a179b50c99f6}{buffers}}
+\begin{DoxyCompactList}\small\item\em Data of all messages that are maintained by the framework at any point of time are kept in this G\+Array. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{mato_8c_aa6e2f37fb2e955b97bacbbd53876850a}\label{mato_8c_aa6e2f37fb2e955b97bacbbd53876850a}} 
+int \mbox{\hyperlink{mato_8c_aa6e2f37fb2e955b97bacbbd53876850a}{next\+\_\+free\+\_\+module\+\_\+id}}
+\begin{DoxyCompactList}\small\item\em A counter for assigning a new module\+\_\+id for newly created module instances. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{mato_8c_a3c68d041defa2734c56413420d572c2a}\label{mato_8c_a3c68d041defa2734c56413420d572c2a}} 
+int \mbox{\hyperlink{mato_8c_a3c68d041defa2734c56413420d572c2a}{next\+\_\+free\+\_\+subscription\+\_\+id}}
+\begin{DoxyCompactList}\small\item\em A counter for assining a new subscription\+\_\+id for newly registered subscriptions. \end{DoxyCompactList}\item 
+G\+Array $\ast$ \mbox{\hyperlink{mato_8c_a08a6dc7b239323f6dbb221f209b6f518}{subscriptions}}
+\begin{DoxyCompactList}\small\item\em Contains all descriptions of subscriptions, instances of subscription structures. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{mato_8c_ace00a3e120249460a8acf8381667cc75}\label{mato_8c_ace00a3e120249460a8acf8381667cc75}} 
+pthread\+\_\+mutex\+\_\+t \mbox{\hyperlink{mato_8c_ace00a3e120249460a8acf8381667cc75}{framework\+\_\+mutex}}
+\begin{DoxyCompactList}\small\item\em Used for mutual exclusion when accessing framework structures from functions that can be called from different threads. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{mato_8c_a225d8d1a4c4e855493b258620e5e2be4}{post\+\_\+data\+\_\+pipe}} \mbox{[}2\mbox{]}
+\begin{DoxyCompactList}\small\item\em New messages that are posted by the modules are allocated in dynamic memory. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Implementation of the Mato control framework. 
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{mato_8c_a948891305b2d86ead8d8b9e98ee992ea}\label{mato_8c_a948891305b2d86ead8d8b9e98ee992ea}} 
+\index{mato.c@{mato.c}!decrement\_references@{decrement\_references}}
+\index{decrement\_references@{decrement\_references}!mato.c@{mato.c}}
+\doxysubsubsection{\texorpdfstring{decrement\_references()}{decrement\_references()}}
+{\footnotesize\ttfamily G\+List$\ast$ decrement\+\_\+references (\begin{DoxyParamCaption}\item[{G\+List $\ast$}]{data\+\_\+buffers,  }\item[{\mbox{\hyperlink{structchannel__data}{channel\+\_\+data}} $\ast$}]{to\+\_\+be\+\_\+decremented }\end{DoxyParamCaption})}
+
+
+
+Decrements the number of references to a particular buffer and deallocates the buffer itself as well as the structure describing the buffer. 
+
+It also removes it from the list of the framework-\/maintained messages. \mbox{\Hypertarget{mato_8c_af3c84af45ac99910057189ede367d72d}\label{mato_8c_af3c84af45ac99910057189ede367d72d}} 
+\index{mato.c@{mato.c}!mato\_borrow\_data@{mato\_borrow\_data}}
+\index{mato\_borrow\_data@{mato\_borrow\_data}!mato.c@{mato.c}}
+\doxysubsubsection{\texorpdfstring{mato\_borrow\_data()}{mato\_borrow\_data()}}
+{\footnotesize\ttfamily void mato\+\_\+borrow\+\_\+data (\begin{DoxyParamCaption}\item[{int}]{id\+\_\+module,  }\item[{int}]{channel,  }\item[{int $\ast$}]{data\+\_\+length,  }\item[{void $\ast$$\ast$}]{data }\end{DoxyParamCaption})}
+
+
+
+Retrieve the most recently posted data of some channel of some module instance. 
+
+In this case, the data is not copied, but a pointer to read-\/only memory containing the data is provided. The module should return the borrowed pointer back to the framework by calling \mbox{\hyperlink{mato_8h_aedcb803fd4a991e805e6c3813c829a35}{mato\+\_\+release\+\_\+data()}} when the data is not needed anymore. \mbox{\Hypertarget{mato_8c_a411a20bcfa908edbebe617fe5cc54667}\label{mato_8c_a411a20bcfa908edbebe617fe5cc54667}} 
+\index{mato.c@{mato.c}!mato\_create\_new\_module\_instance@{mato\_create\_new\_module\_instance}}
+\index{mato\_create\_new\_module\_instance@{mato\_create\_new\_module\_instance}!mato.c@{mato.c}}
+\doxysubsubsection{\texorpdfstring{mato\_create\_new\_module\_instance()}{mato\_create\_new\_module\_instance()}}
+{\footnotesize\ttfamily int mato\+\_\+create\+\_\+new\+\_\+module\+\_\+instance (\begin{DoxyParamCaption}\item[{const char $\ast$}]{module\+\_\+type,  }\item[{const char $\ast$}]{module\+\_\+name }\end{DoxyParamCaption})}
+
+
+
+The main program (or other module) can call this function to request creation of a module instance. 
+
+The function returns the new module id. \mbox{\Hypertarget{mato_8c_ab49165685fd95d2e9f70f484e367c6f2}\label{mato_8c_ab49165685fd95d2e9f70f484e367c6f2}} 
+\index{mato.c@{mato.c}!mato\_data\_buffer\_usage@{mato\_data\_buffer\_usage}}
+\index{mato\_data\_buffer\_usage@{mato\_data\_buffer\_usage}!mato.c@{mato.c}}
+\doxysubsubsection{\texorpdfstring{mato\_data\_buffer\_usage()}{mato\_data\_buffer\_usage()}}
+{\footnotesize\ttfamily void mato\+\_\+data\+\_\+buffer\+\_\+usage (\begin{DoxyParamCaption}\item[{int}]{module\+\_\+id,  }\item[{int}]{channel,  }\item[{int $\ast$}]{number\+\_\+of\+\_\+allocated\+\_\+buffers,  }\item[{int $\ast$}]{total\+\_\+sum\+\_\+of\+\_\+ref\+\_\+count }\end{DoxyParamCaption})}
+
+
+
+Provide a diagnostic information on use of the buffers by a particular channel of a particular module. 
+
+If this starts growing, the callbacks take too much time to process data and should be refactored. \mbox{\Hypertarget{mato_8c_a480acc181ff3a7d7c925d64e3d4a7442}\label{mato_8c_a480acc181ff3a7d7c925d64e3d4a7442}} 
+\index{mato.c@{mato.c}!mato\_dec\_thread\_count@{mato\_dec\_thread\_count}}
+\index{mato\_dec\_thread\_count@{mato\_dec\_thread\_count}!mato.c@{mato.c}}
+\doxysubsubsection{\texorpdfstring{mato\_dec\_thread\_count()}{mato\_dec\_thread\_count()}}
+{\footnotesize\ttfamily void mato\+\_\+dec\+\_\+thread\+\_\+count (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Decrement the number of threads running. It should be called by each thread that terminates. 
+
+Each thread that terminates should call this function just before it quits. \mbox{\Hypertarget{mato_8c_af356c7284b6f1d6be285de40d9e23b77}\label{mato_8c_af356c7284b6f1d6be285de40d9e23b77}} 
+\index{mato.c@{mato.c}!mato\_get\_data@{mato\_get\_data}}
+\index{mato\_get\_data@{mato\_get\_data}!mato.c@{mato.c}}
+\doxysubsubsection{\texorpdfstring{mato\_get\_data()}{mato\_get\_data()}}
+{\footnotesize\ttfamily void mato\+\_\+get\+\_\+data (\begin{DoxyParamCaption}\item[{int}]{id\+\_\+module,  }\item[{int}]{channel,  }\item[{int $\ast$}]{data\+\_\+length,  }\item[{void $\ast$$\ast$}]{data }\end{DoxyParamCaption})}
+
+
+
+Retrieve the most recently posted data of some channel of some module instance. 
+
+Data is copied into the buffer provided, and the length of the data is set to data\+\_\+length. The calling module should release the memory by calling free() when it is not needed anymore. \mbox{\Hypertarget{mato_8c_a5c6a3a9b7e7969e9d9324b1d937ff2a5}\label{mato_8c_a5c6a3a9b7e7969e9d9324b1d937ff2a5}} 
+\index{mato.c@{mato.c}!mato\_get\_list\_of\_all\_modules@{mato\_get\_list\_of\_all\_modules}}
+\index{mato\_get\_list\_of\_all\_modules@{mato\_get\_list\_of\_all\_modules}!mato.c@{mato.c}}
+\doxysubsubsection{\texorpdfstring{mato\_get\_list\_of\_all\_modules()}{mato\_get\_list\_of\_all\_modules()}}
+{\footnotesize\ttfamily G\+Array$\ast$ mato\+\_\+get\+\_\+list\+\_\+of\+\_\+all\+\_\+modules (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Retrieve the list of currently running modules. 
+
+The list should be freed by calling \mbox{\hyperlink{mato_8h_aeafc9d85e29a73b9b5423cd661bd54c2}{mato\+\_\+free\+\_\+list\+\_\+of\+\_\+modules()}} when it is not needed anymore. \mbox{\Hypertarget{mato_8c_ac8c86d7dbb7acd09f1884c2e80ec698c}\label{mato_8c_ac8c86d7dbb7acd09f1884c2e80ec698c}} 
+\index{mato.c@{mato.c}!mato\_get\_list\_of\_modules@{mato\_get\_list\_of\_modules}}
+\index{mato\_get\_list\_of\_modules@{mato\_get\_list\_of\_modules}!mato.c@{mato.c}}
+\doxysubsubsection{\texorpdfstring{mato\_get\_list\_of\_modules()}{mato\_get\_list\_of\_modules()}}
+{\footnotesize\ttfamily G\+Array$\ast$ mato\+\_\+get\+\_\+list\+\_\+of\+\_\+modules (\begin{DoxyParamCaption}\item[{char $\ast$}]{type }\end{DoxyParamCaption})}
+
+
+
+Retrieve the list of currently running modules of the specified type. 
+
+The list should be freed by calling \mbox{\hyperlink{mato_8h_aeafc9d85e29a73b9b5423cd661bd54c2}{mato\+\_\+free\+\_\+list\+\_\+of\+\_\+modules()}} when it is not needed anymore. \mbox{\Hypertarget{mato_8c_a6b31044a7afec17426ec4d4e3354aa9f}\label{mato_8c_a6b31044a7afec17426ec4d4e3354aa9f}} 
+\index{mato.c@{mato.c}!mato\_inc\_thread\_count@{mato\_inc\_thread\_count}}
+\index{mato\_inc\_thread\_count@{mato\_inc\_thread\_count}!mato.c@{mato.c}}
+\doxysubsubsection{\texorpdfstring{mato\_inc\_thread\_count()}{mato\_inc\_thread\_count()}}
+{\footnotesize\ttfamily void mato\+\_\+inc\+\_\+thread\+\_\+count (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Increment the number of threads running. This should be called by each thread that has been started. 
+
+Each module instance (or other part of the program) that creates a new thread should call this funciton for each newly created thread. \mbox{\Hypertarget{mato_8c_a96f8e9e3c32c9abdab14dabd590fae87}\label{mato_8c_a96f8e9e3c32c9abdab14dabd590fae87}} 
+\index{mato.c@{mato.c}!mato\_init@{mato\_init}}
+\index{mato\_init@{mato\_init}!mato.c@{mato.c}}
+\doxysubsubsection{\texorpdfstring{mato\_init()}{mato\_init()}}
+{\footnotesize\ttfamily void mato\+\_\+init (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Initializes the framework. It must be the first function of the framework to be called. It should be called only once. 
+
+Initialize the whole framework. Should be called first from the main program. \mbox{\Hypertarget{mato_8c_a43f0570e3ab59d7a021e93113437dcaf}\label{mato_8c_a43f0570e3ab59d7a021e93113437dcaf}} 
+\index{mato.c@{mato.c}!mato\_register\_new\_type\_of\_module@{mato\_register\_new\_type\_of\_module}}
+\index{mato\_register\_new\_type\_of\_module@{mato\_register\_new\_type\_of\_module}!mato.c@{mato.c}}
+\doxysubsubsection{\texorpdfstring{mato\_register\_new\_type\_of\_module()}{mato\_register\_new\_type\_of\_module()}}
+{\footnotesize\ttfamily void mato\+\_\+register\+\_\+new\+\_\+type\+\_\+of\+\_\+module (\begin{DoxyParamCaption}\item[{char $\ast$}]{type,  }\item[{\mbox{\hyperlink{structmodule__specification}{module\+\_\+specification}} $\ast$}]{specification }\end{DoxyParamCaption})}
+
+
+
+Register a new module type. 
+
+This is typically called from the init() function of each module type, which should be called directly from the main program. \mbox{\Hypertarget{mato_8c_a62a0865fa5114c0a254435a1369531cf}\label{mato_8c_a62a0865fa5114c0a254435a1369531cf}} 
+\index{mato.c@{mato.c}!mato\_start\_module@{mato\_start\_module}}
+\index{mato\_start\_module@{mato\_start\_module}!mato.c@{mato.c}}
+\doxysubsubsection{\texorpdfstring{mato\_start\_module()}{mato\_start\_module()}}
+{\footnotesize\ttfamily void mato\+\_\+start\+\_\+module (\begin{DoxyParamCaption}\item[{int}]{module\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+Start a newly created instance of a particular module. 
+
+This is typically used when the module instance is created later than when the framework has already been started. 
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{mato_8c_a2822a291e85d87882c86a179b50c99f6}\label{mato_8c_a2822a291e85d87882c86a179b50c99f6}} 
+\index{mato.c@{mato.c}!buffers@{buffers}}
+\index{buffers@{buffers}!mato.c@{mato.c}}
+\doxysubsubsection{\texorpdfstring{buffers}{buffers}}
+{\footnotesize\ttfamily G\+Array$\ast$ buffers}
+
+
+
+Data of all messages that are maintained by the framework at any point of time are kept in this G\+Array. 
+
+It is indexed by module\+\_\+id and contains G\+Arrays indexed by channel number of the particular module instance. Finally, the elements of the nested G\+Array are G\+Lists -\/ the list of all messages of the particular module in its particular channel that are still needed by the framework or any other module and thus have not been deallocated. Each time a module posts a new message to its channel, it is added to that list. The message is removed from the list when it has have been forwarded to all the subscribers, no subscriber or another module has borrowed a pointer to it and a new message from the module on the same channel has already arrived. \mbox{\Hypertarget{mato_8c_a0e0d7e8d878428833528a1123d6558c5}\label{mato_8c_a0e0d7e8d878428833528a1123d6558c5}} 
+\index{mato.c@{mato.c}!instance\_data@{instance\_data}}
+\index{instance\_data@{instance\_data}!mato.c@{mato.c}}
+\doxysubsubsection{\texorpdfstring{instance\_data}{instance\_data}}
+{\footnotesize\ttfamily G\+Array$\ast$ instance\+\_\+data}
+
+
+
+Contains pointers to instance\+\_\+data of all module instances as returned by their create\+\_\+instance\+\_\+callback. 
+
+The G\+Array is indexed by module\+\_\+id. After a particular module is deleted, its module\+\_\+id and the location in this array will remain unused. \mbox{\Hypertarget{mato_8c_a7ccdd7e11e9c4bbf1887270e9d74779a}\label{mato_8c_a7ccdd7e11e9c4bbf1887270e9d74779a}} 
+\index{mato.c@{mato.c}!module\_names@{module\_names}}
+\index{module\_names@{module\_names}!mato.c@{mato.c}}
+\doxysubsubsection{\texorpdfstring{module\_names}{module\_names}}
+{\footnotesize\ttfamily G\+Array$\ast$ module\+\_\+names}
+
+
+
+Contains list of names of all module instances. 
+
+The G\+Array is indexed by module\+\_\+id. After a particular module is deleted, its module\+\_\+id and the location in this array will remain unused. \mbox{\Hypertarget{mato_8c_a8cc125cf88b5a24be8ced43b9f710a19}\label{mato_8c_a8cc125cf88b5a24be8ced43b9f710a19}} 
+\index{mato.c@{mato.c}!module\_specifications@{module\_specifications}}
+\index{module\_specifications@{module\_specifications}!mato.c@{mato.c}}
+\doxysubsubsection{\texorpdfstring{module\_specifications}{module\_specifications}}
+{\footnotesize\ttfamily G\+Hash\+Table$\ast$ module\+\_\+specifications}
+
+
+
+Contains \mbox{\hyperlink{structmodule__specification}{module\+\_\+specification}} structures for all type names. 
+
+The keys in this hashtable are the module types. The value is a pointer to \mbox{\hyperlink{structmodule__specification}{module\+\_\+specification}} structure as provided by the argument to \mbox{\hyperlink{mato_8c_a43f0570e3ab59d7a021e93113437dcaf}{mato\+\_\+register\+\_\+new\+\_\+type\+\_\+of\+\_\+module()}} function that is typically called from the init function of a module type. \mbox{\Hypertarget{mato_8c_a2f565b6876bed976cee1f43eaa6d6787}\label{mato_8c_a2f565b6876bed976cee1f43eaa6d6787}} 
+\index{mato.c@{mato.c}!module\_types@{module\_types}}
+\index{module\_types@{module\_types}!mato.c@{mato.c}}
+\doxysubsubsection{\texorpdfstring{module\_types}{module\_types}}
+{\footnotesize\ttfamily G\+Array$\ast$ module\+\_\+types}
+
+
+
+Contains list of types of all module instances. 
+
+The G\+Array is indexed by module\+\_\+id. After a particular module is deleted, its module\+\_\+id and the location in this array will remain unused. \mbox{\Hypertarget{mato_8c_a225d8d1a4c4e855493b258620e5e2be4}\label{mato_8c_a225d8d1a4c4e855493b258620e5e2be4}} 
+\index{mato.c@{mato.c}!post\_data\_pipe@{post\_data\_pipe}}
+\index{post\_data\_pipe@{post\_data\_pipe}!mato.c@{mato.c}}
+\doxysubsubsection{\texorpdfstring{post\_data\_pipe}{post\_data\_pipe}}
+{\footnotesize\ttfamily int post\+\_\+data\+\_\+pipe\mbox{[}2\mbox{]}}
+
+
+
+New messages that are posted by the modules are allocated in dynamic memory. 
+
+Pointers to that memory enter this pipe and are picked up by a message redistribution loop that takes care of them in a serial manner. Handling of each message is supposed to be done very quickly -\/ assuming the subscriber callbacks return quickly. In the future release, we expect each subscriber callback to be called in a separate thread taken from a thread pool. \mbox{\Hypertarget{mato_8c_a0f80851fe27966d69a2a0dfbafdb7160}\label{mato_8c_a0f80851fe27966d69a2a0dfbafdb7160}} 
+\index{mato.c@{mato.c}!program\_runs@{program\_runs}}
+\index{program\_runs@{program\_runs}!mato.c@{mato.c}}
+\doxysubsubsection{\texorpdfstring{program\_runs}{program\_runs}}
+{\footnotesize\ttfamily volatile int program\+\_\+runs}
+
+
+
+Set to one when the framework is initialized and cleared when any part of the program wants to terminate the whole program. 
+
+This variable is set to non-\/zero when the program is about to terminate.
+
+After it is set to zero, all threads are expected to terminated soon. When all threads terminate, the application terminates. \mbox{\Hypertarget{mato_8c_a08a6dc7b239323f6dbb221f209b6f518}\label{mato_8c_a08a6dc7b239323f6dbb221f209b6f518}} 
+\index{mato.c@{mato.c}!subscriptions@{subscriptions}}
+\index{subscriptions@{subscriptions}!mato.c@{mato.c}}
+\doxysubsubsection{\texorpdfstring{subscriptions}{subscriptions}}
+{\footnotesize\ttfamily G\+Array$\ast$ subscriptions}
+
+
+
+Contains all descriptions of subscriptions, instances of subscription structures. 
+
+The G\+Array is indexed by the module\+\_\+id and contains G\+Arrays indexed by channel number Finally, the nested G\+Array elements are again G\+Arrays containing all subscriptions to that particular channel of that particular module. 
