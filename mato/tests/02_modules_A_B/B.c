@@ -74,7 +74,7 @@ void B_start(void *instance_data)
     else if (strcmp(my_name, "B2") == 0)
 	data->subscribed_to_module_id = a2;
 
-    data->my_subscription_id = mato_subscribe(module_id, a1, 0, message_from_A, direct_data_ptr);
+    data->my_subscription_id = mato_subscribe(module_id, data->subscribed_to_module_id, 0, message_from_A, direct_data_ptr);
 
     pthread_t t;
     printf("starting module B(%d)..\n", data->module_id);
