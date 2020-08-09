@@ -10,7 +10,6 @@
 
 typedef struct { 
            int module_id;
-           int order;            
         } module_A_instance_data;
 
 void *A_create_instance(int module_id)
