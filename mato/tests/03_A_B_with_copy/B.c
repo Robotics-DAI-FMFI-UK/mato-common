@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 #include <inttypes.h>
 
 #include "../../mato.h"
@@ -18,7 +19,7 @@ void *B_create_instance(int module_id)
 {
     module_B_instance_data *data = (module_B_instance_data *)malloc(sizeof(module_B_instance_data));
     data->module_id = module_id;    
-    printf("created a new instance of module B (%d) at %lu\n", module_id, (uint64_t)data);
+    printf("created a new instance of module B (%d) at %" PRIuPTR "\n", module_id, (uintptr_t)data);
     return data;
 }
 
@@ -86,7 +87,7 @@ void B_start(void *instance_data)
 void B_delete(void *instance_data)
 {
     module_B_instance_data *data = (module_B_instance_data *)instance_data;
-    printf("deleting module instance (%d) = %lu\n", data->module_id, (uint64_t)data);
+    printf("deleting module instance (%d) = %" PRIuPTR "\n", data->module_id, (uintptr_t)data);
     free(data);
 }
 
