@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <glib.h>
+#include <stdlib.h>
 #include <pthread.h>
 #include <unistd.h>
 #include <errno.h>
@@ -148,7 +149,7 @@ void *mato_thread(void *arg)
           perror("error reading from message pipe");
           return 0;
       }
-//      printf("retrieved channel data from pipe: %lu\n", (uint64_t)cd);
+//      printf("retrieved channel data from pipe: %" PRIuPTR "\n", (uintptr_t)cd);
       
       cd->references++; // last valid data from module channel
       cd->references++; // currently being sent out to subscribers
@@ -157,10 +158,9 @@ void *mato_thread(void *arg)
       GArray *module_buffers = g_array_index(buffers, GArray *, cd->module_id);
       GList *channel_list = g_array_index(module_buffers, GList *, cd->channel_id);
       
-      channel_data *last_valid = (channel_data *)g_list_first(channel_list);
-      if (last_valid)
+      if (channel_list)
           // previous last valid data is not last valid data anymore => ref--
-          channel_list = decrement_references(channel_list, last_valid);
+          channel_list = decrement_references(channel_list, (channel_data *)(channel_list->data));
       channel_list = g_list_prepend(channel_list, cd);
 
       g_array_index(module_buffers, GList *, cd->channel_id) = channel_list;
@@ -249,7 +249,7 @@ void mato_init()
 
     next_free_module_id = 0;
     next_free_subscription_id = 0;
-    module_specifications = g_hash_table_new(g_int64_hash, g_int64_equal); // assuming 64-bit arch
+    module_specifications = g_hash_table_new(g_str_hash, g_str_equal); 
 
     subscriptions = g_array_new(0, 0, sizeof(GArray *));    
     pthread_mutex_init(&framework_mutex, 0);
@@ -317,7 +317,7 @@ int mato_create_new_module_instance(const char *module_type, const char *module_
     
     lock_framework();
       g_array_append_val(instance_data, module_instance_data);    
-//      printf("appended instance data %lu\n", (uint64_t)module_instance_data);
+//      printf("appended instance data %" PRIuPTR "\n", (uintptr_t)module_instance_data);
     unlock_framework();
 
     return module_id;
@@ -445,7 +445,7 @@ void mato_post_data(int id_of_posting_module, int channel, int data_length, void
 {
     //writing data of size <= PIPE_BUF to pipe are atomic, therefore no framework locking is needed
     channel_data *cd = new_channel_data(id_of_posting_module, channel, data_length, data);
-//    printf("%d sending channel data to pipe: %lu\n", id_of_posting_module, (uint64_t)cd);
+//    printf("%d sending channel data to pipe: %" PRIuPTR "\n", id_of_posting_module, (uintptr_t)cd);
 
     write(post_data_pipe[1], &cd, sizeof(channel_data *));
 }    
