@@ -27,7 +27,7 @@ void *AB_create_instance(int module_id, char type)
     data->module_id = module_id;    
     data->type = type;
     time(&tm);
-    printf("%u created a new instance of module %c (%d) at %" PRIuPTR "\n", tm - tm0, type, module_id, (uintptr_t)data);
+    printf("%u created a new instance of module %c (%d) at %" PRIuPTR "\n", (unsigned int)(tm - tm0), type, module_id, (uintptr_t)data);
     return data;
 }
 
@@ -55,9 +55,9 @@ void *module_AB_thread(void *arg)
         sleep(2);
     }
     time(&tm);
-    printf("%u module_%c_thread done (%d), unsubscribing...\n", tm - tm0, data->type, data->module_id);
+    printf("%u module_%c_thread done (%d), unsubscribing...\n", (unsigned int)(tm - tm0), data->type, data->module_id);
     mato_unsubscribe(data->subscribed_to_module_id, 0, data->my_subscription_id); 
-    printf("%u module_%c_thread terminates (%d)\n", tm - tm0, data->type, data->module_id);
+    printf("%u module_%c_thread terminates (%d)\n", (unsigned int)(tm - tm0), data->type, data->module_id);
 
     close(data->msg_queue[1]);
     close(data->msg_queue[0]);
@@ -77,22 +77,22 @@ void *module_AB_msg_eating_thread(void *arg)
       if (rv == -1) break;
       int val = *val_ptr;
       time(&tm);
-      printf("%u %c(%d) retrieves message %d from queue\n", tm - tm0, data->type, data->module_id, val);
+      printf("%u %c(%d) retrieves message %d from queue\n", (unsigned int)(tm - tm0), data->type, data->module_id, val);
       int *fwd_val = mato_get_data_buffer(sizeof(int));
       *fwd_val = val + 100;
       sleep(data->module_id);
       time(&tm);
-      printf("%u %c(%d) returns borrowed ptr to message %d\n", tm - tm0, data->type, data->module_id, val);
+      printf("%u %c(%d) returns borrowed ptr to message %d\n", (unsigned int)(tm - tm0), data->type, data->module_id, val);
       mato_release_data(data->subscribed_to_module_id, 0, val_ptr);
 
       if (data->module_id < 3)
       {
-          printf("%u %c(%d) post-forwards message %d as %d\n", tm - tm0, data->type, data->module_id, val, *fwd_val);
+          printf("%u %c(%d) post-forwards message %d as %d\n", (unsigned int)(tm - tm0), data->type, data->module_id, val, *fwd_val);
           mato_post_data(data->module_id, 0, sizeof(int), fwd_val);
       }
     }
     time(&tm);
-    printf("%u %c(%d) msg queue closed, msg eating thread terminates\n", tm - tm0, data->type, data->module_id);
+    printf("%u %c(%d) msg queue closed, msg eating thread terminates\n", (unsigned int)(tm - tm0), data->type, data->module_id);
     mato_dec_thread_count();
 }
 
@@ -103,7 +103,7 @@ void message_from_other(void *instance_data, int sender_module_id, int data_leng
     int val = *((int *)new_data_ptr);
     char other_type = 'B' - (data->type - 'A');
     time(&tm);
-    printf("%u %c(%d) receives message from %c(%d): %d, pushed to queue\n", tm - tm0, data->type, data->module_id, other_type, sender_module_id, val);
+    printf("%u %c(%d) receives message from %c(%d): %d, pushed to queue\n", (unsigned int)(tm - tm0), data->type, data->module_id, other_type, sender_module_id, val);
     write(data->msg_queue[1], &new_data_ptr, sizeof(void *));
 }
 
@@ -142,7 +142,7 @@ void AB_start(void *instance_data)
 
     pthread_t t;
     time(&tm);
-    printf("%u starting module %c(%d)..\n", tm - tm0, data->type, data->module_id);
+    printf("%u starting module %c(%d)..\n", (unsigned int)(tm - tm0), data->type, data->module_id);
     if (pthread_create(&t, 0, module_AB_thread, data) != 0)
         perror("could not create thread for module");
     if (pthread_create(&t, 0, module_AB_msg_eating_thread, data) != 0)
@@ -154,7 +154,7 @@ void AB_delete(void *instance_data)
     time_t tm;
     module_AB_instance_data *data = (module_AB_instance_data *)instance_data;
     time(&tm);
-    printf("%u deleting module instance (%d) = %" PRIuPTR "\n", tm - tm0, data->module_id, (uintptr_t)data);
+    printf("%u deleting module instance (%d) = %" PRIuPTR "\n", (unsigned int)(tm - tm0), data->module_id, (uintptr_t)data);
     free(data);
 }
 
@@ -165,7 +165,7 @@ void AB_global_message(void *instance_data, int module_id_sender, int message_id
     char *data = (char *)message_data;
     time(&tm);
     if (message_id == MESSAGE_HELLO) 
-        printf("%u module %c(%d) received global HELLO messsage: '%s'\n", tm - tm0, my_data->type, my_data->module_id, data);
+        printf("%u module %c(%d) received global HELLO messsage: '%s'\n", (unsigned int)(tm - tm0), my_data->type, my_data->module_id, data);
 }
 
 static module_specification A_specification = { A_create_instance, AB_start, AB_delete, AB_global_message, 1 };
