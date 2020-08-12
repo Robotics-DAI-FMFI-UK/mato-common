@@ -72,6 +72,16 @@ typedef struct {
 	char *type;
 } module_info;
 
+
+
+typedef struct {
+    int node_id;
+	char *IP;
+	int port;
+    char *name;
+    int is_online;
+} node_info;
+
 /// Initialize the whole framework. Should be called first from the main program.
 void mato_init();
 
