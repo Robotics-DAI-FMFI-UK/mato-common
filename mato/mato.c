@@ -9,6 +9,9 @@
 
 #include "mato.h"
 
+#define MAX_PENDINGS_CONNECTIONS 10
+
+
 /// \file mato.c
 /// Implementation of the Mato control framework.
 
@@ -56,6 +59,13 @@ volatile int program_runs;
 /// Contains the number of threads that are running. Use the functions mato_inc_thread_count() and mato_dec_thread_count().
 volatile int threads_started;
 
+/// Socket for accepting connections from other nodes.
+int listening_socket;
+
+/// Id of this computational node.
+int32_t this_node_id;
+
+
 //global framework data
 
 /// Contains list of names of all module instances. 
@@ -72,6 +82,11 @@ GArray *module_types;    // [module_id]
 /// The GArray is indexed by module_id. After a particular module is deleted,
 /// its module_id and the location in this array will remain unused.
 GArray *instance_data;   // [module_id]
+
+///Contains node info for all computational nodes filled from config file in mato_init.
+GArray *nodes;   // [node_id]
+
+GArray *sockets;   // [node_id]
 
 /// Contains module_specification structures for all type names. The keys in this hashtable are the 
 /// module types. The value is a pointer to module_specification structure as provided by the 
@@ -236,6 +251,183 @@ void *mato_thread(void *arg)
     mato_dec_thread_count();
 }
 
+
+void node_disconected(int s, int i)
+{
+	g_array_index(nodes,node_info*,i)->is_online = 0;
+	close(s);
+	printf("node %d has disconnected\n", i);
+	
+}
+
+void process_node_message(int s, int i)
+{
+	int32_t message_type;
+	int retval = recv(s, &message_type, sizeof(int32_t), MSG_WAITALL);
+	if(retval<0)
+	{
+		perror("reading from socket");
+		return;
+	}
+	switch(message_type){
+		case MSG_NEW_MODULE_INSTANCE:	
+	}
+}
+
+void *reconnecting_thread(void *arg)
+{
+	while (program_runs){
+		for(int i = 0; i < nodes->len; i++)
+		{
+			if (g_array_index(nodes,node_info*,i)->is_online == 0)
+			{
+				int s = socket(AF_INET, SOCK_STREAM, 0);
+				if( s < 0)
+				{
+					perror("could not create socket");
+					return;
+				}
+				memset(&my_addr, 0, sizeof(struct sockaddr_in));
+				my_addr.sin_family = AF_INET;
+				my_addr.sin_port = htons(g_array_index(nodes,node_info*,i)->port);
+				char *IP = g_array_index(nodes,node_info*,i)->IP;
+				if (inet_pton(AF_INET, IP, &my_addr.sin_addr)<=0)
+				{
+					printf("Invalid ip address (%s)\n",IP);
+					continue;
+				}
+				if(connect(s, (struct sockaddr *)&my_addr, sizeof(struct sockaddr_in))<0)
+					continue;
+				int retval = send(s, &this_node_id, sizeof(int32_t), 0);
+				if(retval<0)
+				{
+					perror("Could not send this node id");
+					close(s);
+					continue;
+				}
+				g_array_index(sockets, int, i) = s;
+				g_array_index(nodes,node_info*,i)->is_online = 1;
+				printf("connected to %d\n",i);
+			}
+		}
+		sleep(10);
+	}
+}
+
+void *communication_thread(void *arg)
+{
+	fd_set rfds;
+	fd_set expfds;
+	int nfd=0;
+	while (program_runs){
+		FD_ZERO(&rfds);
+		FD_ZERO(&expfds);
+		nfd=0;
+		for(int i = 0; i < nodes->len; i++)
+		{
+			if (g_array_index(nodes,node_info*,i)->is_online == 1)
+			{
+				int s = g_array_index(sockets, int, i);
+				FD_SET(s, &rfds);
+				FD_SET(s, &expfds);
+				nfd++;
+			}
+		}
+		FD_SET(listening_socket,&rfds);
+		nfd++;
+		int retval = select(nfd, &rfds, 0, &expfds, 0);
+		if(retval<0)
+		{
+			perror("Select error");
+			break;			
+		}
+		if(FD_ISSET(listening_socket,&rfds))
+		{
+			printf("Connectiong ...")
+			sockaddr_in incomming;
+			int s = accept(listening_socket, &incomming, sizeof(struct sockaddr_in));
+			int32_t new_node_id;
+			retval = recv(s, &new_node_id, sizeof(int32_t), MSG_WAITALL);
+			if(retval<0)
+			{
+				perror("reading from socket");
+				continue;
+			}
+			g_array_index(sockets, int, new_node_id) = s;
+			g_array_index(nodes, node_info*, new_node_id)->is_online = 1;
+		}
+		for(int i = 0; i < nodes->len; i++)
+		{
+			if (g_array_index(nodes,node_info*,i)->is_online == 1)
+			{
+				int s = g_array_index(sockets, int, i);
+				if (FD_ISSET(s, &rfds))
+				{
+					process_node_message(s, i);
+				}
+				if (FD_ISSET(s, &expfds))
+				{
+					node_disconected(s, i);
+				}
+			}
+		}
+	}
+}
+
+void start_networking()
+{
+	int sfd, cfd;
+	struct sockaddr_in my_addr, peer_addr;
+	socklen_t peer_addr_size;
+
+	sfd = socket(AF_INET, SOCK_STREAM, 0);
+	if (sfd == -1)
+	   perror("socket");
+
+	memset(&my_addr, 0, sizeof(struct sockaddr_un));
+	my_addr.sin_family = AF_INET;
+	my_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+	my_addr.sin_port = htons(g_array_index(nodes,node_info*,this_node_id)->port);
+	
+	if (bind(sfd, (struct sockaddr *) &my_addr, sizeof(struct sockaddr_in)) == -1)
+	   perror("bind");
+   
+	if (listen(sfd, LISTEN_BACKLOG) == -1)
+	   perror("listen");
+   
+    listening_socket = listen(SOCK_STREAM , MAX_PENDINGS_CONNECTIONS);
+	pthread_t t;
+    if (pthread_create(&t, 0, reconnecting_thread, 0) != 0)
+          perror("could not create reconnecting thread for framework");
+    if (pthread_create(&t, 0, communication_thread, 0) != 0)
+          perror("could not create communication thread for framework");
+}
+
+node_info *new_node_info(int node_id, char *ip, int port, char *name, int is_online)
+{
+	node_info *n = (node_info *) malloc(sizeof(node_info));
+	n->node_id = node_id;
+	n->IP = ip;
+	n->name = name;
+	n->port = port;
+	n->is_online = is_online;
+	return n;
+}
+
+
+void read_config()
+{
+	node_info *node_0 = new_node_info(0,"127.0.0.1",9999,"Jetson",0);
+	node_info *node_1 = new_node_info(1,"127.0.0.1",10000,"Raspbery",0);
+	g_array_append_val(nodes, node_0);
+	g_array_append_val(nodes, node_1);
+	g_array_append_val(sockets, 0);
+	g_array_append_val(sockets, 0);
+	this_node_id = 0;
+	g_array_index(nodes,node_info*,this_node_id)->is_online = 1;
+}
+
+
 /// Initializes the framework. It must be the first function of the framework to be called. It should be called only once. 
 void mato_init()
 {
@@ -244,6 +436,8 @@ void mato_init()
     
     module_names = g_array_new(0, 0, sizeof(char *));
     module_types = g_array_new(0, 0, sizeof(char *));
+	nodes = g_array_new(0, 0, sizeof(node_info *));
+	sockets = g_array_new(0, 0, sizeof(int));
     instance_data = g_array_new(0, 0, sizeof(void *));
     buffers = g_array_new(0, 0, sizeof(GArray *));
 
@@ -253,16 +447,16 @@ void mato_init()
 
     subscriptions = g_array_new(0, 0, sizeof(GArray *));    
     pthread_mutex_init(&framework_mutex, 0);
-    
+    read_config();
     if (pipe(post_data_pipe) != 0)
     {
       perror("could not create pipe for framework");
       return;
     }
-    
-    pthread_t t;
+	pthread_t t;
     if (pthread_create(&t, 0, mato_thread, 0) != 0)
           perror("could not create thread for framework");
+	start_networking();
 }
 
 void mato_register_new_type_of_module(char *type, module_specification *specification)
