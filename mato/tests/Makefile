@@ -21,8 +21,6 @@ test_A_B_with_copy: 03_A_B_with_copy/test_A_B_with_copy.c 03_A_B_with_copy/A.c 0
 test_A_B_with_borrowed_ptr: 04_A_B_with_borrowed_ptr/test_A_B_with_borrowed_ptr.c 04_A_B_with_borrowed_ptr/AB.c ../mato.c
 	gcc -o test_A_B_with_borrowed_ptr $^ $(GLIB_INCLUDE) $(GLIB_LIBDIR) $(MATO_LIBS) $(WITH_DEBUG)
 
-
 clean:
 	rm test_two_modules_A test_modules_A_B test_A_B_with_copy test_A_B_with_borrowed_ptr
-
 
