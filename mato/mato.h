@@ -73,17 +73,18 @@ typedef struct {
 } module_info;
 
 
-
+// in config file:
+// node_id,IP,port,name
 typedef struct {
     int node_id;
-	char *IP;
-	int port;
+    char *IP;
+    int port;
     char *name;
     int is_online;
 } node_info;
 
 /// Initialize the whole framework. Should be called first from the main program.
-void mato_init();
+void mato_init(int this_node_identifier);
 
 /// Register a new module type. This is typically called from the init() function of each module type, which
 /// should be called directly from the main program.

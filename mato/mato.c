@@ -6,11 +6,21 @@
 #include <unistd.h>
 #include <errno.h>
 #include <inttypes.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/select.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
 #include "mato.h"
 
 #define MAX_PENDINGS_CONNECTIONS 10
 
+// messages of node to node communication protocol
+#define MSG_NEW_MODULE_INSTANCE 1
+#define LISTEN_BACKLOG  10
+
+#define CONFIG_FILENAME "mato_nodes.conf"
 
 /// \file mato.c
 /// Implementation of the Mato control framework.
@@ -270,22 +280,25 @@ void process_node_message(int s, int i)
 		return;
 	}
 	switch(message_type){
-		case MSG_NEW_MODULE_INSTANCE:	
+		case MSG_NEW_MODULE_INSTANCE: break;
 	}
 }
 
 void *reconnecting_thread(void *arg)
 {
+    struct sockaddr_in my_addr;
+    
 	while (program_runs){
 		for(int i = 0; i < nodes->len; i++)
 		{
 			if (g_array_index(nodes,node_info*,i)->is_online == 0)
 			{
+			        printf("trying to connect to node %d, constructing socket...\n", i);
 				int s = socket(AF_INET, SOCK_STREAM, 0);
 				if( s < 0)
 				{
 					perror("could not create socket");
-					return;
+					return 0;
 				}
 				memset(&my_addr, 0, sizeof(struct sockaddr_in));
 				my_addr.sin_family = AF_INET;
@@ -296,8 +309,10 @@ void *reconnecting_thread(void *arg)
 					printf("Invalid ip address (%s)\n",IP);
 					continue;
 				}
+				printf("calling connect...\n");
 				if(connect(s, (struct sockaddr *)&my_addr, sizeof(struct sockaddr_in))<0)
 					continue;
+			        printf("sending my node_id\n");
 				int retval = send(s, &this_node_id, sizeof(int32_t), 0);
 				if(retval<0)
 				{
@@ -343,9 +358,10 @@ void *communication_thread(void *arg)
 		}
 		if(FD_ISSET(listening_socket,&rfds))
 		{
-			printf("Connectiong ...")
-			sockaddr_in incomming;
-			int s = accept(listening_socket, &incomming, sizeof(struct sockaddr_in));
+			printf("Connectiong ...");
+			struct sockaddr_in incomming;
+			socklen_t size = sizeof(struct sockaddr_in); 
+			int s = accept(listening_socket, (struct sockaddr *)&incomming, &size);
 			int32_t new_node_id;
 			retval = recv(s, &new_node_id, sizeof(int32_t), MSG_WAITALL);
 			if(retval<0)
@@ -376,27 +392,30 @@ void *communication_thread(void *arg)
 
 void start_networking()
 {
-	int sfd, cfd;
-	struct sockaddr_in my_addr, peer_addr;
-	socklen_t peer_addr_size;
+    int sfd, cfd;
+    struct sockaddr_in my_addr, peer_addr;
+    socklen_t peer_addr_size;
 
-	sfd = socket(AF_INET, SOCK_STREAM, 0);
-	if (sfd == -1)
-	   perror("socket");
+    sfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sfd == -1)
+       perror("socket");
 
-	memset(&my_addr, 0, sizeof(struct sockaddr_un));
-	my_addr.sin_family = AF_INET;
-	my_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-	my_addr.sin_port = htons(g_array_index(nodes,node_info*,this_node_id)->port);
-	
-	if (bind(sfd, (struct sockaddr *) &my_addr, sizeof(struct sockaddr_in)) == -1)
-	   perror("bind");
-   
-	if (listen(sfd, LISTEN_BACKLOG) == -1)
-	   perror("listen");
-   
-    listening_socket = listen(SOCK_STREAM , MAX_PENDINGS_CONNECTIONS);
-	pthread_t t;
+    memset(&my_addr, 0, sizeof(struct sockaddr_in));
+    my_addr.sin_family = AF_INET;
+    my_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    my_addr.sin_port = htons(g_array_index(nodes,node_info*,this_node_id)->port);
+    
+    if (bind(sfd, (struct sockaddr *) &my_addr, sizeof(struct sockaddr_in)) == -1)
+       perror("bind");
+      
+    listening_socket = listen(sfd, MAX_PENDINGS_CONNECTIONS);
+    if (listening_socket < 0)
+    {
+        perror("listen");
+	return;
+    }
+    
+    pthread_t t;
     if (pthread_create(&t, 0, reconnecting_thread, 0) != 0)
           perror("could not create reconnecting thread for framework");
     if (pthread_create(&t, 0, communication_thread, 0) != 0)
@@ -407,37 +426,78 @@ node_info *new_node_info(int node_id, char *ip, int port, char *name, int is_onl
 {
 	node_info *n = (node_info *) malloc(sizeof(node_info));
 	n->node_id = node_id;
-	n->IP = ip;
-	n->name = name;
+	n->IP = (char *)malloc(strlen(ip) + 1);
+	strcpy(n->IP, ip);
+	n->name = (char *)malloc(strlen(name) + 1);
+	strcpy(n->name, name);
 	n->port = port;
 	n->is_online = is_online;
 	return n;
 }
 
-
-void read_config()
+int config_error(int ln)
 {
-	node_info *node_0 = new_node_info(0,"127.0.0.1",9999,"Jetson",0);
-	node_info *node_1 = new_node_info(1,"127.0.0.1",10000,"Raspbery",0);
-	g_array_append_val(nodes, node_0);
-	g_array_append_val(nodes, node_1);
-	g_array_append_val(sockets, 0);
-	g_array_append_val(sockets, 0);
-	this_node_id = 0;
-	g_array_index(nodes,node_info*,this_node_id)->is_online = 1;
+    printf("Could not parse nodes config file, error at line %d\n", ln);
+    return 0;
 }
 
+int read_config()
+{
+    char config_line[256];
+    int ln = 0;
+    
+    int node_id;
+    char *ip;
+    int port;
+    char *name;
+    
+    FILE *f = fopen(CONFIG_FILENAME, "r");
+    while (fgets(config_line, 255, f))
+    {
+	char *comma = strchr(config_line, ',');
+	if (comma == 0) return config_error(ln);
+	*comma = 0;
+	sscanf(config_line, "%d", &node_id);
+	comma++;
+	char *comma2 = strchr(comma, ',');
+	if (comma2 == 0) return config_error(ln);
+	*comma2 = 0;
+	ip = comma;
+	comma2++;
+	comma = strchr(comma2, ',');
+	if (comma == 0) return config_error(ln);
+	*comma = 0;
+	sscanf(comma2, "%d", &port);
+	comma++;
+	int ln = strlen(comma);
+	while (ln > 0)
+	{
+	    char c = comma[ln - 1];
+	    if ((c != '\n') && (c != '\r')) break;
+	    comma[ln - 1] = 0;
+	    ln--;
+	}	    
+	name = comma;
+	node_info *node = new_node_info(node_id, ip, port, name, 0);
+	g_array_append_val(nodes, node);
+	int zero = 0;
+	g_array_append_val(sockets, zero);	
+    }
+    g_array_index(nodes,node_info*,this_node_id)->is_online = 1;
+    return 1;
+}
 
 /// Initializes the framework. It must be the first function of the framework to be called. It should be called only once. 
-void mato_init()
+void mato_init(int this_node_identifier)
 {
+    this_node_id = this_node_identifier;
     program_runs = 1;
     threads_started = 0;
     
     module_names = g_array_new(0, 0, sizeof(char *));
     module_types = g_array_new(0, 0, sizeof(char *));
-	nodes = g_array_new(0, 0, sizeof(node_info *));
-	sockets = g_array_new(0, 0, sizeof(int));
+    nodes = g_array_new(0, 0, sizeof(node_info *));
+    sockets = g_array_new(0, 0, sizeof(int));
     instance_data = g_array_new(0, 0, sizeof(void *));
     buffers = g_array_new(0, 0, sizeof(GArray *));
 
@@ -447,7 +507,11 @@ void mato_init()
 
     subscriptions = g_array_new(0, 0, sizeof(GArray *));    
     pthread_mutex_init(&framework_mutex, 0);
-    read_config();
+    if (!read_config())
+    {
+	printf("Error loading nodes config file\n");
+	return;
+    }
     if (pipe(post_data_pipe) != 0)
     {
       perror("could not create pipe for framework");
