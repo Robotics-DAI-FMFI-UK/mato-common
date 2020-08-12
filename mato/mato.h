@@ -129,6 +129,7 @@ void mato_get_data(int id_module, int channel, int *data_length, void **data);
 void mato_borrow_data(int id_module, int channel, int *data_length, void **data);
 
 /// Return a borrowed pointer that was obtained either by mato_borrow_data() or by a callback in the borrowed_pointer mode.
+/// The id_module and channel specify the origin of the message.
 void mato_release_data(int id_module, int channel, void *data);
 
 /// Retrieve the list of currently running modules. 

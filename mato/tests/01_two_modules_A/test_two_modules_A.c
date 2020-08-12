@@ -12,7 +12,7 @@ int main()
     printf("initializing framework...\n");
     mato_init();
 
-    printf("initializing modules...\n");
+    printf("initializing module types...\n");
     A_init();
 
     printf("creating instances of modules...\n");

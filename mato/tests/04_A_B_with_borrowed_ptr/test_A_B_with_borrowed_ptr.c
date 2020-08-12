@@ -3,8 +3,7 @@
 #include <unistd.h>
 
 #include "../../mato.h"
-#include "A.h"
-#include "B.h"
+#include "AB.h"
 
 int a1, a2, b1, b2; 
 
@@ -27,13 +26,13 @@ int main()
     GArray *modules_list = mato_get_list_of_all_modules();
     for(int i = 0; i < modules_list->len; i++)
     {
-		module_info *info = g_array_index(modules_list, module_info *, i);	
-		printf("%d: module_id=%d, type=%s, name=%s\n", i, info->module_id, info->type, info->name);
+        module_info *info = g_array_index(modules_list, module_info *, i);	
+        printf("%d: module_id=%d, type=%s, name=%s\n", i, info->module_id, info->type, info->name);
     }
     mato_free_list_of_modules(modules_list);
 
     printf("List of all modules of type B:\n");	
-	modules_list = mato_get_list_of_modules("B");
+    modules_list = mato_get_list_of_modules("B");
     for(int i = 0; i < modules_list->len; i++)
     {
         module_info *info = g_array_index(modules_list, module_info *, i);	
@@ -59,4 +58,4 @@ int main()
     printf("main program terminates.\n");
     return 0;
 }
-	
+

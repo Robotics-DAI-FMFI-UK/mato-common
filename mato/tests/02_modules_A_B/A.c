@@ -1,6 +1,7 @@
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <inttypes.h>
 
@@ -18,7 +19,7 @@ void *A_create_instance(int module_id)
 {
     module_A_instance_data *data = (module_A_instance_data *)malloc(sizeof(module_A_instance_data));
     data->module_id = module_id;    
-    printf("created a new instance of module A (%d) at %lu\n", module_id, (uint64_t)data);
+    printf("created a new instance of module A (%d) at %" PRIuPTR "\n", module_id, (uintptr_t)data);
     return data;
 }
 
@@ -80,7 +81,7 @@ void A_start(void *instance_data)
 void A_delete(void *instance_data)
 {
     module_A_instance_data *data = (module_A_instance_data *)instance_data;
-    printf("deleting module instance (%d) = %lu\n", data->module_id, (uint64_t)data);
+    printf("deleting module instance (%d) = %" PRIuPTR "\n", data->module_id, (uintptr_t)data);
     free(data);
 }
 
