@@ -20,7 +20,7 @@
 #include "mato.h"
 
 #define MAX_PENDINGS_CONNECTIONS 10
-
+#define NODE_MULTIPLIER 100000L
 // messages of node to node communication protocol
 #define MSG_NEW_MODULE_INSTANCE 1
 #define LISTEN_BACKLOG  10
@@ -40,6 +40,7 @@ typedef struct {
     subscription_type type;
     subscriber_callback callback;
     int subscriber_module_id;
+    int subscriber_node_id;
 } subscription;
 
 /// The structure holds one message that was posted by a module to one of its output channels.
@@ -53,6 +54,7 @@ typedef struct {
     int length;
     void* data;
     int references;
+    int node_id;
 } channel_data;
 
 /// A constructor for the channel_data structure.
@@ -89,12 +91,12 @@ static int32_t this_node_id;
 /// Contains list of names of all module instances. 
 /// The GArray is indexed by module_id. After a particular module is deleted,
 /// its module_id and the location in this array will remain unused.
-static GArray *module_names;   // [module_id]
+static GArray *module_names;   // [node_id][module_id]
 
 /// Contains list of types of all module instances.
 /// The GArray is indexed by module_id. After a particular module is deleted,
 /// its module_id and the location in this array will remain unused.
-static GArray *module_types;    // [module_id]
+static GArray *module_types;    // [node_id][module_id]
 
 /// Contains pointers to instance_data of all module instances as returned by their create_instance_callback.
 /// The GArray is indexed by module_id. After a particular module is deleted,
@@ -120,7 +122,7 @@ static GHashTable *module_specifications;  // [type_name]
 /// to its channel, it is added to that list. The message is removed from the list when it has
 /// have been forwarded to all the subscribers, no subscriber or another module has borrowed a pointer
 /// to it and a new message from the module on the same channel has already arrived.
-static GArray *buffers;  // [module_id][channel_id] -> g_list (the most recent data buffer is at the beginning)
+static GArray *buffers;  // [node_id][module_id][channel_id] -> g_list (the most recent data buffer is at the beginning)
 
 /// A counter for assigning a new module_id for newly created module instances.
 static int next_free_module_id;
@@ -132,7 +134,7 @@ static int next_free_subscription_id;
 /// The GArray is indexed by the module_id and contains GArrays indexed by channel number
 /// Finally, the nested GArray elements are again GArrays containing all subscriptions
 /// to that particular channel of that particular module.
-static GArray *subscriptions;  // [module_id][channel_id][subscription_index] - contains "subcription"s
+static GArray *subscriptions;  // [node_id][module_id][channel_id][subscription_index] - contains "subcription"s
 
 /// Used for mutual exclusion when accessing framework structures from functions that can be called from different threads.
 static pthread_mutex_t framework_mutex;
@@ -217,7 +219,7 @@ void *mato_thread(void *arg)
       
       lock_framework();
       
-      char *check_module_exists = g_array_index(module_names, char *, cd->module_id);
+      char *check_module_exists = g_array_index(g_array_index(module_names, GArray *,cd->node_id), char *, cd->module_id);
       if (check_module_exists == 0)
       {
 	      free(cd->data);
@@ -225,7 +227,7 @@ void *mato_thread(void *arg)
 	      continue;
       }
 
-      GArray *module_buffers = g_array_index(buffers, GArray *, cd->module_id);
+      GArray *module_buffers = g_array_index(g_array_index(buffers,GArray *,cd->node_id), GArray *, cd->module_id);
       GList *channel_list = g_array_index(module_buffers, GList *, cd->channel_id);
       
       if (channel_list)
@@ -234,8 +236,8 @@ void *mato_thread(void *arg)
       channel_list = g_list_prepend(channel_list, cd);
 
       g_array_index(module_buffers, GList *, cd->channel_id) = channel_list;
-            
-      GArray *subscriptions_for_channel = g_array_index(g_array_index(subscriptions, GArray *, cd->module_id), GArray *, cd->channel_id);
+	
+      GArray *subscriptions_for_channel = g_array_index(g_array_index(g_array_index(subscriptions,GArray *,cd->node_id), GArray *, cd->module_id), GArray *, cd->channel_id);
       int n = subscriptions_for_channel->len;
       
       // extract the list of all subscriptions to call before unlocking framework
@@ -271,29 +273,35 @@ void *mato_thread(void *arg)
            subscriber = subscriber->next;
            continue;
         }
-       
-        void *subscriber_instance_data = g_array_index(instance_data, void *, sub->subscriber_module_id);
-        if (sub->type == direct_data_ptr)
-        {
-            unlock_framework();
-              sub->callback(subscriber_instance_data, cd->module_id, cd->length, cd->data);
-            lock_framework();
-        }
-        else if (sub->type == data_copy)
-        {
-            void *copy_of_data = malloc(cd->length);
-            memcpy(copy_of_data, cd->data, cd->length);
-            unlock_framework();
-              sub->callback(subscriber_instance_data, cd->module_id, cd->length, copy_of_data);
-            lock_framework();
-        }
-        else if (sub->type == borrowed_pointer)
-        {    
-            cd->references++;
-            unlock_framework();
-              sub->callback(subscriber_instance_data, cd->module_id, cd->length, cd->data);
-            lock_framework();
-        }
+       if(sub->subscriber_node_id==this_node_id)
+       {
+	    void *subscriber_instance_data = g_array_index(instance_data, void *, sub->subscriber_module_id);
+	    if (sub->type == direct_data_ptr)
+	    {
+		unlock_framework();
+		  sub->callback(subscriber_instance_data, cd->module_id, cd->length, cd->data);
+		lock_framework();
+	    }
+	    else if (sub->type == data_copy)
+	    {
+		void *copy_of_data = malloc(cd->length);
+		memcpy(copy_of_data, cd->data, cd->length);
+		unlock_framework();
+		  sub->callback(subscriber_instance_data, cd->module_id, cd->length, copy_of_data);
+		lock_framework();
+	    }
+	    else if (sub->type == borrowed_pointer)
+	    {    
+		cd->references++;
+		unlock_framework();
+		  sub->callback(subscriber_instance_data, cd->module_id, cd->length, cd->data);
+		lock_framework();
+	    }
+	}
+	else
+	{
+	    //TODO forwarding data to subscriber from another node
+	}
         free(subscriber->data);
         subscriber = subscriber->next;
       }
@@ -307,11 +315,12 @@ void *mato_thread(void *arg)
 }
 
 
-void node_disconected(int s, int i)
+void node_disconnected(int s, int i)
 {
 	g_array_index(nodes,node_info*,i)->is_online = 0;
 	close(s);
 	printf("node %d has disconnected\n", i);
+	// TODO delete all node traces from data structures
 	
 }
 
@@ -326,6 +335,7 @@ void process_node_message(int s, int i)
 	}
 	else if (retval == 0) // node disconnected
 	{
+	    node_disconnected(s, i);
 	}
 	switch(message_type){
 		case MSG_NEW_MODULE_INSTANCE: break;
@@ -339,7 +349,7 @@ void *reconnecting_thread(void *arg)
         mato_inc_system_thread_count();
 
 	while (program_runs){
-		for(int i = 0; i < nodes->len; i++)
+		for(int i = this_node_id + 1; i < nodes->len; i++)
 		{
 			if (g_array_index(nodes,node_info*,i)->is_online == 0)
 			{
@@ -439,8 +449,6 @@ void *communication_thread(void *arg)
 			printf("...from node %d\n", new_node_id);
 			g_array_index(sockets, int, new_node_id) = s;
 			g_array_index(nodes, node_info*, new_node_id)->is_online = 1;
-			uint8_t wakeup_byte = 123;
-			write(select_wakeup_pipe[1], &wakeup_byte, 1);
 		}
 		for(int i = 0; i < nodes->len; i++)
 		{
@@ -565,25 +573,47 @@ void mato_init(int this_node_identifier)
     this_node_id = this_node_identifier;
     program_runs = 1;
     threads_started = 0;
-    
-    module_names = g_array_new(0, 0, sizeof(char *));
-    module_types = g_array_new(0, 0, sizeof(char *));
-    nodes = g_array_new(0, 0, sizeof(node_info *));
-    sockets = g_array_new(0, 0, sizeof(int));
-    instance_data = g_array_new(0, 0, sizeof(void *));
-    buffers = g_array_new(0, 0, sizeof(GArray *));
-
     next_free_module_id = 0;
     next_free_subscription_id = 0;
+    
+    instance_data = g_array_new(0, 0, sizeof(void *));
     module_specifications = g_hash_table_new(g_str_hash, g_str_equal); 
-
+    
+    module_names = g_array_new(0, 0, sizeof(GArray *));
+    module_types = g_array_new(0, 0, sizeof(GArray *));
+    buffers = g_array_new(0, 0, sizeof(GArray *));
     subscriptions = g_array_new(0, 0, sizeof(GArray *));    
+    nodes = g_array_new(0, 0, sizeof(node_info *));
+    sockets = g_array_new(0, 0, sizeof(int));
+
+    
+    
+
+    
+    
+       
     pthread_mutex_init(&framework_mutex, 0);
+    
+    
     if (!read_config())
     {
 	printf("Error loading nodes config file\n");
 	return;
     }
+    for(int i=0;i<nodes->len;i++)
+    {
+	GArray * names = g_array_new(0, 0, sizeof(char *));
+	g_array_append_val(module_names, names);
+	GArray * types = g_array_new(0, 0, sizeof(char *));
+	g_array_append_val(module_types , types);
+	GArray * buffs = g_array_new(0, 0, sizeof(GArray *));
+	g_array_append_val(buffers , buffs);
+	GArray * subsc = g_array_new(0, 0, sizeof(GArray *));
+	g_array_append_val(subscriptions , subsc); 
+    }
+
+    
+    
     if (pipe(post_data_pipe) != 0)
     {
       perror("could not create pipe for framework");
@@ -619,14 +649,14 @@ int mato_create_new_module_instance(const char *module_type, const char *module_
     lock_framework();
     
     int module_id = get_free_module_id();
-    g_array_append_val(module_names, module_name);
-    g_array_append_val(module_types, module_type);
+    g_array_append_val(g_array_index(module_names,GArray *,this_node_id), module_name);
+    g_array_append_val(g_array_index(module_types,GArray *,this_node_id), module_type);
     
     GArray *channels_subscriptions = g_array_new(0, 0, sizeof(GArray *));
-    g_array_append_val(subscriptions, channels_subscriptions);
+    g_array_append_val(g_array_index(subscriptions,GArray *,this_node_id), channels_subscriptions);
     
     GArray *module_buffers = g_array_new(0, 0, sizeof(GArray *));
-    g_array_append_val(buffers, module_buffers);
+    g_array_append_val(g_array_index(buffers,GArray *,this_node_id), module_buffers);
 
     module_specification *spec = (module_specification *)g_hash_table_lookup(module_specifications, module_type);
     int num_channels = spec->number_of_channels;
@@ -656,7 +686,7 @@ int mato_create_new_module_instance(const char *module_type, const char *module_
 void mato_start_module(int module_id)
 {
     lock_framework();
-    char *module_type = g_array_index(module_types, char *, module_id); 
+    char *module_type = g_array_index(g_array_index(module_types,GArray *,this_node_id), char *, module_id); 
     if (module_type == 0) return;
     module_specification *spec = (module_specification *)g_hash_table_lookup(module_specifications, module_type); 
     if (spec != 0)
@@ -671,25 +701,29 @@ void mato_start_module(int module_id)
 
 void mato_start()
 {
-    int n = module_names->len;
+    int n = g_array_index(module_names,GArray *,this_node_id)->len;
     for (int module_id = 0; module_id < n; module_id++)
         mato_start_module(module_id);
 }
 
 void mato_delete_module_instance(int module_id)
 {    
+    int node_id=module_id/NODE_MULTIPLIER;
+    module_id%=NODE_MULTIPLIER;
+    if(node_id!=this_node_id)
+    return;
+    
     lock_framework();
     
 //    printf("%d: instance_data->len=%d\n", module_id, instance_data->len);
-    char *module_type = g_array_index(module_types, char *, module_id); 
+    char *module_type = g_array_index(g_array_index(module_types,GArray *,this_node_id), char *, module_id); 
     void *data = g_array_index(instance_data, void *, module_id);
 
        module_specification *spec = (module_specification *)g_hash_table_lookup(module_specifications, module_type); 
        unlock_framework();
      spec->delete_instance(data);
      lock_framework();
-    
-    GArray *channels_subscriptions = g_array_index(subscriptions, GArray *, module_id);
+    GArray *channels_subscriptions = g_array_index(g_array_index(subscriptions,GArray *,this_node_id), GArray *, module_id);
     int number_of_channels = channels_subscriptions->len;
         
     for (int i = 0; i < number_of_channels; i++)
@@ -704,54 +738,76 @@ void mato_delete_module_instance(int module_id)
         g_array_free(g_array_index(channels_subscriptions, GArray *, i), 1);
     }
             
-    g_array_free(g_array_index(subscriptions, GArray *, module_id), 1);
+    g_array_free(g_array_index(g_array_index(subscriptions,GArray *,this_node_id), GArray *, module_id), 1);
     void *zero = 0;
-    g_array_index(subscriptions, subscription *, module_id) = 0;
-    g_array_index(module_names, char *, module_id) = 0;
-    g_array_index(module_types, char *, module_id) = 0;
+    g_array_index(g_array_index(subscriptions, GArray *, this_node_id), subscription *, module_id) = 0;
+    g_array_index(g_array_index(module_names, GArray *, this_node_id), char *, module_id) = 0;
+    g_array_index(g_array_index(module_types, GArray *, this_node_id), char *, module_id) = 0;
     g_array_index(instance_data, void *, module_id) = 0;
     unlock_framework();
 }
 
 int mato_get_module_id(const char *module_name)
 {
-    for (int i = 0; i < module_names->len; i++)
+    for(int j =0; j < nodes->len; j++)
     {
-        char *name = g_array_index(module_names, char *, i);
-        if ((name != 0) && (strcmp(name, module_name) == 0))
-          return i;
+	int module_count = g_array_index(module_names,GArray *,j)->len;
+	for (int i = 0; i < module_count; i++)
+	{
+	    char *name = g_array_index(g_array_index(module_names, GArray *,j), char *, i);
+	    if ((name != 0) && (strcmp(name, module_name) == 0))
+	    return i+j*NODE_MULTIPLIER;
+	}
     }
     return -1;
 }
 
 char *mato_get_module_name(int module_id)
 {
-    return g_array_index(module_names, char *, module_id);
+    int node_id=module_id/NODE_MULTIPLIER;
+    module_id%=NODE_MULTIPLIER;
+    return g_array_index(g_array_index(module_names,GArray *,node_id), char *, module_id);
 }
 
 char *mato_get_module_type(int module_id)
 {
-    return g_array_index(module_types, char *, module_id);
+    int node_id=module_id/NODE_MULTIPLIER;
+    module_id%=NODE_MULTIPLIER;
+    return g_array_index(g_array_index(module_types,GArray *,node_id), char *, module_id);
 }
 
 int mato_subscribe(int subscriber_module_id, int subscribed_module_id, int channel, subscriber_callback callback, int subscription_type)
 {
+    int subscriber_node_id=subscriber_module_id/NODE_MULTIPLIER;
+    subscriber_module_id%=NODE_MULTIPLIER;
+    if(subscriber_node_id!=this_node_id)
+    return -1;
+    int subscribed_node_id=subscribed_module_id/NODE_MULTIPLIER;
+    subscribed_module_id%=NODE_MULTIPLIER;    
     subscription *new_subscription = (subscription *)malloc(sizeof(subscription));
     new_subscription->type = subscription_type;
     new_subscription->callback = callback;
     new_subscription->subscriber_module_id = subscriber_module_id;
+    new_subscription->subscriber_node_id=subscriber_node_id;
     lock_framework();
         new_subscription->subscription_id = get_free_subscription_id();
     
-      g_array_append_val(g_array_index(g_array_index(subscriptions, GArray *, subscribed_module_id), GArray *, channel), new_subscription);
+      g_array_append_val(g_array_index(g_array_index(g_array_index(subscriptions, GArray *, subscribed_node_id), GArray *, subscribed_module_id), GArray *, channel), new_subscription);
     unlock_framework();
+    if(subscribed_node_id!=this_node_id)
+    {
+	//TODO send subscription to another node
+    }
     return new_subscription->subscription_id;
 }
 
 void mato_unsubscribe(int module_id, int channel, int subscription_id)
 {
+    int subscribed_node_id=module_id/NODE_MULTIPLIER;
+    module_id%=NODE_MULTIPLIER;
+    
     lock_framework();
-    GArray *subscriptions_for_channel = g_array_index(g_array_index(subscriptions, GArray *, module_id), GArray *, channel);
+    GArray *subscriptions_for_channel = g_array_index(g_array_index(g_array_index(subscriptions, GArray *,subscribed_node_id), GArray *, module_id), GArray *, channel);
     int number_of_channel_subscriptions = subscriptions_for_channel->len;
     for (int i = 0; i < number_of_channel_subscriptions; i++)
     {
@@ -782,27 +838,35 @@ void mato_post_data(int id_of_posting_module, int channel, int data_length, void
     
 int mato_send_global_message(int module_id_sender, int message_id, int msg_length, void *message_data)
 {
-    for(int module_id = 0; module_id < next_free_module_id; module_id++)
+    for(int j=0; j<nodes->len;j++)
     {
-        char *module_type = g_array_index(module_types, char *, module_id);
-        if (module_type != 0)
-            if (module_id != module_id_sender)
-            {
-                module_specification *spec = (module_specification *)g_hash_table_lookup(module_specifications, module_type); 
-                if (spec != 0)
-                {
-                  void *modules_instance_data = g_array_index(instance_data, void *, module_id);
-                  if (modules_instance_data != 0)
-                    spec->global_message(modules_instance_data, module_id_sender, message_id, msg_length, message_data);
-                }
-            }
+	for(int module_id = 0; module_id < g_array_index(module_names,GArray *, j)->len; module_id++)
+	{
+	    
+	    char *module_type = g_array_index(g_array_index(module_types,GArray *,j), char *, module_id);
+	    if (module_type != 0)
+		if (module_id != module_id_sender)
+		{
+		    module_specification *spec = (module_specification *)g_hash_table_lookup(module_specifications, module_type); 
+		    if (spec != 0)
+		    {
+		      void *modules_instance_data = g_array_index(instance_data, void *, module_id);
+		      if (modules_instance_data != 0)
+			spec->global_message(modules_instance_data, module_id_sender, message_id, msg_length, message_data);
+		    }
+		}
+	}
     }
 }
 
 void mato_get_data(int id_module, int channel, int *data_length, void **data)
 {
     lock_framework();
-      GList *waiting_buffers = g_array_index(g_array_index(buffers, GArray *, id_module), GList *, channel);
+    int node_id=id_module/NODE_MULTIPLIER;
+    id_module%=NODE_MULTIPLIER;
+    if(node_id==this_node_id)
+    {
+      GList *waiting_buffers = g_array_index(g_array_index(g_array_index(buffers,GArray *,this_node_id), GArray *, id_module), GList *, channel);
       if (waiting_buffers == 0)
       {
           unlock_framework();
@@ -815,6 +879,11 @@ void mato_get_data(int id_module, int channel, int *data_length, void **data)
       *data_length = cd->length;
       *data = malloc(cd->length);
       memcpy(*data, cd->data, cd->length);
+    }
+    else
+    {
+	//TODO get data from other node
+    }
     unlock_framework();
     return;
 }
@@ -822,7 +891,11 @@ void mato_get_data(int id_module, int channel, int *data_length, void **data)
 void mato_borrow_data(int id_module, int channel, int *data_length, void **data)//28.7 nove
 {
     lock_framework();
-      GList *waiting_buffers = g_array_index(g_array_index(buffers, GArray *, id_module), GList *, channel);
+    int node_id=id_module/NODE_MULTIPLIER;
+    id_module%=NODE_MULTIPLIER;
+    if(node_id==this_node_id)
+    {
+      GList *waiting_buffers = g_array_index(g_array_index(g_array_index(buffers,GArray *,this_node_id), GArray *, id_module), GList *, channel);
       if (waiting_buffers == 0)
       {
           unlock_framework();
@@ -835,7 +908,11 @@ void mato_borrow_data(int id_module, int channel, int *data_length, void **data)
       *data_length = cd->length;
       *data = cd->data;
       cd->references++;
-      
+  }
+  else
+  {
+      //TODO borrow data from other node
+  }
     unlock_framework();
     return;
 }
@@ -844,7 +921,11 @@ void mato_borrow_data(int id_module, int channel, int *data_length, void **data)
 void mato_release_data(int id_module, int channel, void *data)
 {
     lock_framework();
-      GArray *buffers_for_module = g_array_index(buffers, GArray *, id_module);
+        int node_id=id_module/NODE_MULTIPLIER;
+    id_module%=NODE_MULTIPLIER;
+    if(node_id==this_node_id)
+    {
+      GArray *buffers_for_module = g_array_index(g_array_index(buffers,GArray *,this_node_id), GArray *, id_module);
       GList *waiting_buffers = g_array_index(buffers_for_module, GList *, channel);
       if (waiting_buffers == 0)
       {
@@ -864,6 +945,11 @@ void mato_release_data(int id_module, int channel, void *data)
           }
           lookup = lookup->next;
       }
+  }
+  else
+  {
+      //TODO...
+  }
     unlock_framework();
 }
 
@@ -886,17 +972,20 @@ GArray* mato_get_list_of_modules(char *type)
 {
     lock_framework();
       GArray *modules = g_array_new(0, 0, sizeof(module_info *));
-      for(int i = 0; i < module_names->len; i++)
+      for(int j=0; j < nodes->len; j++)
       {
-          char *module_name = g_array_index(module_names, char *, i);
-          if (module_name == 0) continue;
-          char *module_type = g_array_index(module_types, char *, i);
-          if ((type == 0) || (strcmp(module_type, type) == 0))
-          {  
-            module_info *info = new_module_info(i, module_name, module_type);
-            g_array_append_val(modules, info);
-          }
-      }
+	  for(int i = 0; i < g_array_index(module_names,GArray *,j)->len; i++)
+	  {
+	      char *module_name = g_array_index(g_array_index(module_names,GArray *,j), char *, i);
+	      if (module_name == 0) continue;
+	      char *module_type = g_array_index(g_array_index(module_types,GArray *,j), char *, i);
+	      if ((type == 0) || (strcmp(module_type, type) == 0))
+	      {  
+		module_info *info = new_module_info(i+j*NODE_MULTIPLIER, module_name, module_type);
+		g_array_append_val(modules, info);
+	      }
+	  }
+    }
     unlock_framework();
     return modules;
 }
@@ -915,11 +1004,16 @@ void mato_free_list_of_modules(GArray* a)
 
 void mato_data_buffer_usage(int module_id, int channel, int *number_of_allocated_buffers, int *total_sum_of_ref_count)
 {
+    *number_of_allocated_buffers = 0;
+    *total_sum_of_ref_count = 0;
     lock_framework();
-      GArray *module_buffers = (GArray *)g_array_index(buffers, GArray *, module_id);
+    int node_id=module_id/NODE_MULTIPLIER;
+    module_id%=NODE_MULTIPLIER;
+    
+    if(node_id!=this_node_id)
+    return;
+      GArray *module_buffers = (GArray *)g_array_index(g_array_index(buffers, GArray *,this_node_id), GArray *, module_id);
       GList *channel_buffers = (GList *)g_array_index(module_buffers, GList *, channel);
-      *number_of_allocated_buffers = 0;
-      *total_sum_of_ref_count = 0;
       while (channel_buffers != 0)
       {
           (*number_of_allocated_buffers)++;

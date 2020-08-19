@@ -70,6 +70,8 @@ typedef struct {
 	int module_id;
 	char *name;
 	char *type;
+	int node_id;
+	int number_of_channels;
 } module_info;
 
 
