@@ -50,7 +50,8 @@ int main(int argc, char **argv)
     mato_send_global_message(-1, MESSAGE_HELLO, 9, "greeting");
 
     printf("main loop...\n");
-    while (mato_threads_running() > 1) sleep(1); 
+    sleep(2);
+    while (mato_threads_running() > 0) sleep(1); 
 
     printf("deleting instances...\n");
     mato_delete_module_instance(a1);

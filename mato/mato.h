@@ -170,6 +170,9 @@ void mato_dec_thread_count();
 /// The number of threads currently running in the system
 int mato_threads_running();
 
+/// Releases all resources used by the framework, recommended to be called before the main program terminates
+void mato_shutdown();
+
 /// This variable is set to non-zero when the program is about to terminate. 
 /// All threads should terminate at the earliest possbility
 extern volatile int program_runs;

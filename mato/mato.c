@@ -1,9 +1,12 @@
+#define _GNU_SOURCE
+
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 #include <glib.h>
 #include <stdlib.h>
 #include <pthread.h>
-#include <unistd.h>
+#include <fcntl.h>
 #include <errno.h>
 #include <inttypes.h>
 #include <sys/types.h>
@@ -11,6 +14,8 @@
 #include <sys/select.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #include "mato.h"
 
@@ -69,11 +74,14 @@ volatile int program_runs;
 /// Contains the number of threads that are running. Use the functions mato_inc_thread_count() and mato_dec_thread_count().
 volatile int threads_started;
 
+/// Contains the number of internal framework threads that are running. Use the functions mato_inc_system_thread_count() and mato_dec_system_thread_count().
+volatile int system_threads_started;
+
 /// Socket for accepting connections from other nodes.
-int listening_socket;
+static int listening_socket;
 
 /// Id of this computational node.
-int32_t this_node_id;
+static int32_t this_node_id;
 
 
 //global framework data
@@ -81,28 +89,28 @@ int32_t this_node_id;
 /// Contains list of names of all module instances. 
 /// The GArray is indexed by module_id. After a particular module is deleted,
 /// its module_id and the location in this array will remain unused.
-GArray *module_names;   // [module_id]
+static GArray *module_names;   // [module_id]
 
 /// Contains list of types of all module instances.
 /// The GArray is indexed by module_id. After a particular module is deleted,
 /// its module_id and the location in this array will remain unused.
-GArray *module_types;    // [module_id]
+static GArray *module_types;    // [module_id]
 
 /// Contains pointers to instance_data of all module instances as returned by their create_instance_callback.
 /// The GArray is indexed by module_id. After a particular module is deleted,
 /// its module_id and the location in this array will remain unused.
-GArray *instance_data;   // [module_id]
+static GArray *instance_data;   // [module_id]
 
 ///Contains node info for all computational nodes filled from config file in mato_init.
-GArray *nodes;   // [node_id]
+static GArray *nodes;   // [node_id]
 
-GArray *sockets;   // [node_id]
+static GArray *sockets;   // [node_id]
 
 /// Contains module_specification structures for all type names. The keys in this hashtable are the 
 /// module types. The value is a pointer to module_specification structure as provided by the 
 /// argument to mato_register_new_type_of_module() function that is typically called from the init
 /// function of a module type.
-GHashTable *module_specifications;  // [type_name]
+static GHashTable *module_specifications;  // [type_name]
 
 /// Data of all messages that are maintained by the framework at any point of time are kept in this
 /// GArray. It is indexed by module_id and contains GArrays indexed by channel number of the particular
@@ -112,28 +120,32 @@ GHashTable *module_specifications;  // [type_name]
 /// to its channel, it is added to that list. The message is removed from the list when it has
 /// have been forwarded to all the subscribers, no subscriber or another module has borrowed a pointer
 /// to it and a new message from the module on the same channel has already arrived.
-GArray *buffers;  // [module_id][channel_id] -> g_list (the most recent data buffer is at the beginning)
+static GArray *buffers;  // [module_id][channel_id] -> g_list (the most recent data buffer is at the beginning)
 
 /// A counter for assigning a new module_id for newly created module instances.
-int next_free_module_id;
+static int next_free_module_id;
 
 /// A counter for assining a new subscription_id for newly registered subscriptions.
-int next_free_subscription_id;
+static int next_free_subscription_id;
                         
 /// Contains all descriptions of subscriptions, instances of subscription structures.
 /// The GArray is indexed by the module_id and contains GArrays indexed by channel number
 /// Finally, the nested GArray elements are again GArrays containing all subscriptions
 /// to that particular channel of that particular module.
-GArray *subscriptions;  // [module_id][channel_id][subscription_index] - contains "subcription"s
+static GArray *subscriptions;  // [module_id][channel_id][subscription_index] - contains "subcription"s
 
 /// Used for mutual exclusion when accessing framework structures from functions that can be called from different threads.
-pthread_mutex_t framework_mutex;
+static pthread_mutex_t framework_mutex;
 
 /// New messages that are posted by the modules are allocated in dynamic memory. Pointers to that memory enter this pipe
 /// and are picked up by a message redistribution loop that takes care of them in a serial manner. Handling of each message
 /// is supposed to be done very quickly - assuming the subscriber callbacks return quickly. In the future release, we expect
 /// each subscriber callback to be called in a separate thread taken from a thread pool.
-int post_data_pipe[2];
+static int post_data_pipe[2];
+
+/// pipe for sending a signal to select() waiting on msgs from nodes - it has to be interrupted when new node
+/// connects (or similar events occur)
+static int select_wakeup_pipe[2];
 
 /// Enter mutually-exclusive area accessing internal framework data structures.
 void lock_framework()
@@ -145,6 +157,27 @@ void lock_framework()
 void unlock_framework()
 {
     pthread_mutex_unlock(&framework_mutex);    
+}
+
+/// Increment the number of internal framework threads running. This should be called by each framework thread that has been started.
+void mato_inc_system_thread_count()
+{
+    lock_framework();
+      system_threads_started++;
+    unlock_framework();
+}
+
+/// Decrement the number of internal framework threads running. It should be called by each framework thread that terminates.
+void mato_dec_system_thread_count()
+{
+    lock_framework();
+      system_threads_started--;
+    unlock_framework();
+}
+
+int mato_system_threads_running()
+{
+    return system_threads_started;
 }
 
 /// Decrements the number of references to a particular buffer and deallocates the buffer itself as well
@@ -165,7 +198,7 @@ GList *decrement_references(GList *data_buffers, channel_data *to_be_decremented
 void *mato_thread(void *arg)
 {
     channel_data *cd;
-    mato_inc_thread_count();
+    mato_inc_system_thread_count();
     while (program_runs)
     {
       int retval = read(post_data_pipe[0], &cd, sizeof(channel_data *));
@@ -176,10 +209,22 @@ void *mato_thread(void *arg)
       }
 //      printf("retrieved channel data from pipe: %" PRIuPTR "\n", (uintptr_t)cd);
       
+      if (retval == 0) // pipe write has closed, framework terminates
+          break;
+
       cd->references++; // last valid data from module channel
       cd->references++; // currently being sent out to subscribers
       
       lock_framework();
+      
+      char *check_module_exists = g_array_index(module_names, char *, cd->module_id);
+      if (check_module_exists == 0)
+      {
+	      free(cd->data);
+	      free(cd);
+	      continue;
+      }
+
       GArray *module_buffers = g_array_index(buffers, GArray *, cd->module_id);
       GList *channel_list = g_array_index(module_buffers, GList *, cd->channel_id);
       
@@ -258,7 +303,7 @@ void *mato_thread(void *arg)
       // no need to check for channel_list changed, since it is still the last valid, ie. refcount > 0
       unlock_framework();
     }
-    mato_dec_thread_count();
+    mato_dec_system_thread_count();
 }
 
 
@@ -279,6 +324,9 @@ void process_node_message(int s, int i)
 		perror("reading from socket");
 		return;
 	}
+	else if (retval == 0) // node disconnected
+	{
+	}
 	switch(message_type){
 		case MSG_NEW_MODULE_INSTANCE: break;
 	}
@@ -288,12 +336,16 @@ void *reconnecting_thread(void *arg)
 {
     struct sockaddr_in my_addr;
     
+        mato_inc_system_thread_count();
+
 	while (program_runs){
 		for(int i = 0; i < nodes->len; i++)
 		{
 			if (g_array_index(nodes,node_info*,i)->is_online == 0)
 			{
 			        printf("trying to connect to node %d, constructing socket...\n", i);
+
+
 				int s = socket(AF_INET, SOCK_STREAM, 0);
 				if( s < 0)
 				{
@@ -323,42 +375,57 @@ void *reconnecting_thread(void *arg)
 				g_array_index(sockets, int, i) = s;
 				g_array_index(nodes,node_info*,i)->is_online = 1;
 				printf("connected to %d\n",i);
+				continue;
 			}
 		}
-		sleep(10);
+		for (int i = 0; i < 10; i++) 
+			if (!program_runs) break;
+		        else sleep(1);
 	}
+    mato_dec_system_thread_count();
 }
 
 void *communication_thread(void *arg)
 {
+        mato_inc_system_thread_count();
 	fd_set rfds;
-	fd_set expfds;
-	int nfd=0;
+	int nfd = 0;
 	while (program_runs){
 		FD_ZERO(&rfds);
-		FD_ZERO(&expfds);
-		nfd=0;
 		for(int i = 0; i < nodes->len; i++)
 		{
+			if (i == this_node_id) continue;
 			if (g_array_index(nodes,node_info*,i)->is_online == 1)
 			{
 				int s = g_array_index(sockets, int, i);
 				FD_SET(s, &rfds);
-				FD_SET(s, &expfds);
-				nfd++;
+				if (s > nfd) nfd = s;
+                                printf("selected fd(%d) of node %d\n", s, i);
 			}
 		}
-		FD_SET(listening_socket,&rfds);
+		FD_SET(listening_socket, &rfds);
+		if (listening_socket > nfd) nfd = listening_socket;
+		FD_SET(select_wakeup_pipe[0], &rfds);
+		if (select_wakeup_pipe[0] > nfd) nfd = select_wakeup_pipe[0];
+                printf("calling select...\n");
 		nfd++;
-		int retval = select(nfd, &rfds, 0, &expfds, 0);
-		if(retval<0)
+		int retval = select(nfd, &rfds, 0, 0, 0);
+                printf("select() returns %d\n", retval);
+		if (retval < 0)
 		{
 			perror("Select error");
 			break;			
 		}
-		if(FD_ISSET(listening_socket,&rfds))
+		if (FD_ISSET(select_wakeup_pipe[0], &rfds))
 		{
-			printf("Connectiong ...");
+			uint8_t b;
+			read(select_wakeup_pipe[0], &b, 1);
+			continue;
+		}
+
+		if (FD_ISSET(listening_socket,&rfds))
+		{
+			printf("Connection ...\n");
 			struct sockaddr_in incomming;
 			socklen_t size = sizeof(struct sockaddr_in); 
 			int s = accept(listening_socket, (struct sockaddr *)&incomming, &size);
@@ -369,8 +436,11 @@ void *communication_thread(void *arg)
 				perror("reading from socket");
 				continue;
 			}
+			printf("...from node %d\n", new_node_id);
 			g_array_index(sockets, int, new_node_id) = s;
 			g_array_index(nodes, node_info*, new_node_id)->is_online = 1;
+			uint8_t wakeup_byte = 123;
+			write(select_wakeup_pipe[1], &wakeup_byte, 1);
 		}
 		for(int i = 0; i < nodes->len; i++)
 		{
@@ -381,23 +451,19 @@ void *communication_thread(void *arg)
 				{
 					process_node_message(s, i);
 				}
-				if (FD_ISSET(s, &expfds))
-				{
-					node_disconected(s, i);
-				}
 			}
 		}
 	}
+    mato_dec_system_thread_count();
 }
 
 void start_networking()
 {
-    int sfd, cfd;
     struct sockaddr_in my_addr, peer_addr;
     socklen_t peer_addr_size;
 
-    sfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sfd == -1)
+    listening_socket = socket(AF_INET, SOCK_STREAM, 0);
+    if (listening_socket == -1)
        perror("socket");
 
     memset(&my_addr, 0, sizeof(struct sockaddr_in));
@@ -405,16 +471,22 @@ void start_networking()
     my_addr.sin_addr.s_addr = htonl(INADDR_ANY);
     my_addr.sin_port = htons(g_array_index(nodes,node_info*,this_node_id)->port);
     
-    if (bind(sfd, (struct sockaddr *) &my_addr, sizeof(struct sockaddr_in)) == -1)
+    if (bind(listening_socket, (struct sockaddr *) &my_addr, sizeof(struct sockaddr_in)) == -1)
        perror("bind");
       
-    listening_socket = listen(sfd, MAX_PENDINGS_CONNECTIONS);
-    if (listening_socket < 0)
+    int rv = listen(listening_socket, MAX_PENDINGS_CONNECTIONS);
+    if (rv < 0)
     {
         perror("listen");
 	return;
     }
     
+    if (pipe(select_wakeup_pipe) < 0)
+    {
+	    perror("could not create pipe for select");
+	    return;
+    }
+
     pthread_t t;
     if (pthread_create(&t, 0, reconnecting_thread, 0) != 0)
           perror("could not create reconnecting thread for framework");
@@ -876,4 +948,24 @@ void mato_dec_thread_count()
 int mato_threads_running()
 {
     return threads_started;
+}
+
+void mato_shutdown()
+{
+    uint8_t wakeup_byte;
+    program_runs = 0;
+
+    if (write(select_wakeup_pipe[1], &wakeup_byte, 1) < 0)
+	    perror("could not wakeup networking thread");
+
+    close(post_data_pipe[1]);
+     
+    while (mato_system_threads_running() > 0) { usleep(10000); }
+
+    close(post_data_pipe[0]);
+    close(select_wakeup_pipe[0]);
+    close(select_wakeup_pipe[1]);
+    close(listening_socket);
+
+    pthread_mutex_destroy(&framework_mutex);
 }
