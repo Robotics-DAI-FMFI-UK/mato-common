@@ -360,16 +360,17 @@ void *reconnecting_thread(void *arg)
                     perror("could not create socket");
                     return 0;
                 }
+                char *IP = g_array_index(nodes,node_info*,i)->IP;
+                int port = g_array_index(nodes,node_info*,i)->port;
                 memset(&my_addr, 0, sizeof(struct sockaddr_in));
                 my_addr.sin_family = AF_INET;
-                my_addr.sin_port = htons(g_array_index(nodes,node_info*,i)->port);
-                char *IP = g_array_index(nodes,node_info*,i)->IP;
+                my_addr.sin_port = htons(port);
                 if (inet_pton(AF_INET, IP, &my_addr.sin_addr)<=0)
                 {
-                    printf("Invalid ip address (%s)\n",IP);
+                    printf("Invalid ip address (%s:%d)\n", IP, port);
                     continue;
                 }
-                printf("calling connect...\n");
+                printf("calling connect (%s:%d)...\n", IP, port);
                 if(connect(s, (struct sockaddr *)&my_addr, sizeof(struct sockaddr_in))<0)
                     continue;
                     printf("sending my node_id\n");
@@ -477,8 +478,14 @@ void start_networking()
     my_addr.sin_addr.s_addr = htonl(INADDR_ANY);
     my_addr.sin_port = htons(g_array_index(nodes,node_info*,this_node_id)->port);
 
-    if (bind(listening_socket, (struct sockaddr *) &my_addr, sizeof(struct sockaddr_in)) == -1)
-       perror("bind");
+    int i = 0;
+    do {
+        if (bind(listening_socket, (struct sockaddr *) &my_addr, sizeof(struct sockaddr_in)) == -1)
+            perror("bind, will retry...");
+        else break;
+        sleep(6);
+    } while (program_runs && (++i < 20));
+    if (i >= 20) exit(1);       
 
     int rv = listen(listening_socket, MAX_PENDINGS_CONNECTIONS);
     if (rv < 0)
@@ -565,9 +572,18 @@ int read_config()
     return 1;
 }
 
+/// signal handler, intercept CTRL-C
+void intHandler(int signum) 
+{
+    program_runs = 0;
+    printf("...CTRL-C hit, terminating\n");
+}
+
 /// Initializes the framework. It must be the first function of the framework to be called. It should be called only once.
 void mato_init(int this_node_identifier)
 {
+    signal(SIGINT, intHandler);
+
     this_node_id = this_node_identifier;
     program_runs = 1;
     threads_started = 0;
@@ -730,7 +746,7 @@ void mato_delete_module_instance(int module_id)
         g_array_free(g_array_index(channels_subscriptions, GArray *, i), 1);
     }
 
-    g_array_free(g_array_index(g_array_index(subscriptions,GArray *,this_node_id), GArray *, module_id), 1);
+    g_array_free(g_array_index(g_array_index(subscriptions, GArray *, this_node_id), GArray *, module_id), 1);
     void *zero = 0;
     g_array_index(g_array_index(subscriptions, GArray *, this_node_id), subscription *, module_id) = 0;
     g_array_index(g_array_index(module_names, GArray *, this_node_id), char *, module_id) = 0;
@@ -741,15 +757,15 @@ void mato_delete_module_instance(int module_id)
 
 int mato_get_module_id(const char *module_name)
 {
-    for(int j =0; j < nodes->len; j++)
+    for(int node_id = 0; node_id < nodes->len; node_id++)
     {
-    int module_count = g_array_index(module_names,GArray *,j)->len;
-    for (int i = 0; i < module_count; i++)
-    {
-        char *name = g_array_index(g_array_index(module_names, GArray *,j), char *, i);
-        if ((name != 0) && (strcmp(name, module_name) == 0))
-        return i+j*NODE_MULTIPLIER;
-    }
+        int module_count = g_array_index(module_names, GArray *, node_id)->len;
+        for (int i = 0; i < module_count; i++)
+        {
+            char *name = g_array_index(g_array_index(module_names, GArray *, node_id), char *, i);
+            if ((name != 0) && (strcmp(name, module_name) == 0))
+                return i + node_id * NODE_MULTIPLIER;
+        }
     }
     return -1;
 }
@@ -967,6 +983,14 @@ module_info *new_module_info(int module_id, char *module_name, char *module_type
     return info;
 }
 
+int mato_get_number_of_modules()
+{
+    int count = 0;
+    for (int node_id = 0; node_id < nodes->len; node_id++)
+      count += g_array_index(module_names, GArray *, node_id)->len;
+    return count;
+}
+
 GArray* mato_get_list_of_all_modules()
 {
     return mato_get_list_of_modules(0);
@@ -976,16 +1000,16 @@ GArray* mato_get_list_of_modules(char *type)
 {
     lock_framework();
     GArray *modules = g_array_new(0, 0, sizeof(module_info *));
-    for(int j=0; j < nodes->len; j++)
+    for (int node_id = 0; node_id < nodes->len; node_id++)
     {
-        for(int i = 0; i < g_array_index(module_names,GArray *,j)->len; i++)
+        for (int i = 0; i < g_array_index(module_names, GArray *, node_id)->len; i++)
         {
-            char *module_name = g_array_index(g_array_index(module_names,GArray *,j), char *, i);
+            char *module_name = g_array_index(g_array_index(module_names, GArray *, node_id), char *, i);
             if (module_name == 0) continue;
-            char *module_type = g_array_index(g_array_index(module_types,GArray *,j), char *, i);
+            char *module_type = g_array_index(g_array_index(module_types, GArray *, node_id), char *, i);
             if ((type == 0) || (strcmp(module_type, type) == 0))
             {
-                module_info *info = new_module_info(i+j*NODE_MULTIPLIER, module_name, module_type);
+                module_info *info = new_module_info(i + node_id * NODE_MULTIPLIER, module_name, module_type);
                 g_array_append_val(modules, info);
             }
         }
