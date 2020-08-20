@@ -20,6 +20,7 @@ typedef struct {
             int starting_pipe[2];
             int hello_count;
             pthread_mutex_t lock;
+            int forwarder;
         } module_AB_instance_data;
 
 static time_t tm0;
@@ -31,6 +32,7 @@ void *AB_create_instance(int module_id, char type)
     data->module_id = module_id;    
     data->type = type;
     data->hello_count = 0;
+    data->forwarder = 1;
     if (pipe(data->starting_pipe) < 0)
         perror("could not create starting pipe");
     pthread_mutex_init(&data->lock, 0);
@@ -126,7 +128,7 @@ void *module_AB_msg_eating_thread(void *arg)
         printf("%u %c(%d) returns borrowed ptr to message %d\n", (unsigned int)(tm - tm0), data->type, data->module_id, val);
         mato_release_data(data->subscribed_to_module_id, 0, val_ptr);
 
-        if (data->module_id < 3)
+        if (data->forwarder)
         {
             printf("%u %c(%d) post-forwards message %d as %d\n", (unsigned int)(tm - tm0), data->type, data->module_id, val, *fwd_val);
             mato_post_data(data->module_id, 0, sizeof(int), fwd_val);
@@ -173,6 +175,9 @@ void AB_start(void *instance_data)
     char my_ord = my_name[4];
     
 	data->subscribed_to_module_id = module_ids[(my_node + 1) % 3]['A' + 'B' - my_type][1 - my_ord];
+  
+    // n2_B{01} is not forwarding received messages further
+    if ((my_node == 2) && (my_type == 'B')) data->forwarder = 0;
 
     if (pipe(data->msg_queue) < 0)
     {
