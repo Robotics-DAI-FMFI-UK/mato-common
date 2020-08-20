@@ -171,6 +171,8 @@ void AB_delete(void *instance_data)
 {
     time_t tm;
     module_AB_instance_data *data = (module_AB_instance_data *)instance_data;
+    close(data->hello_starting_pipe[0]);
+    close(data->hello_starting_pipe[1]);
     time(&tm);
     printf("%u deleting module instance (%d) = %" PRIuPTR "\n", (unsigned int)(tm - tm0), data->module_id, (uintptr_t)data);
     free(data);

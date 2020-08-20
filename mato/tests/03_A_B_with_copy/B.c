@@ -105,6 +105,8 @@ void B_start(void *instance_data)
 void B_delete(void *instance_data)
 {
     module_B_instance_data *data = (module_B_instance_data *)instance_data;
+    close(data->hello_starting_pipe[0]);
+    close(data->hello_starting_pipe[1]);
     printf("deleting module instance (%d) = %" PRIuPTR "\n", data->module_id, (uintptr_t)data);
     free(data);
 }
