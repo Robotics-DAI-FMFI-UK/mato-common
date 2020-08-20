@@ -46,7 +46,7 @@ void *module_B_thread(void *arg)
     module_B_instance_data *data = (module_B_instance_data *)arg;
     wait_for_hello_starting_message(data);
     sleep(2 * (data->module_id % 5));
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; program_runs && (i < 5); i++)
     {
         int *val = mato_get_data_buffer(sizeof(int));
 	*val = data->module_id * 10 + i;

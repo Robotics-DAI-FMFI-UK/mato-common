@@ -59,6 +59,8 @@ int main(int argc, char **argv)
     mato_delete_module_instance(b1);
     mato_delete_module_instance(b2);
 
+    mato_shutdown();
+
     printf("main program terminates.\n");
     return 0;
 }
