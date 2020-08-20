@@ -21,8 +21,16 @@
 
 #define MAX_PENDINGS_CONNECTIONS 10
 #define NODE_MULTIPLIER 100000L
+
 // messages of node to node communication protocol
 #define MSG_NEW_MODULE_INSTANCE 1
+#define MSG_DELETED_MODULE_INSTANCE 2
+#define MSG_SUBSCRIBE 3
+#define MSG_UNSUBSCRIBE 4
+#define MSG_GET_DATA 5
+#define MSG_SUBSCRIBED_DATA 6
+#define MSG_GLOBAL_MESSAGE 7
+
 #define LISTEN_BACKLOG  10
 
 #define CONFIG_FILENAME "mato_nodes.conf"
@@ -337,7 +345,20 @@ void process_node_message(int s, int i)
         node_disconnected(s, i);
     }
     switch(message_type){
-        case MSG_NEW_MODULE_INSTANCE: break;
+        case MSG_NEW_MODULE_INSTANCE: 
+               break;
+        case MSG_DELETED_MODULE_INSTANCE:
+               break;
+        case MSG_SUBSCRIBE:
+               break;
+        case MSG_UNSUBSCRIBE:
+               break;
+        case MSG_GET_DATA:
+               break;
+        case MSG_SUBSCRIBED_DATA:
+               break;
+        case MSG_GLOBAL_MESSAGE:
+               break;
     }
 }
 
@@ -491,7 +512,7 @@ void start_networking()
     if (rv < 0)
     {
         perror("listen");
-    return;
+        return;
     }
 
     if (pipe(select_wakeup_pipe) < 0)
@@ -539,34 +560,34 @@ int read_config()
     FILE *f = fopen(CONFIG_FILENAME, "r");
     while (fgets(config_line, 255, f))
     {
-    char *comma = strchr(config_line, ',');
-    if (comma == 0) return config_error(ln);
-    *comma = 0;
-    sscanf(config_line, "%d", &node_id);
-    comma++;
-    char *comma2 = strchr(comma, ',');
-    if (comma2 == 0) return config_error(ln);
-    *comma2 = 0;
-    ip = comma;
-    comma2++;
-    comma = strchr(comma2, ',');
-    if (comma == 0) return config_error(ln);
-    *comma = 0;
-    sscanf(comma2, "%d", &port);
-    comma++;
-    int ln = strlen(comma);
-    while (ln > 0)
-    {
-        char c = comma[ln - 1];
-        if ((c != '\n') && (c != '\r')) break;
-        comma[ln - 1] = 0;
-        ln--;
-    }
-    name = comma;
-    node_info *node = new_node_info(node_id, ip, port, name, 0);
-    g_array_append_val(nodes, node);
-    int zero = 0;
-    g_array_append_val(sockets, zero);
+		char *comma = strchr(config_line, ',');
+		if (comma == 0) return config_error(ln);
+		*comma = 0;
+		sscanf(config_line, "%d", &node_id);
+		comma++;
+		char *comma2 = strchr(comma, ',');
+		if (comma2 == 0) return config_error(ln);
+		*comma2 = 0;
+		ip = comma;
+		comma2++;
+		comma = strchr(comma2, ',');
+		if (comma == 0) return config_error(ln);
+		*comma = 0;
+		sscanf(comma2, "%d", &port);
+		comma++;
+		int ln = strlen(comma);
+		while (ln > 0)
+		{
+			char c = comma[ln - 1];
+			if ((c != '\n') && (c != '\r')) break;
+			comma[ln - 1] = 0;
+			ln--;
+		}
+		name = comma;
+		node_info *node = new_node_info(node_id, ip, port, name, 0);
+		g_array_append_val(nodes, node);
+		int zero = 0;
+		g_array_append_val(sockets, zero);
     }
     g_array_index(nodes,node_info*,this_node_id)->is_online = 1;
     return 1;
@@ -688,6 +709,7 @@ int mato_create_new_module_instance(const char *module_type, const char *module_
 //      printf("appended instance data %" PRIuPTR "\n", (uintptr_t)module_instance_data);
     unlock_framework();
 
+    // TODO: notify other nodes that the node was created
     return public_module_id;
 }
 
@@ -718,40 +740,42 @@ void mato_delete_module_instance(int module_id)
 {
     int node_id=module_id / NODE_MULTIPLIER;
     module_id %= NODE_MULTIPLIER;
-    if(node_id!=this_node_id)
-    return;
+    if (node_id != this_node_id) return;
 
     lock_framework();
 
 //    printf("%d: instance_data->len=%d\n", module_id, instance_data->len);
-    char *module_type = g_array_index(g_array_index(module_types,GArray *,this_node_id), char *, module_id);
-    void *data = g_array_index(instance_data, void *, module_id);
+        char *module_type = g_array_index(g_array_index(module_types, GArray *, this_node_id), char *, module_id);
+        void *data = g_array_index(instance_data, void *, module_id);
 
-       module_specification *spec = (module_specification *)g_hash_table_lookup(module_specifications, module_type);
-       unlock_framework();
-     spec->delete_instance(data);
-     lock_framework();
-    GArray *channels_subscriptions = g_array_index(g_array_index(subscriptions,GArray *,this_node_id), GArray *, module_id);
-    int number_of_channels = channels_subscriptions->len;
+        module_specification *spec = (module_specification *)g_hash_table_lookup(module_specifications, module_type);
+    unlock_framework();
+    
+    spec->delete_instance(data);
+    lock_framework();
+    
+        GArray *channels_subscriptions = g_array_index(g_array_index(subscriptions, GArray *, this_node_id), GArray *, module_id);
+        int number_of_channels = channels_subscriptions->len;
 
-    for (int i = 0; i < number_of_channels; i++)
-    {
-        GArray *subscriptions_in_channel = g_array_index(channels_subscriptions, GArray *, i);
-        int number_of_subscriptions_in_this_channel = subscriptions_in_channel->len;
-        for (int j = 0; j < number_of_subscriptions_in_this_channel; j++)
-        {
-            subscription *s = g_array_index(subscriptions_in_channel, subscription *, j);
-            free(s);
-        }
-        g_array_free(g_array_index(channels_subscriptions, GArray *, i), 1);
-    }
+		for (int i = 0; i < number_of_channels; i++)
+		{
+			GArray *subscriptions_in_channel = g_array_index(channels_subscriptions, GArray *, i);
+			int number_of_subscriptions_in_this_channel = subscriptions_in_channel->len;
+			for (int j = 0; j < number_of_subscriptions_in_this_channel; j++)
+			{
+				subscription *s = g_array_index(subscriptions_in_channel, subscription *, j);
+				free(s);
+			}
+			g_array_free(g_array_index(channels_subscriptions, GArray *, i), 1);
+		}
 
-    g_array_free(g_array_index(g_array_index(subscriptions, GArray *, this_node_id), GArray *, module_id), 1);
-    void *zero = 0;
-    g_array_index(g_array_index(subscriptions, GArray *, this_node_id), subscription *, module_id) = 0;
-    g_array_index(g_array_index(module_names, GArray *, this_node_id), char *, module_id) = 0;
-    g_array_index(g_array_index(module_types, GArray *, this_node_id), char *, module_id) = 0;
-    g_array_index(instance_data, void *, module_id) = 0;
+		g_array_free(g_array_index(g_array_index(subscriptions, GArray *, this_node_id), GArray *, module_id), 1);
+		void *zero = 0;
+		g_array_index(g_array_index(subscriptions, GArray *, this_node_id), subscription *, module_id) = 0;
+		g_array_index(g_array_index(module_names, GArray *, this_node_id), char *, module_id) = 0;
+		g_array_index(g_array_index(module_types, GArray *, this_node_id), char *, module_id) = 0;
+		g_array_index(instance_data, void *, module_id) = 0;
+		// TODO: notify other nodes that the module has been deleted
     unlock_framework();
 }
 
@@ -772,14 +796,14 @@ int mato_get_module_id(const char *module_name)
 
 char *mato_get_module_name(int module_id)
 {
-    int node_id = module_id/NODE_MULTIPLIER;
+    int node_id = module_id / NODE_MULTIPLIER;
     module_id %= NODE_MULTIPLIER;
     return g_array_index(g_array_index(module_names, GArray *, node_id), char *, module_id);
 }
 
 char *mato_get_module_type(int module_id)
 {
-    int node_id = module_id/NODE_MULTIPLIER;
+    int node_id = module_id / NODE_MULTIPLIER;
     module_id %= NODE_MULTIPLIER;
     return g_array_index(g_array_index(module_types, GArray *, node_id), char *, module_id);
 }
@@ -799,12 +823,13 @@ int mato_subscribe(int subscriber_module_id, int subscribed_module_id, int chann
     new_subscription->subscriber_node_id = subscriber_node_id;
     lock_framework();
         new_subscription->subscription_id = get_free_subscription_id();
-        g_array_append_val(g_array_index(g_array_index(g_array_index(subscriptions, GArray *, subscribed_node_id), GArray *, subscribed_module_id), GArray *, channel), new_subscription);
+        GArray *channel_subscriptions = g_array_index(g_array_index(g_array_index(subscriptions, GArray *, subscribed_node_id), GArray *, subscribed_module_id), GArray *, channel);
+        g_array_append_val(channel_subscriptions, new_subscription);
+		if ((channel_subscriptions->len == 1) && (subscribed_node_id != this_node_id))
+		{
+			//TODO send subscription to another node
+		}
     unlock_framework();
-    if(subscribed_node_id!=this_node_id)
-    {
-        //TODO send subscription to another node
-    }
     return new_subscription->subscription_id;
 }
 
@@ -814,18 +839,25 @@ void mato_unsubscribe(int module_id, int channel, int subscription_id)
     module_id %= NODE_MULTIPLIER;
 
     lock_framework();
-    GArray *subscriptions_for_channel = g_array_index(g_array_index(g_array_index(subscriptions, GArray *,subscribed_node_id), GArray *, module_id), GArray *, channel);
-    int number_of_channel_subscriptions = subscriptions_for_channel->len;
-    for (int i = 0; i < number_of_channel_subscriptions; i++)
-    {
-        subscription *s = (subscription *)g_array_index(subscriptions_for_channel, GArray *, i);
-        if (s->subscription_id == subscription_id)
-        {
-            free(s);
-            g_array_remove_index_fast(subscriptions_for_channel, i);
-            break;
-        }
-    }
+		GArray *subscriptions_for_channel = g_array_index(g_array_index(g_array_index(subscriptions, GArray *,subscribed_node_id), GArray *, module_id), GArray *, channel);
+		int number_of_channel_subscriptions = subscriptions_for_channel->len;
+		for (int i = 0; i < number_of_channel_subscriptions; i++)
+		{
+			subscription *s = (subscription *)g_array_index(subscriptions_for_channel, GArray *, i);
+			if (s->subscription_id == subscription_id)
+			{
+				free(s);
+				g_array_remove_index_fast(subscriptions_for_channel, i);
+				if (subscribed_node_id != this_node_id)
+				{
+					if (subscriptions_for_channel->len == 0) 
+					{
+						// TODO: notify another node about unsubscription for this channel
+					}
+				}
+				break;
+			}
+		}
     unlock_framework();
 }
 
@@ -852,37 +884,34 @@ int mato_send_global_message(int module_id_sender, int message_id, int msg_lengt
 
     for (int node_id = 0; node_id < nodes->len; node_id++)
     {
-        if (this_node_id == node_id)
-        {
-            for (int module_id = 0; module_id < g_array_index(module_names, GArray *, node_id)->len; module_id++)
-            {
-                char *module_type = g_array_index(g_array_index(module_types, GArray *, node_id), char *, module_id);
-                if (module_type != 0)
-                {
-                    if (module_id != local_module_id_sender)  // not delivering to the msg. originator
-                    {
-                        module_specification *spec = (module_specification *)g_hash_table_lookup(module_specifications, module_type);
-                        if (spec != 0)
-                        {
-                            void *modules_instance_data = g_array_index(instance_data, void *, module_id);
-                            if (modules_instance_data != 0)
-                                spec->global_message(modules_instance_data, module_id_sender, message_id, msg_length, message_data);
-                        }
-                    }
-                }
-            }
-        }
-        else
-        {
-            // TODO: forward global message to other node
-        }
-    }
+        if (this_node_id == node_id) continue;
+        // TODO: forward global message to other node
+	}
+	
+	int our_modules_count = g_array_index(module_names, GArray *, this_node_id)->len;
+	for (int module_id = 0; module_id < our_modules_count; module_id++)
+	{
+		char *module_type = g_array_index(g_array_index(module_types, GArray *, this_node_id), char *, module_id);
+		if (module_type != 0)
+		{
+			if (module_id != local_module_id_sender)  // not delivering to the msg. originator
+			{
+				module_specification *spec = (module_specification *)g_hash_table_lookup(module_specifications, module_type);
+				if (spec != 0)
+				{
+					void *modules_instance_data = g_array_index(instance_data, void *, module_id);
+					if (modules_instance_data != 0)
+						spec->global_message(modules_instance_data, module_id_sender, message_id, msg_length, message_data);
+				}
+			}
+		}
+	}    
 }
 
 void mato_get_data(int id_module, int channel, int *data_length, void **data)
 {
     lock_framework();
-    int node_id = id_module/NODE_MULTIPLIER;
+    int node_id = id_module / NODE_MULTIPLIER;
     id_module %= NODE_MULTIPLIER;
     if (node_id == this_node_id)
     {
@@ -903,6 +932,8 @@ void mato_get_data(int id_module, int channel, int *data_length, void **data)
     else
     {
         //TODO get data from other node
+        //if we are subscribed to that channel, just copy the last valid from the buffers,
+        //otherwise request the last valid data from other node
     }
     unlock_framework();
     return;
@@ -932,6 +963,8 @@ void mato_borrow_data(int id_module, int channel, int *data_length, void **data)
     else
     {
         //TODO borrow data from other node
+        //if we are subscribed to that channel, just copy the last valid from the buffers,
+        //otherwise request the last valid data from other node
     }
     unlock_framework();
     return;
@@ -942,41 +975,36 @@ void mato_release_data(int id_module, int channel, void *data)
     lock_framework();
     int node_id = id_module / NODE_MULTIPLIER;
     id_module %= NODE_MULTIPLIER;
-    if (node_id == this_node_id)
-    {
-        GArray *buffers_for_module = g_array_index(g_array_index(buffers,GArray *,this_node_id), GArray *, id_module);
-        GList *waiting_buffers = g_array_index(buffers_for_module, GList *, channel);
-        if (waiting_buffers == 0)
-        {
-            unlock_framework();
-            return;
-        }
-        GList *lookup = waiting_buffers;
-        while (lookup)
-        {
-            channel_data *buffer = (channel_data *)waiting_buffers->data;
-            if (buffer->data == data)
-            {
-                lookup = decrement_references(waiting_buffers, buffer);
-                if (lookup != waiting_buffers)
-                    g_array_index(buffers_for_module, GList *, channel) = lookup;
-                break;
-            }
-            lookup = lookup->next;
-        }
-    }
-    else
-    {
-        //TODO...
-    }
+ 
+    GArray *buffers_for_module = g_array_index(g_array_index(buffers, GArray *, node_id), GArray *, id_module);
+    GList *waiting_buffers = g_array_index(buffers_for_module, GList *, channel);
+	if (waiting_buffers == 0)
+	{
+		unlock_framework();
+		return;
+	}
+	GList *lookup = waiting_buffers;
+	while (lookup)
+	{
+		channel_data *buffer = (channel_data *)waiting_buffers->data;
+		if (buffer->data == data)
+		{
+			lookup = decrement_references(waiting_buffers, buffer);
+			if (lookup != waiting_buffers)
+				g_array_index(buffers_for_module, GList *, channel) = lookup;
+			break;
+		}
+		lookup = lookup->next;
+	}
     unlock_framework();
 }
 
 /// A constructor for the module_info structure.
-module_info *new_module_info(int module_id, char *module_name, char *module_type)
+module_info *new_module_info(int node_id, int module_id, char *module_name, char *module_type)
 {
     module_info *info = (module_info *)malloc(sizeof(module_info));
     info->module_id = module_id;
+    info->node_id = node_id;
     info->name = module_name;
     info->name = module_name;
     info->type = module_type;
@@ -999,21 +1027,21 @@ GArray* mato_get_list_of_all_modules()
 GArray* mato_get_list_of_modules(char *type)
 {
     lock_framework();
-    GArray *modules = g_array_new(0, 0, sizeof(module_info *));
-    for (int node_id = 0; node_id < nodes->len; node_id++)
-    {
-        for (int i = 0; i < g_array_index(module_names, GArray *, node_id)->len; i++)
-        {
-            char *module_name = g_array_index(g_array_index(module_names, GArray *, node_id), char *, i);
-            if (module_name == 0) continue;
-            char *module_type = g_array_index(g_array_index(module_types, GArray *, node_id), char *, i);
-            if ((type == 0) || (strcmp(module_type, type) == 0))
-            {
-                module_info *info = new_module_info(i + node_id * NODE_MULTIPLIER, module_name, module_type);
-                g_array_append_val(modules, info);
-            }
-        }
-    }
+		GArray *modules = g_array_new(0, 0, sizeof(module_info *));
+		for (int node_id = 0; node_id < nodes->len; node_id++)
+		{
+			for (int i = 0; i < g_array_index(module_names, GArray *, node_id)->len; i++)
+			{
+				char *module_name = g_array_index(g_array_index(module_names, GArray *, node_id), char *, i);
+				if (module_name == 0) continue;
+				char *module_type = g_array_index(g_array_index(module_types, GArray *, node_id), char *, i);
+				if ((type == 0) || (strcmp(module_type, type) == 0))
+				{
+					module_info *info = new_module_info(node_id, i + node_id * NODE_MULTIPLIER, module_name, module_type);
+					g_array_append_val(modules, info);
+				}
+			}
+		}
     unlock_framework();
     return modules;
 }
