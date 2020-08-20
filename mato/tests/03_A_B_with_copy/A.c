@@ -27,7 +27,7 @@ void *module_A_thread(void *arg)
 {
     mato_inc_thread_count();
     module_A_instance_data *data = (module_A_instance_data *)arg;
-    sleep(2 * data->module_id);
+    sleep(2 * (data->module_id % 5));
     for (int i = 0; i < 5; i++)
     {
         int *val = mato_get_data_buffer(sizeof(int));

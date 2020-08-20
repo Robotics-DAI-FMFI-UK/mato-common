@@ -46,7 +46,7 @@ void *module_AB_thread(void *arg)
     time_t tm;
     mato_inc_thread_count();
     module_AB_instance_data *data = (module_AB_instance_data *)arg;
-    sleep(2 * data->module_id);
+    sleep(2 * (data->module_id % 5));
     for (int i = 0; i < 5; i++)
     {
         int *val = mato_get_data_buffer(sizeof(int));
@@ -80,7 +80,7 @@ void *module_AB_msg_eating_thread(void *arg)
       printf("%u %c(%d) retrieves message %d from queue\n", (unsigned int)(tm - tm0), data->type, data->module_id, val);
       int *fwd_val = mato_get_data_buffer(sizeof(int));
       *fwd_val = val + 100;
-      sleep(data->module_id);
+      sleep(data->module_id % 5);
       time(&tm);
       printf("%u %c(%d) returns borrowed ptr to message %d\n", (unsigned int)(tm - tm0), data->type, data->module_id, val);
       mato_release_data(data->subscribed_to_module_id, 0, val_ptr);
