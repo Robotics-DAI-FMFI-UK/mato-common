@@ -331,21 +331,79 @@ void node_disconnected(int s, int i)
     // TODO delete all node traces from data structures
 }
 
-void process_node_message(int s, int i)
+/// Receive one 32-bit integer from a socket. Returns 0 on failure (and the sending node is updated to be off-line), otherwise returns 1.
+/// See net_send_int32_t() function.
+int net_recv_int32t(int s, int32_t *num, int sending_node_id)
 {
-    int32_t message_type;
-    int retval = recv(s, &message_type, sizeof(int32_t), MSG_WAITALL);
+    int retval = recv(s, num, sizeof(int32_t), MSG_WAITALL);
     if(retval<0)
     {
         perror("reading from socket");
-        return;
+        return 0;
     }
     else if (retval == 0) // node disconnected
     {
-        node_disconnected(s, i);
+        node_disconnected(s, sending_node_id);
+        return 0;
     }
+    return 1;
+}
+
+/// Receive zero-terminated string from a socket. String is sent as int32_t (length+1) and then data.
+/// Returns 0 on failure (and the sending node is updated to be off-line), otherwise returns 1.
+/// See net_send_string() function.
+int net_recv_string(int s, char **str, int sending_node_id)
+{
+    int32_t str_len;
+    if (!net_recv_int32t(s, &str_len, sending_node_id))
+        return 0;
+    *str = (char *)malloc(str_len);
+    int retval = recv(s, *str, str_len, MSG_WAITALL);
+    if(retval<0)
+    {
+        perror("reading from socket");
+        return 0;
+    }
+    else if (retval == 0) // node disconnected
+    {
+        node_disconnected(s, sending_node_id);
+        return 0;
+    }
+    return 1;
+}
+
+/// Update internal data structures as necessary when a new module announcement arrives from another node
+void store_new_remote_module(int node_id, int module_id, char *module_name, char *module_type, int number_of_channels)
+{
+    printf("got info about new module %d from node %d (%s|%s) with %d channels\n", node_id, module_id, module_name, module_type, number_of_channels);
+}
+
+/// Receive and process new module instance message from another node. For the packet format, see net_announce_new_module() function.
+void net_process_new_module(int s, int sending_node_id)
+{
+    int32_t node_id, module_id, number_of_channels;
+    char *module_name, *module_type;
+    if (
+      !net_recv_int32t(s, &node_id, sending_node_id) ||
+      !net_recv_int32t(s, &module_id, sending_node_id) ||
+      !net_recv_string(s, &module_name, sending_node_id)  ||
+      !net_recv_string(s, &module_type, sending_node_id)  ||
+      !net_recv_int32t(s, &number_of_channels, sending_node_id)
+    )
+        return;
+    store_new_remote_module(node_id, module_id, module_name, module_type, number_of_channels);
+}
+
+/// Receive, unpack, and process a new message arriving from another node from socket s.
+void process_node_message(int s, int sending_node_id)
+{
+    int32_t message_type;
+    if (!net_recv_int32t(s, &message_type, sending_node_id))
+        return;
+
     switch(message_type){
-        case MSG_NEW_MODULE_INSTANCE: 
+        case MSG_NEW_MODULE_INSTANCE:
+               net_process_new_module(s, sending_node_id);
                break;
         case MSG_DELETED_MODULE_INSTANCE:
                break;
@@ -362,6 +420,8 @@ void process_node_message(int s, int i)
     }
 }
 
+/// This thread monitors connections to all nodes according to config file and tries to connect/reconnect
+/// those that are not currently connected. It runs in the background from the start till the framework shutdown.
 void *reconnecting_thread(void *arg)
 {
     struct sockaddr_in my_addr;
@@ -506,7 +566,7 @@ void start_networking()
         else break;
         sleep(6);
     } while (program_runs && (++i < 20));
-    if (i >= 20) exit(1);       
+    if (i >= 20) exit(1);
 
     int rv = listen(listening_socket, MAX_PENDINGS_CONNECTIONS);
     if (rv < 0)
@@ -560,41 +620,41 @@ int read_config()
     FILE *f = fopen(CONFIG_FILENAME, "r");
     while (fgets(config_line, 255, f))
     {
-		char *comma = strchr(config_line, ',');
-		if (comma == 0) return config_error(ln);
-		*comma = 0;
-		sscanf(config_line, "%d", &node_id);
-		comma++;
-		char *comma2 = strchr(comma, ',');
-		if (comma2 == 0) return config_error(ln);
-		*comma2 = 0;
-		ip = comma;
-		comma2++;
-		comma = strchr(comma2, ',');
-		if (comma == 0) return config_error(ln);
-		*comma = 0;
-		sscanf(comma2, "%d", &port);
-		comma++;
-		int ln = strlen(comma);
-		while (ln > 0)
-		{
-			char c = comma[ln - 1];
-			if ((c != '\n') && (c != '\r')) break;
-			comma[ln - 1] = 0;
-			ln--;
-		}
-		name = comma;
-		node_info *node = new_node_info(node_id, ip, port, name, 0);
-		g_array_append_val(nodes, node);
-		int zero = 0;
-		g_array_append_val(sockets, zero);
+        char *comma = strchr(config_line, ',');
+        if (comma == 0) return config_error(ln);
+        *comma = 0;
+        sscanf(config_line, "%d", &node_id);
+        comma++;
+        char *comma2 = strchr(comma, ',');
+        if (comma2 == 0) return config_error(ln);
+        *comma2 = 0;
+        ip = comma;
+        comma2++;
+        comma = strchr(comma2, ',');
+        if (comma == 0) return config_error(ln);
+        *comma = 0;
+        sscanf(comma2, "%d", &port);
+        comma++;
+        int ln = strlen(comma);
+        while (ln > 0)
+        {
+            char c = comma[ln - 1];
+            if ((c != '\n') && (c != '\r')) break;
+            comma[ln - 1] = 0;
+            ln--;
+        }
+        name = comma;
+        node_info *node = new_node_info(node_id, ip, port, name, 0);
+        g_array_append_val(nodes, node);
+        int zero = 0;
+        g_array_append_val(sockets, zero);
     }
     g_array_index(nodes,node_info*,this_node_id)->is_online = 1;
     return 1;
 }
 
 /// signal handler, intercept CTRL-C
-void intHandler(int signum) 
+void intHandler(int signum)
 {
     program_runs = 0;
     printf("...CTRL-C hit, terminating\n");
@@ -672,6 +732,70 @@ int get_free_subscription_id() // is not thread-safe
     return next_free_subscription_id++;
 }
 
+/// Send a zero-terminated character string to socket.
+/// First send its length+1 as int32_t and then data.
+/// See net_recv_string() function.
+int net_send_string(int socket, char *str)
+{
+    int32_t len = strlen(str) + 1;
+    if (write(socket, &len, sizeof(int32_t)) < 0)
+        return 0;
+    if (write(socket, str, len) < 0)
+        return 0;
+    return 1;
+}
+
+/// Send 32-bit signed integer to a socket.
+/// See net_recv_int32_t() function.
+int net_send_int32t(int socket, int32_t num)
+{
+    if (write(socket, &num, sizeof(int32_t)) < 0)
+        return 0;
+    else return 1;
+}
+
+/// Broadcast information about new local module instance to all other nodes.
+///
+/// Packet format:
+/// -------------------------------------
+/// MSG_NEW_MODULE_INSTANCE   int32
+/// this_node_id              int32
+/// [local]module_id          int32
+/// len(module_name)+1        int32
+/// module_name               variable
+/// len(module_type)+1        int32
+/// module_type               variable
+/// number_of_channels        int32
+/// -------------------------------------
+void net_announce_new_module(int module_id)
+{
+    for (int node_id = 0; node_id < nodes->len; node_id++)
+    {
+        if (node_id == this_node_id) continue;
+        node_info *ni = g_array_index(nodes, node_info *, node_id);
+        if (ni->is_online == 0) continue;
+
+        int s = g_array_index(sockets, int, node_id);
+        char *module_name = g_array_index(g_array_index(module_names, GArray *, this_node_id), char *, module_id);
+        char *module_type = g_array_index(g_array_index(module_types, GArray *, this_node_id), char *, module_id);
+        module_specification *spec = (module_specification *)g_hash_table_lookup(module_specifications, module_type);
+        int32_t number_of_channels = spec->number_of_channels;
+
+        if (
+          !net_send_int32t(s, MSG_NEW_MODULE_INSTANCE)  ||
+          !net_send_int32t(s, this_node_id) ||
+          !net_send_int32t(s, module_id) ||
+          !net_send_string(s, module_name) ||
+          !net_send_string(s, module_type) ||
+          !net_send_int32t(s, number_of_channels)
+        )
+        {
+            node_disconnected(s, node_id);
+        }
+    }
+    printf("announced new module %d to other nodes\n", module_id);
+}
+
 int mato_create_new_module_instance(const char *module_type, const char *module_name)
 {
     lock_framework();
@@ -707,9 +831,10 @@ int mato_create_new_module_instance(const char *module_type, const char *module_
     lock_framework();
         g_array_append_val(instance_data, module_instance_data);
 //      printf("appended instance data %" PRIuPTR "\n", (uintptr_t)module_instance_data);
+
+        net_announce_new_module(module_id);
     unlock_framework();
 
-    // TODO: notify other nodes that the node was created
     return public_module_id;
 }
 
@@ -750,32 +875,32 @@ void mato_delete_module_instance(int module_id)
 
         module_specification *spec = (module_specification *)g_hash_table_lookup(module_specifications, module_type);
     unlock_framework();
-    
+
     spec->delete_instance(data);
     lock_framework();
-    
+
         GArray *channels_subscriptions = g_array_index(g_array_index(subscriptions, GArray *, this_node_id), GArray *, module_id);
         int number_of_channels = channels_subscriptions->len;
 
-		for (int i = 0; i < number_of_channels; i++)
-		{
-			GArray *subscriptions_in_channel = g_array_index(channels_subscriptions, GArray *, i);
-			int number_of_subscriptions_in_this_channel = subscriptions_in_channel->len;
-			for (int j = 0; j < number_of_subscriptions_in_this_channel; j++)
-			{
-				subscription *s = g_array_index(subscriptions_in_channel, subscription *, j);
-				free(s);
-			}
-			g_array_free(g_array_index(channels_subscriptions, GArray *, i), 1);
-		}
+        for (int i = 0; i < number_of_channels; i++)
+        {
+            GArray *subscriptions_in_channel = g_array_index(channels_subscriptions, GArray *, i);
+            int number_of_subscriptions_in_this_channel = subscriptions_in_channel->len;
+            for (int j = 0; j < number_of_subscriptions_in_this_channel; j++)
+            {
+                subscription *s = g_array_index(subscriptions_in_channel, subscription *, j);
+                free(s);
+            }
+            g_array_free(g_array_index(channels_subscriptions, GArray *, i), 1);
+        }
 
-		g_array_free(g_array_index(g_array_index(subscriptions, GArray *, this_node_id), GArray *, module_id), 1);
-		void *zero = 0;
-		g_array_index(g_array_index(subscriptions, GArray *, this_node_id), subscription *, module_id) = 0;
-		g_array_index(g_array_index(module_names, GArray *, this_node_id), char *, module_id) = 0;
-		g_array_index(g_array_index(module_types, GArray *, this_node_id), char *, module_id) = 0;
-		g_array_index(instance_data, void *, module_id) = 0;
-		// TODO: notify other nodes that the module has been deleted
+        g_array_free(g_array_index(g_array_index(subscriptions, GArray *, this_node_id), GArray *, module_id), 1);
+        void *zero = 0;
+        g_array_index(g_array_index(subscriptions, GArray *, this_node_id), subscription *, module_id) = 0;
+        g_array_index(g_array_index(module_names, GArray *, this_node_id), char *, module_id) = 0;
+        g_array_index(g_array_index(module_types, GArray *, this_node_id), char *, module_id) = 0;
+        g_array_index(instance_data, void *, module_id) = 0;
+        // TODO: notify other nodes that the module has been deleted
     unlock_framework();
 }
 
@@ -825,10 +950,10 @@ int mato_subscribe(int subscriber_module_id, int subscribed_module_id, int chann
         new_subscription->subscription_id = get_free_subscription_id();
         GArray *channel_subscriptions = g_array_index(g_array_index(g_array_index(subscriptions, GArray *, subscribed_node_id), GArray *, subscribed_module_id), GArray *, channel);
         g_array_append_val(channel_subscriptions, new_subscription);
-		if ((channel_subscriptions->len == 1) && (subscribed_node_id != this_node_id))
-		{
-			//TODO send subscription to another node
-		}
+        if ((channel_subscriptions->len == 1) && (subscribed_node_id != this_node_id))
+        {
+            //TODO send subscription to another node
+        }
     unlock_framework();
     return new_subscription->subscription_id;
 }
@@ -839,25 +964,25 @@ void mato_unsubscribe(int module_id, int channel, int subscription_id)
     module_id %= NODE_MULTIPLIER;
 
     lock_framework();
-		GArray *subscriptions_for_channel = g_array_index(g_array_index(g_array_index(subscriptions, GArray *,subscribed_node_id), GArray *, module_id), GArray *, channel);
-		int number_of_channel_subscriptions = subscriptions_for_channel->len;
-		for (int i = 0; i < number_of_channel_subscriptions; i++)
-		{
-			subscription *s = (subscription *)g_array_index(subscriptions_for_channel, GArray *, i);
-			if (s->subscription_id == subscription_id)
-			{
-				free(s);
-				g_array_remove_index_fast(subscriptions_for_channel, i);
-				if (subscribed_node_id != this_node_id)
-				{
-					if (subscriptions_for_channel->len == 0) 
-					{
-						// TODO: notify another node about unsubscription for this channel
-					}
-				}
-				break;
-			}
-		}
+        GArray *subscriptions_for_channel = g_array_index(g_array_index(g_array_index(subscriptions, GArray *,subscribed_node_id), GArray *, module_id), GArray *, channel);
+        int number_of_channel_subscriptions = subscriptions_for_channel->len;
+        for (int i = 0; i < number_of_channel_subscriptions; i++)
+        {
+            subscription *s = (subscription *)g_array_index(subscriptions_for_channel, GArray *, i);
+            if (s->subscription_id == subscription_id)
+            {
+                free(s);
+                g_array_remove_index_fast(subscriptions_for_channel, i);
+                if (subscribed_node_id != this_node_id)
+                {
+                    if (subscriptions_for_channel->len == 0)
+                    {
+                        // TODO: notify another node about unsubscription for this channel
+                    }
+                }
+                break;
+            }
+        }
     unlock_framework();
 }
 
@@ -886,26 +1011,26 @@ int mato_send_global_message(int module_id_sender, int message_id, int msg_lengt
     {
         if (this_node_id == node_id) continue;
         // TODO: forward global message to other node
-	}
-	
-	int our_modules_count = g_array_index(module_names, GArray *, this_node_id)->len;
-	for (int module_id = 0; module_id < our_modules_count; module_id++)
-	{
-		char *module_type = g_array_index(g_array_index(module_types, GArray *, this_node_id), char *, module_id);
-		if (module_type != 0)
-		{
-			if (module_id != local_module_id_sender)  // not delivering to the msg. originator
-			{
-				module_specification *spec = (module_specification *)g_hash_table_lookup(module_specifications, module_type);
-				if (spec != 0)
-				{
-					void *modules_instance_data = g_array_index(instance_data, void *, module_id);
-					if (modules_instance_data != 0)
-						spec->global_message(modules_instance_data, module_id_sender, message_id, msg_length, message_data);
-				}
-			}
-		}
-	}    
+    }
+
+    int our_modules_count = g_array_index(module_names, GArray *, this_node_id)->len;
+    for (int module_id = 0; module_id < our_modules_count; module_id++)
+    {
+        char *module_type = g_array_index(g_array_index(module_types, GArray *, this_node_id), char *, module_id);
+        if (module_type != 0)
+        {
+            if (module_id != local_module_id_sender)  // not delivering to the msg. originator
+            {
+                module_specification *spec = (module_specification *)g_hash_table_lookup(module_specifications, module_type);
+                if (spec != 0)
+                {
+                    void *modules_instance_data = g_array_index(instance_data, void *, module_id);
+                    if (modules_instance_data != 0)
+                        spec->global_message(modules_instance_data, module_id_sender, message_id, msg_length, message_data);
+                }
+            }
+        }
+    }
 }
 
 void mato_get_data(int id_module, int channel, int *data_length, void **data)
@@ -975,27 +1100,27 @@ void mato_release_data(int id_module, int channel, void *data)
     lock_framework();
     int node_id = id_module / NODE_MULTIPLIER;
     id_module %= NODE_MULTIPLIER;
- 
+
     GArray *buffers_for_module = g_array_index(g_array_index(buffers, GArray *, node_id), GArray *, id_module);
     GList *waiting_buffers = g_array_index(buffers_for_module, GList *, channel);
-	if (waiting_buffers == 0)
-	{
-		unlock_framework();
-		return;
-	}
-	GList *lookup = waiting_buffers;
-	while (lookup)
-	{
-		channel_data *buffer = (channel_data *)waiting_buffers->data;
-		if (buffer->data == data)
-		{
-			lookup = decrement_references(waiting_buffers, buffer);
-			if (lookup != waiting_buffers)
-				g_array_index(buffers_for_module, GList *, channel) = lookup;
-			break;
-		}
-		lookup = lookup->next;
-	}
+    if (waiting_buffers == 0)
+    {
+        unlock_framework();
+        return;
+    }
+    GList *lookup = waiting_buffers;
+    while (lookup)
+    {
+        channel_data *buffer = (channel_data *)waiting_buffers->data;
+        if (buffer->data == data)
+        {
+            lookup = decrement_references(waiting_buffers, buffer);
+            if (lookup != waiting_buffers)
+                g_array_index(buffers_for_module, GList *, channel) = lookup;
+            break;
+        }
+        lookup = lookup->next;
+    }
     unlock_framework();
 }
 
@@ -1027,21 +1152,21 @@ GArray* mato_get_list_of_all_modules()
 GArray* mato_get_list_of_modules(char *type)
 {
     lock_framework();
-		GArray *modules = g_array_new(0, 0, sizeof(module_info *));
-		for (int node_id = 0; node_id < nodes->len; node_id++)
-		{
-			for (int i = 0; i < g_array_index(module_names, GArray *, node_id)->len; i++)
-			{
-				char *module_name = g_array_index(g_array_index(module_names, GArray *, node_id), char *, i);
-				if (module_name == 0) continue;
-				char *module_type = g_array_index(g_array_index(module_types, GArray *, node_id), char *, i);
-				if ((type == 0) || (strcmp(module_type, type) == 0))
-				{
-					module_info *info = new_module_info(node_id, i + node_id * NODE_MULTIPLIER, module_name, module_type);
-					g_array_append_val(modules, info);
-				}
-			}
-		}
+        GArray *modules = g_array_new(0, 0, sizeof(module_info *));
+        for (int node_id = 0; node_id < nodes->len; node_id++)
+        {
+            for (int i = 0; i < g_array_index(module_names, GArray *, node_id)->len; i++)
+            {
+                char *module_name = g_array_index(g_array_index(module_names, GArray *, node_id), char *, i);
+                if (module_name == 0) continue;
+                char *module_type = g_array_index(g_array_index(module_types, GArray *, node_id), char *, i);
+                if ((type == 0) || (strcmp(module_type, type) == 0))
+                {
+                    module_info *info = new_module_info(node_id, i + node_id * NODE_MULTIPLIER, module_name, module_type);
+                    g_array_append_val(modules, info);
+                }
+            }
+        }
     unlock_framework();
     return modules;
 }
