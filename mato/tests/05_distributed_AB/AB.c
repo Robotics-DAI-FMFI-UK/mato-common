@@ -9,9 +9,9 @@
 #include "../../mato.h"
 #include "AB.h"
 
-#define NUMBER_OF_HELLOs_TO_WAIT_FOR 12
+#define NUMBER_OF_HELLOs_TO_WAIT_FOR (12 - 1)
 
-typedef struct { 
+typedef struct {
             char type;
             int module_id;
             int my_subscription_id;
@@ -29,7 +29,7 @@ void *AB_create_instance(int module_id, char type)
 {
     time_t tm;
     module_AB_instance_data *data = (module_AB_instance_data *)malloc(sizeof(module_AB_instance_data));
-    data->module_id = module_id;    
+    data->module_id = module_id;
     data->type = type;
     data->hello_count = 0;
     data->forwarder = 1;
@@ -99,7 +99,7 @@ void *module_AB_thread(void *arg)
     }
     time(&tm);
     printf("%u module_%c_thread done (%d), unsubscribing...\n", (unsigned int)(tm - tm0), data->type, data->module_id);
-    mato_unsubscribe(data->subscribed_to_module_id, 0, data->my_subscription_id); 
+    mato_unsubscribe(data->subscribed_to_module_id, 0, data->my_subscription_id);
     printf("%u module_%c_thread terminates (%d)\n", (unsigned int)(tm - tm0), data->type, data->module_id);
 
     close(data->msg_queue[1]);
@@ -154,7 +154,7 @@ void AB_start(void *instance_data)
 {
     time_t tm;
     module_AB_instance_data *data = (module_AB_instance_data *)instance_data;
-    int module_ids[3][2][2];  // [node_id][A=0/B=1][1-2] 
+    int module_ids[3][2][2];  // [node_id][A=0/B=1][1-2]
     static char module_name[6];
 
     // nx_yz wants to subscribe to n((x + 1) % 3 )_('A' + 'B' - y)(1 - z)
@@ -169,13 +169,13 @@ void AB_start(void *instance_data)
             {
                sprintf(module_name, "n%d_%c%d", node_id, type, ord);
                module_ids[node_id][type - 'A'][ord] = mato_get_module_id(module_name);
-            }    
+            }
     char my_node = my_name[1];
     char my_type = my_name[3];
     char my_ord = my_name[4];
-    
-	data->subscribed_to_module_id = module_ids[(my_node + 1) % 3]['A' + 'B' - my_type][1 - my_ord];
-  
+
+    data->subscribed_to_module_id = module_ids[(my_node + 1) % 3]['A' + 'B' - my_type][1 - my_ord];
+
     // n2_B{01} is not forwarding received messages further
     if ((my_node == 2) && (my_type == 'B')) data->forwarder = 0;
 
@@ -214,12 +214,12 @@ void AB_global_message(void *instance_data, int module_id_sender, int message_id
     module_AB_instance_data *my_data = (module_AB_instance_data *)instance_data;
     char *data = (char *)message_data;
     time(&tm);
-    if (message_id == MESSAGE_HELLO) 
+    if (message_id == MESSAGE_HELLO)
     {
         printf("%u module %c(%d) received global HELLO messsage: '%s'\n", (unsigned int)(tm - tm0), my_data->type, my_data->module_id, data);
         AB_lock(my_data);
             my_data->hello_count++;
-            if (my_data->hello_count == NUMBER_OF_HELLOs_TO_WAIT_FOR) 
+            if (my_data->hello_count == NUMBER_OF_HELLOs_TO_WAIT_FOR)
                 notify_about_hello_messages(my_data);
         AB_unlock(my_data);
     }
