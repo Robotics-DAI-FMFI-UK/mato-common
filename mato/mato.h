@@ -8,12 +8,12 @@
 /// The framework manages the data flow between modules of the control architecture.
 /// Modules have types and names. There can be multiple instances of the same type of module, having different names.
 /// Module instances should only keep their local data inside of one structure that is created for each
-/// instance (we call it "instance data"). 
-/// Each module type contains its "init()" function that registers the module in the framework so that it can 
+/// instance (we call it "instance data").
+/// Each module type contains its "init()" function that registers the module in the framework so that it can
 /// be used by the main program and other modules.
 /// Each module type is specified by the structure module_specification that lists the public interface of
 /// the module (used by the framework):
-///   * create_instance_callback - creates a new instance of the module, i.e. allocates and initializes 
+///   * create_instance_callback - creates a new instance of the module, i.e. allocates and initializes
 ///     the module instance data, it is called by the framework when the main program or another module
 ///     requests to create a new module instance
 ///   * start_instance_callback  - all modules are started by the framework by calling this function
@@ -31,17 +31,17 @@
 ///  not needed anymore automatically, unless the copy_mode is specified.
 
 
-typedef enum subscription_type_enum {direct_data_ptr = 1, data_copy = 2, borrowed_pointer = 3} subscription_type; 
+typedef enum subscription_type_enum {direct_data_ptr = 1, data_copy = 2, borrowed_pointer = 3} subscription_type;
 
-/// Create instance data of a module and initialize it. Each module should define this callback. 
-/// This instance will be from now on always referred by the module_id passed in the argument. 
-/// It is recommended that the module saves it to its instance_data. The function should return 
+/// Create instance data of a module and initialize it. Each module should define this callback.
+/// This instance will be from now on always referred by the module_id passed in the argument.
+/// It is recommended that the module saves it to its instance_data. The function should return
 /// a pointer to the newly allocated instance data.
 typedef void * (* create_instance_callback)(int module_id);
 
 /// Start the module instance. Typically, a module instance will create a new thread that will take care
 /// of the functionality of the module (active module). Alternately, the module can remain passive - without a thread
-/// and only responding to the subscribes... This is also the right place for the module to subscribe to the data 
+/// and only responding to the subscribes... This is also the right place for the module to subscribe to the data
 /// channels of other module instances, because they are expected to be instantiated at this point of time
 typedef void (* start_instance_callback)(void *instance_data);
 
@@ -49,29 +49,29 @@ typedef void (* start_instance_callback)(void *instance_data);
 typedef void (* delete_instance_callback)(void *instance_data);
 
 /// When some other module or the main program has sent a global message, this callback of each module is called
-/// immediatelly - from the thread of the sender. 
+/// immediatelly - from the thread of the sender.
 typedef void (* global_message_callback)(void *instance_data, int module_id_sender, int message_id, int msg_length, void *message_data);
 
-/// Modules that subscribe to the data on channels of other module instances provide this callback. It receives 
+/// Modules that subscribe to the data on channels of other module instances provide this callback. It receives
 /// the instance data of the subscriber, the id of the sender module, and the actual raw data of the message and its length
 typedef void (* subscriber_callback)(void *instance_data, int sender_module_id, int data_length, void *new_data_ptr);
 
 /// Each module type has to provide the callbacks for its module instances.
 typedef struct {
-	create_instance_callback create_instance;
-	start_instance_callback start_instance;
-	delete_instance_callback delete_instance;
-	global_message_callback global_message;
-	int number_of_channels;
+        create_instance_callback create_instance;
+        start_instance_callback start_instance;
+        delete_instance_callback delete_instance;
+        global_message_callback global_message;
+        int number_of_channels;
 } module_specification;
 
 /// List of modules descriptions consists of structures describing the basic information about a module.
 typedef struct {
-	int module_id;
-	char *name;
-	char *type;
-	int node_id;
-	int number_of_channels;
+        int module_id;
+        char *name;
+        char *type;
+        int node_id;
+        int number_of_channels;
 } module_info;
 
 
@@ -131,7 +131,7 @@ void mato_post_data(int id_of_posting_module, int channel, int data_length, void
 /// thread by calling this function.
 int mato_send_global_message(int module_id_sender, int message_id, int msg_length, void *message_data);
 
-/// Retrieve the most recently posted data of some channel of some module instance. Data is copied into the buffer provided,
+/// Retrieve the most recently posted data of some channel of some module instance. Data is copied into new buffer allocated and its pointer is returned in data variable,
 /// and the length of the data is set to data_length. The calling module should release the memory by calling free() when
 /// it is not needed anymore.
 void mato_get_data(int id_module, int channel, int *data_length, void **data);
@@ -145,7 +145,7 @@ void mato_borrow_data(int id_module, int channel, int *data_length, void **data)
 /// The id_module and channel specify the origin of the message.
 void mato_release_data(int id_module, int channel, void *data);
 
-/// Retrieve the list of currently running modules. 
+/// Retrieve the list of currently running modules.
 /// The list should be freed by calling mato_free_list_of_modules() when
 /// it is not needed anymore.
 GArray* mato_get_list_of_all_modules();
@@ -155,7 +155,7 @@ GArray* mato_get_list_of_all_modules();
 /// it is not needed anymore.
 GArray* mato_get_list_of_modules(char *type);
 
-/// Retrieve the number of currently running modules 
+/// Retrieve the number of currently running modules
 int mato_get_number_of_modules();
 
 /// Free the list of modules returned by either of the two functions mato_get_list_of_modules() or mato_get_list_of_modules().
@@ -178,7 +178,7 @@ int mato_threads_running();
 /// Releases all resources used by the framework, recommended to be called before the main program terminates
 void mato_shutdown();
 
-/// This variable is set to non-zero when the program is about to terminate. 
+/// This variable is set to non-zero when the program is about to terminate.
 /// All threads should terminate at the earliest possbility
 extern volatile int program_runs;
 

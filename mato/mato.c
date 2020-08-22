@@ -28,8 +28,9 @@
 #define MSG_SUBSCRIBE 3
 #define MSG_UNSUBSCRIBE 4
 #define MSG_GET_DATA 5
-#define MSG_SUBSCRIBED_DATA 6
-#define MSG_GLOBAL_MESSAGE 7
+#define MSG_DATA 6
+#define MSG_SUBSCRIBED_DATA 7
+#define MSG_GLOBAL_MESSAGE 8
 
 #define LISTEN_BACKLOG  10
 
@@ -227,6 +228,12 @@ void *mato_thread(void *arg)
       cd->references++; // currently being sent out to subscribers
 
       lock_framework();
+      if(g_array_index(nodes,node_info*,cd->node_id)->is_online == 0)
+      {
+          free(cd->data);
+          free(cd);
+          continue;
+      }
 
       char *check_module_exists = g_array_index(g_array_index(module_names, GArray *,cd->node_id), char *, cd->module_id);
       if (check_module_exists == 0)
@@ -309,7 +316,9 @@ void *mato_thread(void *arg)
           }
           else
           {
-              //TODO forwarding data to subscriber from another node
+              unlock_framework();
+              net_send_subscribed_data(sub->subscriber_node_id, cd);
+              lock_framevork();
           }
           free(subscriber->data);
           subscriber = subscriber->next;
@@ -323,13 +332,85 @@ void *mato_thread(void *arg)
     mato_dec_system_thread_count();
 }
 
-void node_disconnected(int s, int i)
+
+void remove_names_types(int node_id)
 {
-    g_array_index(nodes,node_info*,i)->is_online = 0;
-    close(s);
-    printf("node %d has disconnected\n", i);
-    // TODO delete all node traces from data structures
+    GArray* names = g_array_index(module_names, GArray*, node_id);
+    GArray* types = g_array_index(module_types, GArray*, node_id);
+    int module_number = names->len;
+    for(int module=0; module < module_number; module++)
+    {
+        char* name = g_array_index(names,char*,0);
+        char* type = g_array_index(types,char*,0);
+        g_array_remove_index_fast(names,0);
+        g_array_remove_index_fast(types,0);
+        free(name);
+        free(type);
+    }
 }
+
+void remove_remote_module_from_subscriptions(int node, int node_id_of_module, int module)
+{
+    GArray* module_subscriptions = g_array_index(node_subscriptions, GArray*, module);
+    int channel_number = module_subscriptions->len;
+    for(int channel=0; channel < channel_number; channel++)
+    {
+        GArray* channel_subscriptions = g_array_index(module_subscriptions, GArray*, module);
+        int subscription_number = channel_subscriptions->len;
+        for(int sub=0; sub < subscription_number; sub++)
+        {
+            subscription* subsc = g_array_index(channel_subscriptions, subscription*,sub);
+            if (node == node_id_of_module || subsc -> subscriber_node_id == node_id_of_module)
+            {
+                remove_subscription(node,module,channel,subsc->subscription_id);
+            }
+        }
+    }
+    g_array_free(g_array_index(g_array_index(subscriptions, GArray *, node_id), GArray *, module), 1);
+    g_array_index(g_array_index(subscriptions, GArray *, node_id), subscription *, module) = 0;
+}
+
+void remove_node_from_subscriptions(int node_id)
+{
+    int number_nodes = nodes->len;
+    for(int node=0; node < number_nodes; node++)
+    {
+        GArray* node_subscriptions = g_array_index(subscripions, GArray*, node);
+        int module_number = node_subscriptions->len;
+        for(int module=0; module < module_number; module++)
+        {
+            remove_remote_module_from_subscriptions(node, node_id, module);
+        }
+    }
+}
+
+void remove_node_buffers(int node_id)
+{
+    int length = g_array_index(buffers,GArray*,node_id)->len;
+    for(int module_id = 0; module_id < length; module_id++)
+    {
+        net_delete_module_instance(node_id, module_id)
+    }
+}
+
+
+void node_disconnected(int s, int node_id)
+{
+    g_array_index(nodes,node_info*,node_id)->is_online = 0;
+    close(s);
+    printf("node %d has disconnected\n", node_id);
+    lock_framework();
+    remove_node_buffers(node_id);
+    remove_node_from_subscriptions(node_id);
+    remove_names_types(node_id);
+    unlock_framework();
+}
+
+
+
+
+
+
 
 /// Receive one 32-bit integer from a socket. Returns 0 on failure (and the sending node is updated to be off-line), otherwise returns 1.
 /// See net_send_int32_t() function.
@@ -349,48 +430,19 @@ int net_recv_int32t(int s, int32_t *num, int sending_node_id)
     return 1;
 }
 
-int net_recv_callback(int s, subscriber_callback *num, int sending_node_id)
-{
-    int retval = recv(s, num, sizeof(subscriber_callback), MSG_WAITALL);
-    if(retval<0)
-    {
-        perror("reading from socket");
-        return 0;
-    }
-    else if (retval == 0) // node disconnected
-    {
-        node_disconnected(s, sending_node_id);
-        return 0;
-    }
-    return 1;
-}
 
-int net_recv_void(int s, void *num, int sending_node_id)
-{
-    int retval = recv(s, num, sizeof(void), MSG_WAITALL);
-    if(retval<0)
-    {
-        perror("reading from socket");
-        return 0;
-    }
-    else if (retval == 0) // node disconnected
-    {
-        node_disconnected(s, sending_node_id);
-        return 0;
-    }
-    return 1;
-}
 
-/// Receive zero-terminated string from a socket. String is sent as int32_t (length+1) and then data.
+/// Receive string of bytes from a socket. This could be a zero-terminated string,
+/// or any other bunch of bytes. String is sent as int32_t (length+1) and then data.
 /// Returns 0 on failure (and the sending node is updated to be off-line), otherwise returns 1.
 /// See net_send_string() function.
-int net_recv_string(int s, char **str, int sending_node_id)
+int net_recv_bytes(int s, uint8_t **str, int32_t *str_len, int sending_node_id)
 {
-    int32_t str_len;
-    if (!net_recv_int32t(s, &str_len, sending_node_id))
+
+    if (!net_recv_int32t(s, str_len, sending_node_id))
         return 0;
-    *str = (char *)malloc(str_len);
-    int retval = recv(s, *str, str_len, MSG_WAITALL);
+    *str = (uint8_t *)malloc(*str_len);
+    int retval = recv(s, *str, *str_len, MSG_WAITALL);
     if(retval<0)
     {
         perror("reading from socket");
@@ -411,10 +463,10 @@ void store_new_remote_module(int node_id, int module_id, char *module_name, char
     g_array_append_val(g_array_index(module_names, GArray *, node_id), module_name);
     g_array_append_val(g_array_index(module_types, GArray *, node_id), module_type);
     GArray *channels_subscriptions = g_array_new(0, 0, sizeof(GArray *));
-    g_array_append_val(g_array_index(subscriptions,GArray *,node_id), channels_subscriptions);
-    GArray *module_buffers = g_array_new(0, 0, sizeof(GArray *));
+    g_array_append_val(g_array_index(subscriptions, GArray *,node_id), channels_subscriptions);
+    GArray *module_buffers = g_array_new(0, 0, sizeof(GList *));
     g_array_append_val(g_array_index(buffers,GArray *, node_id), module_buffers);
-    
+
     for (int channel_id = 0; channel_id < number_of_channels; channel_id++)
     {
        GArray *subs_for_channel = g_array_new(0, 0, sizeof(GArray *));
@@ -424,116 +476,228 @@ void store_new_remote_module(int node_id, int module_id, char *module_name, char
        g_array_append_val(module_buffers, channel_buffers);
     }
     unlock_framework();
-    
+
     printf("got info about new module %d from node %d (%s|%s) with %d channels\n", node_id, module_id, module_name, module_type, number_of_channels);
 }
 
 /// Receive and process new module instance message from another node. For the packet format, see net_announce_new_module() function.
 void net_process_new_module(int s, int sending_node_id)
 {
-    int32_t node_id, module_id, number_of_channels;
+    int32_t node_id, module_id, number_of_channels, ingore;
     char *module_name, *module_type;
     if (
-      !net_recv_int32t(s, &node_id, sending_node_id) ||
       !net_recv_int32t(s, &module_id, sending_node_id) ||
-      !net_recv_string(s, &module_name, sending_node_id)  ||
-      !net_recv_string(s, &module_type, sending_node_id)  ||
+      !net_recv_bytes(s, &module_name, &ignore, sending_node_id)  ||
+      !net_recv_bytes(s, &module_type, &ignore, sending_node_id)  ||
       !net_recv_int32t(s, &number_of_channels, sending_node_id)
     )
         return;
-    store_new_remote_module(node_id, module_id, module_name, module_type, number_of_channels);
+    store_new_remote_module(sending_node_id, module_id, module_name, module_type, number_of_channels);
 }
 
-void net_delete_remote_module(int s, int sending_node_id)
+void net_process_delete_module(int s, int sending_node_id)
 {
-    int32_t node_id, module_id, number_of_channels;
-    char *module_name, *module_type;
+    int32_t node_id, module_id;
     if (
-      !net_recv_int32t(s, &node_id, sending_node_id) ||
-      !net_recv_int32t(s, &module_id, sending_node_id) ||
-      !net_recv_string(s, &module_name, sending_node_id)  ||
-      !net_recv_string(s, &module_type, sending_node_id)  ||
-      !net_recv_int32t(s, &number_of_channels, sending_node_id)
+      !net_recv_int32t(s, &module_id, sending_node_id)
     )
         return;
-    mato_delete_module_instance(node_id*NODE_MULTIPLIER+module_id);
+    lock_framework();
+    net_delete_module_instance(sending_node_id,module_id);
+    unlock_framework();
+
 }
 
-void net_subscribe_remote_module(int s, int sending_node_id)
+void net_delete_module_buffers(int node_id, int module_id)
 {
-    int32_t node_id, module_id, channel, subscription_type;
+        GArray *module_buffers = g_array_index(g_array_index(buffers,GArray *,node_id), GArray *, module_id);
+        int number_of_channels = module_buffers -> len;
+        for (int i = 0; i < number_of_channels; i++)
+        {
+            GList *channel_list = g_array_index(module_buffers, GList *, i);
+            if (channel_list)
+            {
+                channel_list = decrement_references(channel_list, (channel_data *)(channel_list->data));
+                if (channel_list==0)
+                g_array_index(module_buffers, GList *, i) = 0;
+            }
+        }
+
+        g_array_index(g_array_index(module_names, GArray *, node_id), char *, module_id) = 0;
+        g_array_index(g_array_index(module_types, GArray *, node_id), char *, module_id) = 0;
+
+}
+
+
+void net_process_subscribe_module(int s, int sending_node_id)
+{
+    int32_t subscribed_module_id, channel;
     char *module_name, *module_type;
     subscriber_callback callback;
     if (
-      !net_recv_int32t(s, &node_id, sending_node_id) ||
-      !net_recv_int32t(s, &module_id, sending_node_id) ||
-      !net_recv_string(s, &module_name, sending_node_id)  ||
-      !net_recv_string(s, &module_type, sending_node_id)  ||
+      !net_recv_int32t(s, &subscribed_module_id, sending_node_id) ||
       !net_recv_int32t(s, &channel, sending_node_id) ||
-      !net_recv_callback(s, &callback, sending_node_id) ||
-      !net_recv_int32t(s, &subscription_type, sending_node_id)
     )
         return;
-    int new_subscribtion_id = mato_subscribe(sending_node_id, node_id * NODE_MULTIPLIER + module_id, channel, callback, subscription_type);
-    //post(node_id * NODE_MULTIPLIER + module_id, channel, sizeof(int), *data));????????????
+    net_subscribe(sending_node_id, subscribed_module_id, channel);
 }
 
-void net_unsubscribe_remote_module(int s, int sending_node_id)
+void net_subscribe(int sending_node_id, int subscribed_module_id, int channel)
 {
-    int32_t node_id, module_id, channel, subscription_id;
+    subscription *new_subscription = (subscription *)malloc(sizeof(subscription));
+    new_subscription->type = data_copy;
+    new_subscription->callback = 0;
+    new_subscription->subscriber_module_id = 0;
+    new_subscription->subscriber_node_id = sending_node_id;
+    lock_framework();
+        new_subscription->subscription_id = get_free_subscription_id();
+        GArray *channel_subscriptions = g_array_index(g_array_index(g_array_index(subscriptions, GArray *, this_node_id), GArray *, subscribed_module_id), GArray *, channel);
+        g_array_append_val(channel_subscriptions, new_subscription);
+    unlock_framework();
+}
+
+void net_process_unsubscribe_module(int s, int sending_node_id)
+{
+    int32_t subscribed_module_id, channel;
     if (
-      !net_recv_int32t(s, &node_id, sending_node_id) ||
-      !net_recv_int32t(s, &module_id, sending_node_id) ||
+      !net_recv_int32t(s, &subscribed_module_id, sending_node_id) ||
       !net_recv_int32t(s, &channel, sending_node_id) ||
-      !net_recv_int32t(s, &subscription_id, sending_node_id)
     )
         return;
-    mato_unsubscribe(module_id+node_id*NODE_MULTIPLIER, channel, subscription_id);
+    net_unsubscribe(sending_node_id, subscribed_module_id, channel);
 }
 
-void net_get_remote_data(int s, int sending_node_id)
+void net_unsubscribe(int sending_node_id, int subscribed_module_id, int channel)
 {
-    int32_t node_id, module_id, channel, *data_length;
-    void *data;
+    lock_framework();
+        GArray *subscriptions_for_channel = g_array_index(g_array_index(g_array_index(subscriptions, GArray *,this_node_id), GArray *, subscribed_module_id), GArray *, channel);
+        int number_of_channel_subscriptions = subscriptions_for_channel->len;
+        for (int i = 0; i < number_of_channel_subscriptions; i++)
+        {
+            subscription *s = (subscription *)g_array_index(subscriptions_for_channel, GArray *, i);
+            if (s->subscriber_node_id == sending_node_id)
+            {
+                free(s);
+                g_array_remove_index_fast(subscriptions_for_channel, i);
+                break;
+            }
+        }
+    unlock_framework();
+}
+
+
+void net_process_get_data(int s, int sending_node_id)
+{
+    int32_t module_id, channel, get_data_id;
+
     if (
-      !net_recv_int32t(s, &node_id, sending_node_id) ||
       !net_recv_int32t(s, &module_id, sending_node_id) ||
       !net_recv_int32t(s, &channel, sending_node_id) ||
-      !net_recv_int32t(s, &*data_length, sending_node_id) ||
-      !net_recv_void(s, &data, sending_node_id)
+      !net_recv_int32t(s, &get_data_id, sending_node_id)
     )
         return;
-    mato_get_data(module_id+node_id*NODE_MULTIPLIER, channel, data_length, data);    
+    net_get_data(sending_node_id, module_id, channel, get_data_id);
 }
 
-void net_subscribed_data(int s, int sending_node_id)
+
+void net_get_data(int sending_node_id, int module_id, int channel, int get_data_id)
 {
-    int32_t node_id, module_id, channel, *data_length;
-    void *data;
+    lock_framework();
+        GList *waiting_buffers = g_array_index(g_array_index(g_array_index(buffers, GArray *,this_node_id), GArray *, module_id), GList *, channel);
+        if (waiting_buffers == 0)
+        {
+            unlock_framework();
+            *data_length = 0;
+            *data = 0;
+            return;
+        }
+        channel_data *cd = (channel_data *)(waiting_buffers->data);
+
+        *data_length = cd->length;
+        *data = malloc(cd->length);
+        memcpy(*data, cd->data, cd->length);
+    unlock_framework();
+    return;
+}
+
+/// Broadcast information about new local module instance to all other nodes.
+///
+/// Packet format:
+/// -------------------------------------
+/// MSG_DATA                  int32
+/// this_node_id              int32
+/// get_data_id               int32
+/// len(data)                 int32
+/// data                      variable
+/// -------------------------------------
+void net_send_data(int get_data_id, uint8_t *data, int32_t data_length)
+{
     if (
-      !net_recv_int32t(s, &node_id, sending_node_id) ||
-      !net_recv_int32t(s, &module_id, sending_node_id) ||
+      !net_send_int32t(s, MSG_DATA)  ||
+      !net_send_int32t(s, this_node_id) ||
+      !net_send_int32t(s, get_data_id) ||
+      !net_send_bytes(s, data_length, data)
+    )
+    {
+        node_disconnected(s, node_id);
+    }
+}
+
+
+
+
+/// Broadcast information about new local module instance to all other nodes.
+///
+/// Packet format:
+/// -------------------------------------
+/// MSG_SUBSCRIBED_DATA       int32
+/// sending_node_id           int32
+/// module_id                 int32
+/// channel                   int32
+/// length                    int32
+/// data                      variable
+/// -------------------------------------
+void net_send_subscribed_data(int subscribed_node_id, channel_data *cd)
+{
+    if (
+      !net_send_int32t(s, MSG_SUBSCRIBED_DATA)  ||
+      !net_send_int32t(s, this_node_id) ||
+      !net_send_int32t(s, cd->module_id) ||
+      !net_send_int32t(s, cd->channel_id) ||
+      !net_send_bytes(s, cd->length, cd->data)
+    )
+    {
+        node_disconnected(s, node_id);
+    }
+}
+
+
+
+void net_process_subscribed_data(int s, int sending_node_id)
+{
+    int32_t module_id, channel, data_length;
+    uint8_t *data;
+    if (
+      !net_recv_int32t(s, &sending_module_id, sending_node_id) ||
       !net_recv_int32t(s, &channel, sending_node_id) ||
-      !net_recv_int32t(s, &*data_length, sending_node_id) ||
-      !net_recv_void(s, &data, sending_node_id)
+      !net_recv_int32t(s, &data_length, sending_node_id) ||
+      !net_recv_bytes(s, &data, &data_length, sending_node_id)
     )
         return;
-    mato_post_data(module_id+node_id*NODE_MULTIPLIER, channel, *data_length, data);    
+    mato_post_data(sending_module_id+sending_node_id*NODE_MULTIPLIER, channel, data_length, data);
 }
 
-void net_global_message(int s, int sending_node_id)
+void net_process_global_message(int s, int sending_node_id)
 {
-    int32_t node_id, module_id, message_id, msg_length;
-    void *message_data;
+    int32_t module_id, message_id, msg_length;
+    uint8_t *message_data;
     if (
-      !net_recv_int32t(s, &node_id, sending_node_id) ||
-      !net_recv_int32t(s, &module_id, sending_node_id) ||
+      !net_recv_int32t(s, &sending_module_id, sending_node_id) ||
       !net_recv_int32t(s, &message_id, sending_node_id) ||
-      !net_recv_int32t(s, &msg_length, sending_node_id) ||
-      !net_recv_void(s, &message_data, sending_node_id)
+      !net_recv_bytes(s, &message_data, &msg_length, sending_node_id)
     )
         return;
-    mato_send_global_message(module_id+node_id*NODE_MULTIPLIER, message_id, msg_length, message_data);    
+    mato_send_global_message(sending_module_id+sending_node_id*NODE_MULTIPLIER, message_id, msg_length, message_data);
 }
 
 /// Receive, unpack, and process a new message arriving from another node from socket s.
@@ -545,26 +709,26 @@ void process_node_message(int s, int sending_node_id)
 
     switch(message_type){
         case MSG_NEW_MODULE_INSTANCE:
-               net_process_new_module(s, sending_node_id);
-               break;
+            net_process_new_module(s, sending_node_id);
+            break;
         case MSG_DELETED_MODULE_INSTANCE:
-	       net_delete_remote_module(s, sending_node_id);
-               break;
+            net_process_delete_module(s, sending_node_id);
+            break;
         case MSG_SUBSCRIBE:
-	       net_subscribe_remote_module(s, sending_node_id);
-               break;
+            net_process_subscribe_module(s, sending_node_id);
+            break;
         case MSG_UNSUBSCRIBE:
-	       net_unsubscribe_remote_module(s, sending_node_id);
-               break;
+            net_process_unsubscribe_module(s, sending_node_id);
+            break;
         case MSG_GET_DATA:
-	       net_get_remote_data(s, sending_node_id);
-               break;
+            net_process_get_data(s, sending_node_id);
+            break;
         case MSG_SUBSCRIBED_DATA:
-	       net_subscribed_data(s, sending_node_id);
-               break;
+            net_process_subscribed_data(s, sending_node_id);
+            break;
         case MSG_GLOBAL_MESSAGE:
-	       net_global_message(s, sending_node_id);
-               break;
+            net_process_global_message(s, sending_node_id);
+            break;
     }
 }
 
@@ -882,13 +1046,23 @@ int get_free_subscription_id() // is not thread-safe
 
 /// Send a zero-terminated character string to socket.
 /// First send its length+1 as int32_t and then data.
-/// See net_recv_string() function.
+/// See net_recv_bytes() function.
 int net_send_string(int socket, char *str)
 {
     int32_t len = strlen(str) + 1;
     if (write(socket, &len, sizeof(int32_t)) < 0)
         return 0;
     if (write(socket, str, len) < 0)
+        return 0;
+    return 1;
+}
+
+
+int net_send_bytes(int socket, uint8_t *data, int32_t length)
+{
+    if (write(socket, &length, sizeof(int32_t)) < 0)
+        return 0;
+    if (write(socket, data, length) < 0)
         return 0;
     return 1;
 }
@@ -1105,6 +1279,28 @@ int mato_subscribe(int subscriber_module_id, int subscribed_module_id, int chann
     unlock_framework();
     return new_subscription->subscription_id;
 }
+void remove_subscription(int subscribed_node_id, int subscribed_module_id, int channel, int subscription_id)
+{
+    GArray *subscriptions_for_channel = g_array_index(g_array_index(g_array_index(subscriptions, GArray *,subscribed_node_id), GArray *, module_id), GArray *, channel);
+    int number_of_channel_subscriptions = subscriptions_for_channel->len;
+    for (int i = 0; i < number_of_channel_subscriptions; i++)
+    {
+        subscription *s = (subscription *)g_array_index(subscriptions_for_channel, GArray *, i);
+        if (s->subscription_id == subscription_id)
+        {
+            free(s);
+            g_array_remove_index_fast(subscriptions_for_channel, i);
+            if (subscribed_node_id != this_node_id)
+            {
+                if (subscriptions_for_channel->len == 0)
+                {
+                    // TODO: notify another node about unsubscription for this channel
+                }
+            }
+            break;
+        }
+    }
+}
 
 void mato_unsubscribe(int module_id, int channel, int subscription_id)
 {
@@ -1112,27 +1308,10 @@ void mato_unsubscribe(int module_id, int channel, int subscription_id)
     module_id %= NODE_MULTIPLIER;
 
     lock_framework();
-        GArray *subscriptions_for_channel = g_array_index(g_array_index(g_array_index(subscriptions, GArray *,subscribed_node_id), GArray *, module_id), GArray *, channel);
-        int number_of_channel_subscriptions = subscriptions_for_channel->len;
-        for (int i = 0; i < number_of_channel_subscriptions; i++)
-        {
-            subscription *s = (subscription *)g_array_index(subscriptions_for_channel, GArray *, i);
-            if (s->subscription_id == subscription_id)
-            {
-                free(s);
-                g_array_remove_index_fast(subscriptions_for_channel, i);
-                if (subscribed_node_id != this_node_id)
-                {
-                    if (subscriptions_for_channel->len == 0)
-                    {
-                        // TODO: notify another node about unsubscription for this channel
-                    }
-                }
-                break;
-            }
-        }
+        remove_subscription(subscribed_node_id, module_id, channel, subscription_id);
     unlock_framework();
 }
+
 
 void *mato_get_data_buffer(int size)
 {
@@ -1153,14 +1332,16 @@ void mato_post_data(int id_of_posting_module, int channel, int data_length, void
 
 int mato_send_global_message(int module_id_sender, int message_id, int msg_length, void *message_data)
 {
-    int local_module_id_sender = module_id_sender % NODE_MULTIPLIER;
+    int local_module_id_sender = module_id_sender % NODE_MULTIPLIER
+    int sending_node_id = module_id_sender / NODE_MULTIPLIER;
 
-    for (int node_id = 0; node_id < nodes->len; node_id++)
-    {
-        if (this_node_id == node_id) continue;
-        // TODO: forward global message to other node
-    }
+    if (sending_node_id != this_node_id)
+        for (int node_id = 0; node_id < nodes->len; node_id++)
+        {
+            if (this_node_id == node_id) continue;
+            // TODO: forward global message to other node
 
+        }
     int our_modules_count = g_array_index(module_names, GArray *, this_node_id)->len;
     for (int module_id = 0; module_id < our_modules_count; module_id++)
     {
@@ -1372,7 +1553,6 @@ int mato_threads_running()
 {
     return threads_started;
 }
-
 
 void mato_shutdown()
 {
