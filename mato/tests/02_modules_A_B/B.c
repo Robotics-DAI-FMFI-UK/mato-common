@@ -12,23 +12,41 @@
 typedef struct { 
            int module_id;
            int my_subscription_id; 
-	   int subscribed_to_module_id;
+           int subscribed_to_module_id;
+           int hello_starting_pipe[2];
         } module_B_instance_data;
 
 void *B_create_instance(int module_id)
 {
     module_B_instance_data *data = (module_B_instance_data *)malloc(sizeof(module_B_instance_data));
     data->module_id = module_id;    
+    if (pipe(data->hello_starting_pipe) < 0)
+        perror("could not create starting pipe");
     printf("created a new instance of module B (%d) at %" PRIuPTR "\n", module_id, (uintptr_t)data);
     return data;
+}
+
+static void wait_for_hello_starting_message(module_B_instance_data *data)
+{
+    uint8_t b;
+    if (read(data->hello_starting_pipe[0], &b, 1) < 0)
+        printf("could not write to starting pipe");
+}
+
+static void notify_about_hello_starting_message(module_B_instance_data *data)
+{
+    uint8_t b = 123;
+    if (write(data->hello_starting_pipe[1], &b, 1) < 0)
+        perror("could not write to starting pipe");
 }
 
 void *module_B_thread(void *arg)
 {
     mato_inc_thread_count();
     module_B_instance_data *data = (module_B_instance_data *)arg;
-    sleep(2 * data->module_id);
-    for (int i = 0; i < 5; i++)
+    wait_for_hello_starting_message(data);
+    sleep(2 * (data->module_id % 5));
+    for (int i = 0; program_runs && (i < 5); i++)
     {
         int *val = mato_get_data_buffer(sizeof(int));
 	*val = data->module_id * 10 + i;
@@ -86,17 +104,21 @@ void B_start(void *instance_data)
 void B_delete(void *instance_data)
 {
     module_B_instance_data *data = (module_B_instance_data *)instance_data;
+    close(data->hello_starting_pipe[0]);
+    close(data->hello_starting_pipe[1]);
     printf("deleting module instance (%d) = %" PRIuPTR "\n", data->module_id, (uintptr_t)data);
     free(data);
 }
 
 void B_global_message(void *instance_data, int module_id_sender, int message_id, int msg_length, void *message_data)
 {
-    int module_id = ((module_B_instance_data *)instance_data)->module_id;
+    module_B_instance_data *B_data = ((module_B_instance_data *)instance_data);
+    int module_id = B_data->module_id;
     char *data = (char *)message_data;
     if (message_id == MESSAGE_HELLO) 
     {
         printf("module %d received global HELLO messsage: '%s'\n", module_id, data);
+        notify_about_hello_starting_message(B_data);
     }
 }
 

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['subscription_58',['subscription',['../structsubscription.html',1,'']]]
+  ['node_5finfo_64',['node_info',['../structnode__info.html',1,'']]]
 ];

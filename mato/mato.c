@@ -424,7 +424,6 @@ void store_new_remote_module(int node_id, int module_id, char *module_name, char
        g_array_append_val(module_buffers, channel_buffers);
     }
     unlock_framework();
-
     
     printf("got info about new module %d from node %d (%s|%s) with %d channels\n", node_id, module_id, module_name, module_type, number_of_channels);
 }
@@ -444,7 +443,6 @@ void net_process_new_module(int s, int sending_node_id)
         return;
     store_new_remote_module(node_id, module_id, module_name, module_type, number_of_channels);
 }
-
 
 void net_delete_remote_module(int s, int sending_node_id)
 {
@@ -537,7 +535,6 @@ void net_global_message(int s, int sending_node_id)
         return;
     mato_send_global_message(module_id+node_id*NODE_MULTIPLIER, message_id, msg_length, message_data);    
 }
-
 
 /// Receive, unpack, and process a new message arriving from another node from socket s.
 void process_node_message(int s, int sending_node_id)
@@ -1115,7 +1112,6 @@ void mato_unsubscribe(int module_id, int channel, int subscription_id)
     module_id %= NODE_MULTIPLIER;
 
     lock_framework();
-    
         GArray *subscriptions_for_channel = g_array_index(g_array_index(g_array_index(subscriptions, GArray *,subscribed_node_id), GArray *, module_id), GArray *, channel);
         int number_of_channel_subscriptions = subscriptions_for_channel->len;
         for (int i = 0; i < number_of_channel_subscriptions; i++)
@@ -1325,15 +1321,14 @@ GArray* mato_get_list_of_modules(char *type)
 
 void mato_free_list_of_modules(GArray* a)
 {
-  int n = a->len;
-  for (int i = 0; i < n; i++)
-  {
-      module_info *info = g_array_index(a, module_info *, i);
-      free(info);
-  }
-  g_array_free(a, 1);
+    int n = a->len;
+    for (int i = 0; i < n; i++)
+    {
+        module_info *info = g_array_index(a, module_info *, i);
+        free(info);
+    }
+    g_array_free(a, 1);
 }
-
 
 void mato_data_buffer_usage(int module_id, int channel, int *number_of_allocated_buffers, int *total_sum_of_ref_count)
 {

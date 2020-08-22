@@ -155,6 +155,9 @@ GArray* mato_get_list_of_all_modules();
 /// it is not needed anymore.
 GArray* mato_get_list_of_modules(char *type);
 
+/// Retrieve the number of currently running modules 
+int mato_get_number_of_modules();
+
 /// Free the list of modules returned by either of the two functions mato_get_list_of_modules() or mato_get_list_of_modules().
 void mato_free_list_of_modules(GArray* a);
 

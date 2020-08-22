@@ -9,13 +9,18 @@
 #include "../../mato.h"
 #include "AB.h"
 
+#define NUMBER_OF_HELLOs_TO_WAIT_FOR 12
+
 typedef struct { 
-           char type;
-           int module_id;
-           int my_subscription_id;
-           int subscribed_to_module_id;
-           int msg_queue[2];
-           int hello_starting_pipe[2];
+            char type;
+            int module_id;
+            int my_subscription_id;
+            int subscribed_to_module_id;
+            int msg_queue[2];
+            int starting_pipe[2];
+            int hello_count;
+            pthread_mutex_t lock;
+            int forwarder;
         } module_AB_instance_data;
 
 static time_t tm0;
@@ -26,11 +31,24 @@ void *AB_create_instance(int module_id, char type)
     module_AB_instance_data *data = (module_AB_instance_data *)malloc(sizeof(module_AB_instance_data));
     data->module_id = module_id;    
     data->type = type;
-    if (pipe(data->hello_starting_pipe) < 0)
+    data->hello_count = 0;
+    data->forwarder = 1;
+    if (pipe(data->starting_pipe) < 0)
         perror("could not create starting pipe");
+    pthread_mutex_init(&data->lock, 0);
     time(&tm);
     printf("%u created a new instance of module %c (%d) at %" PRIuPTR "\n", (unsigned int)(tm - tm0), type, module_id, (uintptr_t)data);
     return data;
+}
+
+void AB_lock(module_AB_instance_data *data)
+{
+    pthread_mutex_lock(&data->lock);
+}
+
+void AB_unlock(module_AB_instance_data *data)
+{
+    pthread_mutex_unlock(&data->lock);
 }
 
 void *A_create_instance(int module_id)
@@ -43,17 +61,17 @@ void *B_create_instance(int module_id)
     return AB_create_instance(module_id, 'B');
 }
 
-static void wait_for_hello_starting_message(module_AB_instance_data *data)
+static void wait_for_hello_messages(module_AB_instance_data *data)
 {
     uint8_t b;
-    if (read(data->hello_starting_pipe[0], &b, 1) < 0)
+    if (read(data->starting_pipe[0], &b, 1) < 0)
         printf("could not write to starting pipe");
 }
 
-static void notify_about_hello_starting_message(module_AB_instance_data *data)
+static void notify_about_hello_messages(module_AB_instance_data *data)
 {
     uint8_t b = 123;
-    if (write(data->hello_starting_pipe[1], &b, 1) < 0)
+    if (write(data->starting_pipe[1], &b, 1) < 0)
         perror("could not write to starting pipe");
 }
 
@@ -62,7 +80,15 @@ void *module_AB_thread(void *arg)
     time_t tm;
     mato_inc_thread_count();
     module_AB_instance_data *data = (module_AB_instance_data *)arg;
-    wait_for_hello_starting_message(data);
+
+    printf("%u module_%c_thread (%d) enters barrier...\n", (unsigned int)(tm - tm0), data->type, data->module_id);
+
+    // all modules barrier
+    mato_send_global_message(data->module_id, MESSAGE_HELLO, 3, "hi");
+    wait_for_hello_messages(data);
+
+    printf("%u module_%c_thread (%d) leaves barrier...\n", (unsigned int)(tm - tm0), data->type, data->module_id);
+
     sleep(2 * (data->module_id % 5));
     for (int i = 0; program_runs && (i < 5); i++)
     {
@@ -102,7 +128,7 @@ void *module_AB_msg_eating_thread(void *arg)
         printf("%u %c(%d) returns borrowed ptr to message %d\n", (unsigned int)(tm - tm0), data->type, data->module_id, val);
         mato_release_data(data->subscribed_to_module_id, 0, val_ptr);
 
-        if (data->module_id < 3)
+        if (data->forwarder)
         {
             printf("%u %c(%d) post-forwards message %d as %d\n", (unsigned int)(tm - tm0), data->type, data->module_id, val, *fwd_val);
             mato_post_data(data->module_id, 0, sizeof(int), fwd_val);
@@ -128,26 +154,30 @@ void AB_start(void *instance_data)
 {
     time_t tm;
     module_AB_instance_data *data = (module_AB_instance_data *)instance_data;
+    int module_ids[3][2][2];  // [node_id][A=0/B=1][1-2] 
+    static char module_name[6];
 
-    //a1 wants to subscribe to b2
-    //a2 wants to subscribe to b1
-    //b1 wants to subscribe to a1
-    
+    // nx_yz wants to subscribe to n((x + 1) % 3 )_('A' + 'B' - y)(1 - z)
+    // this gives 2 loops with 6 modules, always hoping to another node
+
     int module_id = data->module_id;
     char *my_name = mato_get_module_name(module_id);
 
-    int a1 = mato_get_module_id("A1");
-    int a2 = mato_get_module_id("A2");
-    int b1 = mato_get_module_id("B1");
-    int b2 = mato_get_module_id("B2");
-
-    if (strcmp(my_name, "A1") == 0) 
-	data->subscribed_to_module_id = b2;
-    else if (strcmp(my_name, "A2") == 0)
-	data->subscribed_to_module_id = b1;
-    else if (strcmp(my_name, "B1") == 0)
-	data->subscribed_to_module_id = a1;
-    else data->subscribed_to_module_id = a2;
+    for (int node_id = 0; node_id < 3; node_id++)
+        for (char type = 'A'; type <= 'B'; type++)
+            for (int ord = 0; ord < 2; ord++)
+            {
+               sprintf(module_name, "n%d_%c%d", node_id, type, ord);
+               module_ids[node_id][type - 'A'][ord] = mato_get_module_id(module_name);
+            }    
+    char my_node = my_name[1];
+    char my_type = my_name[3];
+    char my_ord = my_name[4];
+    
+	data->subscribed_to_module_id = module_ids[(my_node + 1) % 3]['A' + 'B' - my_type][1 - my_ord];
+  
+    // n2_B{01} is not forwarding received messages further
+    if ((my_node == 2) && (my_type == 'B')) data->forwarder = 0;
 
     if (pipe(data->msg_queue) < 0)
     {
@@ -170,9 +200,10 @@ void AB_delete(void *instance_data)
 {
     time_t tm;
     module_AB_instance_data *data = (module_AB_instance_data *)instance_data;
-    close(data->hello_starting_pipe[0]);
-    close(data->hello_starting_pipe[1]);
     time(&tm);
+    close(data->starting_pipe[0]);
+    close(data->starting_pipe[1]);
+    pthread_mutex_destroy(&data->lock);
     printf("%u deleting module instance (%d) = %" PRIuPTR "\n", (unsigned int)(tm - tm0), data->module_id, (uintptr_t)data);
     free(data);
 }
@@ -186,7 +217,11 @@ void AB_global_message(void *instance_data, int module_id_sender, int message_id
     if (message_id == MESSAGE_HELLO) 
     {
         printf("%u module %c(%d) received global HELLO messsage: '%s'\n", (unsigned int)(tm - tm0), my_data->type, my_data->module_id, data);
-        notify_about_hello_starting_message(my_data);
+        AB_lock(my_data);
+            my_data->hello_count++;
+            if (my_data->hello_count == NUMBER_OF_HELLOs_TO_WAIT_FOR) 
+                notify_about_hello_messages(my_data);
+        AB_unlock(my_data);
     }
 }
 
