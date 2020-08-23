@@ -88,7 +88,9 @@ void \mbox{\hyperlink{mato__core_8h_a46237792544cdb9542f03f0504d3a73f}{pack\+\_\
 void \mbox{\hyperlink{mato__core_8h_ae85edaed4da057ef1db61b7b02c13b1b}{return\+\_\+data\+\_\+to\+\_\+waiting\+\_\+module}} (int get\+\_\+data\+\_\+id, int data\+\_\+length, uint8\+\_\+t $\ast$data)
 \begin{DoxyCompactList}\small\item\em Remote node is sending data that some module of this node requested and waits for. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{mato__core_8h_a5e81c3dd52599310f9ae512214c80ad1}{copy\+\_\+of\+\_\+last\+\_\+data\+\_\+of\+\_\+channel}} (int node\+\_\+id, int module\+\_\+id, int channel, int $\ast$data\+\_\+length, uint8\+\_\+t $\ast$$\ast$data)
-\begin{DoxyCompactList}\small\item\em From buffers, retrieve the most recent message from a specified module/channel, make a copy of it and return the pointer to and size of the message in the $\ast$data\+\_\+length and $\ast$data variables. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em From buffers, retrieve the most recent message from a specified module/channel, make a copy of it and return the pointer to and size of the message in the $\ast$data\+\_\+length and $\ast$data variables. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{mato__core_8h_abb023f531c9ca9e7a3a699bfa2a04f9d}{borrow\+\_\+last\+\_\+data\+\_\+of\+\_\+channel}} (int node\+\_\+id, int module\+\_\+id, int channel, int $\ast$data\+\_\+length, uint8\+\_\+t $\ast$$\ast$data)
+\begin{DoxyCompactList}\small\item\em From buffers, retrieve the most recent message from a specified module/channel, increase its reference count and return the pointer to and size of the message in the $\ast$data\+\_\+length and $\ast$data variables. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Variables}
 \begin{DoxyCompactItemize}
 \item 
@@ -139,7 +141,17 @@ Mato control framework -\/ internal core implementation function protypes and ty
 
 
 \doxysubsection{Function Documentation}
-\mbox{\Hypertarget{mato__core_8h_a5e81c3dd52599310f9ae512214c80ad1}\label{mato__core_8h_a5e81c3dd52599310f9ae512214c80ad1}} 
+\mbox{\Hypertarget{mato__core_8h_abb023f531c9ca9e7a3a699bfa2a04f9d}\label{mato__core_8h_abb023f531c9ca9e7a3a699bfa2a04f9d}} 
+\index{mato\_core.h@{mato\_core.h}!borrow\_last\_data\_of\_channel@{borrow\_last\_data\_of\_channel}}
+\index{borrow\_last\_data\_of\_channel@{borrow\_last\_data\_of\_channel}!mato\_core.h@{mato\_core.h}}
+\doxysubsubsection{\texorpdfstring{borrow\_last\_data\_of\_channel()}{borrow\_last\_data\_of\_channel()}}
+{\footnotesize\ttfamily void borrow\+\_\+last\+\_\+data\+\_\+of\+\_\+channel (\begin{DoxyParamCaption}\item[{int}]{node\+\_\+id,  }\item[{int}]{module\+\_\+id,  }\item[{int}]{channel,  }\item[{int $\ast$}]{data\+\_\+length,  }\item[{uint8\+\_\+t $\ast$$\ast$}]{data }\end{DoxyParamCaption})}
+
+
+
+From buffers, retrieve the most recent message from a specified module/channel, increase its reference count and return the pointer to and size of the message in the $\ast$data\+\_\+length and $\ast$data variables. 
+
+If there is no data posted by that module yet, both $\ast$data\+\_\+length and $\ast$data will be 0. \mbox{\Hypertarget{mato__core_8h_a5e81c3dd52599310f9ae512214c80ad1}\label{mato__core_8h_a5e81c3dd52599310f9ae512214c80ad1}} 
 \index{mato\_core.h@{mato\_core.h}!copy\_of\_last\_data\_of\_channel@{copy\_of\_last\_data\_of\_channel}}
 \index{copy\_of\_last\_data\_of\_channel@{copy\_of\_last\_data\_of\_channel}!mato\_core.h@{mato\_core.h}}
 \doxysubsubsection{\texorpdfstring{copy\_of\_last\_data\_of\_channel()}{copy\_of\_last\_data\_of\_channel()}}

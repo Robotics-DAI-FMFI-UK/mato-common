@@ -200,6 +200,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a5e81c3dd52599310f9ae512214c80ad1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__core_8h.html#a5e81c3dd52599310f9ae512214c80ad1">copy_of_last_data_of_channel</a> (int node_id, int module_id, int channel, int *data_length, uint8_t **data)</td></tr>
 <tr class="memdesc:a5e81c3dd52599310f9ae512214c80ad1"><td class="mdescLeft">&#160;</td><td class="mdescRight">From buffers, retrieve the most recent message from a specified module/channel, make a copy of it and return the pointer to and size of the message in the *data_length and *data variables.  <a href="mato__core_8h.html#a5e81c3dd52599310f9ae512214c80ad1">More...</a><br /></td></tr>
 <tr class="separator:a5e81c3dd52599310f9ae512214c80ad1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb023f531c9ca9e7a3a699bfa2a04f9d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__core_8h.html#abb023f531c9ca9e7a3a699bfa2a04f9d">borrow_last_data_of_channel</a> (int node_id, int module_id, int channel, int *data_length, uint8_t **data)</td></tr>
+<tr class="memdesc:abb023f531c9ca9e7a3a699bfa2a04f9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">From buffers, retrieve the most recent message from a specified module/channel, increase its reference count and return the pointer to and size of the message in the *data_length and *data variables.  <a href="mato__core_8h.html#abb023f531c9ca9e7a3a699bfa2a04f9d">More...</a><br /></td></tr>
+<tr class="separator:abb023f531c9ca9e7a3a699bfa2a04f9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
@@ -280,6 +283,55 @@ Variables</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="abb023f531c9ca9e7a3a699bfa2a04f9d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abb023f531c9ca9e7a3a699bfa2a04f9d">&#9670;&nbsp;</a></span>borrow_last_data_of_channel()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void borrow_last_data_of_channel </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>node_id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>module_id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>channel</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>data_length</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t **&#160;</td>
+          <td class="paramname"><em>data</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>From buffers, retrieve the most recent message from a specified module/channel, increase its reference count and return the pointer to and size of the message in the *data_length and *data variables. </p>
+<p>If there is no data posted by that module yet, both *data_length and *data will be 0. </p>
+
+</div>
+</div>
 <a id="a5e81c3dd52599310f9ae512214c80ad1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5e81c3dd52599310f9ae512214c80ad1">&#9670;&nbsp;</a></span>copy_of_last_data_of_channel()</h2>
 

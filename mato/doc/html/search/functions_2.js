@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['fill_5fselect_5ffd_5fset_175',['fill_select_fd_set',['../mato__net_8c.html#aac8e61ea43e2c61d202ad28c646194d3',1,'mato_net.c']]]
+  ['decrement_5freferences_183',['decrement_references',['../mato__core_8c.html#a948891305b2d86ead8d8b9e98ee992ea',1,'decrement_references(GList *data_buffers, channel_data *to_be_decremented):&#160;mato_core.c'],['../mato__core_8h.html#a948891305b2d86ead8d8b9e98ee992ea',1,'decrement_references(GList *data_buffers, channel_data *to_be_decremented):&#160;mato_core.c']]]
 ];

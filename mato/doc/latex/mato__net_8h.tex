@@ -49,14 +49,24 @@ void \mbox{\hyperlink{mato__net_8h_aef72140c8f7454f33e028ea9e8e50ce8}{net\+\_\+m
 \begin{DoxyCompactList}\small\item\em Close and release resources used by the networking. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{mato__net_8h_a073d05e5bf9e0ffebb49c0251d250c0f}{start\+\_\+networking}} ()
 \begin{DoxyCompactList}\small\item\em Create listening socket for other nodes, start reconnecting and communication threads. \end{DoxyCompactList}\item 
-void \mbox{\hyperlink{mato__net_8h_a89b6e0a431131bbd10afb037237fc9d5}{net\+\_\+announce\+\_\+new\+\_\+module}} (int module\+\_\+id)
+void \mbox{\hyperlink{mato__net_8h_ae5a212558cd3b1a1ec8c3852b5a445c0}{net\+\_\+broadcast\+\_\+new\+\_\+module}} (int module\+\_\+id)
 \begin{DoxyCompactList}\small\item\em Broadcast information about new local module instance to all other nodes. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{mato__net_8h_ad8913452c8999b38b60a3732577d9e64}{net\+\_\+send\+\_\+new\+\_\+module}} (int node\+\_\+id, int module\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Send information about new local module instance to a specific node. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{mato__net_8h_a6f5e0a1a54d499b01ed57c8d0ffddeb0}{net\+\_\+send\+\_\+subscribed\+\_\+data}} (int subscribed\+\_\+node\+\_\+id, \mbox{\hyperlink{structchannel__data}{channel\+\_\+data}} $\ast$cd)
 \begin{DoxyCompactList}\small\item\em Send a new message posted by our local module to another node that is subscribed to that channel. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{mato__net_8h_ad33f0d39a802c383a33e794724495b81}{net\+\_\+send\+\_\+data}} (int node\+\_\+id, int get\+\_\+data\+\_\+id, uint8\+\_\+t $\ast$data, int32\+\_\+t data\+\_\+length)
 \begin{DoxyCompactList}\small\item\em Send data that were requested by M\+S\+G\+\_\+\+G\+E\+T\+\_\+\+D\+A\+TA message to the node that requested. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{mato__net_8h_ae4829c6e194570023c226f85d8e74486}{net\+\_\+send\+\_\+get\+\_\+data}} (int node\+\_\+id, int module\+\_\+id, int channel, int get\+\_\+data\+\_\+id)
 \begin{DoxyCompactList}\small\item\em Request data from a channel of a module on a different node. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{mato__net_8h_a997bc9295c99204bb12dd33b0d389389}{net\+\_\+send\+\_\+delete\+\_\+module}} (int module\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Broadcast information that module at this node has been deleted. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{mato__net_8h_a0479bbf8ad6c495de648fcb75d5ee1ad}{net\+\_\+send\+\_\+subscribe}} (int node\+\_\+id, int module\+\_\+id, int channel)
+\begin{DoxyCompactList}\small\item\em Send a subscription to a channel of a module running on a different node. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{mato__net_8h_a21f2927c0c042e1407dd7ef4c9b9d93a}{net\+\_\+send\+\_\+unsubscribe}} (int node\+\_\+id, int module\+\_\+id, int channel)
+\begin{DoxyCompactList}\small\item\em Send a unsubscription to a channel of a module running on a different node. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{mato__net_8h_ad78484930a66eb4b923b8d94df852f20}{net\+\_\+send\+\_\+global\+\_\+message}} (int sending\+\_\+module\+\_\+id, int message\+\_\+id, uint8\+\_\+t $\ast$message\+\_\+data, int message\+\_\+length)
+\begin{DoxyCompactList}\small\item\em Broadcast global message to all other nodes. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{mato__net_8h_affc613d7e6afcf44c6f079084a991b33}{net\+\_\+delete\+\_\+module\+\_\+instance}} (int node\+\_\+id, int module\+\_\+id)
 \begin{DoxyCompactList}\small\item\em Soon to be updated... \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Variables}
@@ -129,31 +139,17 @@ Mato control framework -\/ internal networking definitions.
 
 
 \doxysubsection{Function Documentation}
-\mbox{\Hypertarget{mato__net_8h_a89b6e0a431131bbd10afb037237fc9d5}\label{mato__net_8h_a89b6e0a431131bbd10afb037237fc9d5}} 
-\index{mato\_net.h@{mato\_net.h}!net\_announce\_new\_module@{net\_announce\_new\_module}}
-\index{net\_announce\_new\_module@{net\_announce\_new\_module}!mato\_net.h@{mato\_net.h}}
-\doxysubsubsection{\texorpdfstring{net\_announce\_new\_module()}{net\_announce\_new\_module()}}
-{\footnotesize\ttfamily void net\+\_\+announce\+\_\+new\+\_\+module (\begin{DoxyParamCaption}\item[{int}]{module\+\_\+id }\end{DoxyParamCaption})}
+\mbox{\Hypertarget{mato__net_8h_ae5a212558cd3b1a1ec8c3852b5a445c0}\label{mato__net_8h_ae5a212558cd3b1a1ec8c3852b5a445c0}} 
+\index{mato\_net.h@{mato\_net.h}!net\_broadcast\_new\_module@{net\_broadcast\_new\_module}}
+\index{net\_broadcast\_new\_module@{net\_broadcast\_new\_module}!mato\_net.h@{mato\_net.h}}
+\doxysubsubsection{\texorpdfstring{net\_broadcast\_new\_module()}{net\_broadcast\_new\_module()}}
+{\footnotesize\ttfamily void net\+\_\+broadcast\+\_\+new\+\_\+module (\begin{DoxyParamCaption}\item[{int}]{module\+\_\+id }\end{DoxyParamCaption})}
 
 
 
 Broadcast information about new local module instance to all other nodes. 
 
-
-\begin{DoxyCode}{0}
-\DoxyCodeLine{Packet format:}
-\DoxyCodeLine{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}
-\DoxyCodeLine{\mbox{\hyperlink{mato__net_8h_a0e3a7df94130de2dacc9b60df772627c}{MSG\_NEW\_MODULE\_INSTANCE}}   int32}
-\DoxyCodeLine{sending\_node\_id           int32}
-\DoxyCodeLine{[local]module\_id          int32}
-\DoxyCodeLine{len(module\_name)+1        int32}
-\DoxyCodeLine{module\_name               variable}
-\DoxyCodeLine{len(module\_type)+1        int32}
-\DoxyCodeLine{module\_type               variable}
-\DoxyCodeLine{number\_of\_channels        int32}
-\DoxyCodeLine{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}
-\end{DoxyCode}
- \mbox{\Hypertarget{mato__net_8h_affc613d7e6afcf44c6f079084a991b33}\label{mato__net_8h_affc613d7e6afcf44c6f079084a991b33}} 
+\mbox{\Hypertarget{mato__net_8h_affc613d7e6afcf44c6f079084a991b33}\label{mato__net_8h_affc613d7e6afcf44c6f079084a991b33}} 
 \index{mato\_net.h@{mato\_net.h}!net\_delete\_module\_instance@{net\_delete\_module\_instance}}
 \index{net\_delete\_module\_instance@{net\_delete\_module\_instance}!mato\_net.h@{mato\_net.h}}
 \doxysubsubsection{\texorpdfstring{net\_delete\_module\_instance()}{net\_delete\_module\_instance()}}
@@ -204,6 +200,25 @@ Send data that were requested by M\+S\+G\+\_\+\+G\+E\+T\+\_\+\+D\+A\+TA message 
 \DoxyCodeLine{data                      variable}
 \DoxyCodeLine{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}
 \end{DoxyCode}
+ \mbox{\Hypertarget{mato__net_8h_a997bc9295c99204bb12dd33b0d389389}\label{mato__net_8h_a997bc9295c99204bb12dd33b0d389389}} 
+\index{mato\_net.h@{mato\_net.h}!net\_send\_delete\_module@{net\_send\_delete\_module}}
+\index{net\_send\_delete\_module@{net\_send\_delete\_module}!mato\_net.h@{mato\_net.h}}
+\doxysubsubsection{\texorpdfstring{net\_send\_delete\_module()}{net\_send\_delete\_module()}}
+{\footnotesize\ttfamily void net\+\_\+send\+\_\+delete\+\_\+module (\begin{DoxyParamCaption}\item[{int}]{module\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+Broadcast information that module at this node has been deleted. 
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Packet format:}
+\DoxyCodeLine{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}
+\DoxyCodeLine{\mbox{\hyperlink{mato__net_8h_a177f9c05035981b72ff09e2310b1388d}{MSG\_DELETED\_MODULE\_INSTANCE}}  int32}
+\DoxyCodeLine{sending\_node\_id              int32}
+\DoxyCodeLine{module\_id                    int32}
+\DoxyCodeLine{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}
+\end{DoxyCode}
  \mbox{\Hypertarget{mato__net_8h_ae4829c6e194570023c226f85d8e74486}\label{mato__net_8h_ae4829c6e194570023c226f85d8e74486}} 
 \index{mato\_net.h@{mato\_net.h}!net\_send\_get\_data@{net\_send\_get\_data}}
 \index{net\_send\_get\_data@{net\_send\_get\_data}!mato\_net.h@{mato\_net.h}}
@@ -218,11 +233,77 @@ Request data from a channel of a module on a different node.
 \begin{DoxyCode}{0}
 \DoxyCodeLine{Packet format:}
 \DoxyCodeLine{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}
-\DoxyCodeLine{\mbox{\hyperlink{mato__net_8h_ac319d4cc777b829878d4012f076ad5fa}{MSG\_DATA}}                  int32}
+\DoxyCodeLine{\mbox{\hyperlink{mato__net_8h_a57594e74f6296fcda847e25fc7810603}{MSG\_GET\_DATA}}              int32}
 \DoxyCodeLine{sending\_node\_id           int32}
+\DoxyCodeLine{module\_id                 int32}
+\DoxyCodeLine{channel                   int32}
 \DoxyCodeLine{get\_data\_id               int32}
-\DoxyCodeLine{len(data)                 int32}
-\DoxyCodeLine{data                      variable}
+\DoxyCodeLine{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}
+\end{DoxyCode}
+ \mbox{\Hypertarget{mato__net_8h_ad78484930a66eb4b923b8d94df852f20}\label{mato__net_8h_ad78484930a66eb4b923b8d94df852f20}} 
+\index{mato\_net.h@{mato\_net.h}!net\_send\_global\_message@{net\_send\_global\_message}}
+\index{net\_send\_global\_message@{net\_send\_global\_message}!mato\_net.h@{mato\_net.h}}
+\doxysubsubsection{\texorpdfstring{net\_send\_global\_message()}{net\_send\_global\_message()}}
+{\footnotesize\ttfamily void net\+\_\+send\+\_\+global\+\_\+message (\begin{DoxyParamCaption}\item[{int}]{sending\+\_\+module\+\_\+id,  }\item[{int}]{message\+\_\+id,  }\item[{uint8\+\_\+t $\ast$}]{message\+\_\+data,  }\item[{int}]{message\+\_\+length }\end{DoxyParamCaption})}
+
+
+
+Broadcast global message to all other nodes. 
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Packet format:}
+\DoxyCodeLine{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}
+\DoxyCodeLine{\mbox{\hyperlink{mato__net_8h_aacd704c39679de7ea563044ffed64794}{MSG\_GLOBAL\_MESSAGE}}        int32}
+\DoxyCodeLine{sending\_node\_id           int32}
+\DoxyCodeLine{sending\_module\_id         int32}
+\DoxyCodeLine{message\_id                int32}
+\DoxyCodeLine{len(message\_data)         int32}
+\DoxyCodeLine{message\_data              variable}
+\DoxyCodeLine{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}
+\end{DoxyCode}
+ \mbox{\Hypertarget{mato__net_8h_ad8913452c8999b38b60a3732577d9e64}\label{mato__net_8h_ad8913452c8999b38b60a3732577d9e64}} 
+\index{mato\_net.h@{mato\_net.h}!net\_send\_new\_module@{net\_send\_new\_module}}
+\index{net\_send\_new\_module@{net\_send\_new\_module}!mato\_net.h@{mato\_net.h}}
+\doxysubsubsection{\texorpdfstring{net\_send\_new\_module()}{net\_send\_new\_module()}}
+{\footnotesize\ttfamily void net\+\_\+send\+\_\+new\+\_\+module (\begin{DoxyParamCaption}\item[{int}]{node\+\_\+id,  }\item[{int}]{module\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+Send information about new local module instance to a specific node. 
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Packet format:}
+\DoxyCodeLine{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}
+\DoxyCodeLine{\mbox{\hyperlink{mato__net_8h_a0e3a7df94130de2dacc9b60df772627c}{MSG\_NEW\_MODULE\_INSTANCE}}   int32}
+\DoxyCodeLine{sending\_node\_id           int32}
+\DoxyCodeLine{[local]module\_id          int32}
+\DoxyCodeLine{len(module\_name)+1        int32}
+\DoxyCodeLine{module\_name               variable}
+\DoxyCodeLine{len(module\_type)+1        int32}
+\DoxyCodeLine{module\_type               variable}
+\DoxyCodeLine{number\_of\_channels        int32}
+\DoxyCodeLine{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}
+\end{DoxyCode}
+ \mbox{\Hypertarget{mato__net_8h_a0479bbf8ad6c495de648fcb75d5ee1ad}\label{mato__net_8h_a0479bbf8ad6c495de648fcb75d5ee1ad}} 
+\index{mato\_net.h@{mato\_net.h}!net\_send\_subscribe@{net\_send\_subscribe}}
+\index{net\_send\_subscribe@{net\_send\_subscribe}!mato\_net.h@{mato\_net.h}}
+\doxysubsubsection{\texorpdfstring{net\_send\_subscribe()}{net\_send\_subscribe()}}
+{\footnotesize\ttfamily void net\+\_\+send\+\_\+subscribe (\begin{DoxyParamCaption}\item[{int}]{node\+\_\+id,  }\item[{int}]{module\+\_\+id,  }\item[{int}]{channel }\end{DoxyParamCaption})}
+
+
+
+Send a subscription to a channel of a module running on a different node. 
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Packet format:}
+\DoxyCodeLine{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}
+\DoxyCodeLine{\mbox{\hyperlink{mato__net_8h_af2027af6d3e42f33980d6db493fbb3a4}{MSG\_SUBSCRIBE}}             int32}
+\DoxyCodeLine{sending\_node\_id           int32}
+\DoxyCodeLine{module\_id                 int32}
+\DoxyCodeLine{channel                   int32}
 \DoxyCodeLine{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}
 \end{DoxyCode}
  \mbox{\Hypertarget{mato__net_8h_a6f5e0a1a54d499b01ed57c8d0ffddeb0}\label{mato__net_8h_a6f5e0a1a54d499b01ed57c8d0ffddeb0}} 
@@ -245,6 +326,26 @@ Send a new message posted by our local module to another node that is subscribed
 \DoxyCodeLine{channel                   int32}
 \DoxyCodeLine{length                    int32}
 \DoxyCodeLine{data                      variable}
+\DoxyCodeLine{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}
+\end{DoxyCode}
+ \mbox{\Hypertarget{mato__net_8h_a21f2927c0c042e1407dd7ef4c9b9d93a}\label{mato__net_8h_a21f2927c0c042e1407dd7ef4c9b9d93a}} 
+\index{mato\_net.h@{mato\_net.h}!net\_send\_unsubscribe@{net\_send\_unsubscribe}}
+\index{net\_send\_unsubscribe@{net\_send\_unsubscribe}!mato\_net.h@{mato\_net.h}}
+\doxysubsubsection{\texorpdfstring{net\_send\_unsubscribe()}{net\_send\_unsubscribe()}}
+{\footnotesize\ttfamily void net\+\_\+send\+\_\+unsubscribe (\begin{DoxyParamCaption}\item[{int}]{node\+\_\+id,  }\item[{int}]{module\+\_\+id,  }\item[{int}]{channel }\end{DoxyParamCaption})}
+
+
+
+Send a unsubscription to a channel of a module running on a different node. 
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Packet format:}
+\DoxyCodeLine{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}
+\DoxyCodeLine{\mbox{\hyperlink{mato__net_8h_af2027af6d3e42f33980d6db493fbb3a4}{MSG\_SUBSCRIBE}}             int32}
+\DoxyCodeLine{sending\_node\_id           int32}
+\DoxyCodeLine{module\_id                 int32}
+\DoxyCodeLine{channel                   int32}
 \DoxyCodeLine{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}
 \end{DoxyCode}
  \mbox{\Hypertarget{mato__net_8h_a073d05e5bf9e0ffebb49c0251d250c0f}\label{mato__net_8h_a073d05e5bf9e0ffebb49c0251d250c0f}} 

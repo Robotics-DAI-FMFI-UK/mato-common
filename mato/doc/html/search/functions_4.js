@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['handle_5fincomming_5fconnections_178',['handle_incomming_connections',['../mato__net_8c.html#a86c49d5fb2c98e853e623a1a846cdbdf',1,'mato_net.c']]],
-  ['handle_5fmessages_5ffrom_5fother_5fnodes_179',['handle_messages_from_other_nodes',['../mato__net_8c.html#a7420e33d1907b957903559e7ab3e1d37',1,'mato_net.c']]],
-  ['handle_5fwakeup_5fsignal_180',['handle_wakeup_signal',['../mato__net_8c.html#a9240dd1d60fc0a144d43812df1432b82',1,'mato_net.c']]]
+  ['get_5ffree_5fmodule_5fid_185',['get_free_module_id',['../mato__core_8c.html#ae97dbf0eeadf4345327dcf392d02c30c',1,'get_free_module_id():&#160;mato_core.c'],['../mato__core_8h.html#ae97dbf0eeadf4345327dcf392d02c30c',1,'get_free_module_id():&#160;mato_core.c']]],
+  ['get_5ffree_5fsubscription_5fid_186',['get_free_subscription_id',['../mato__core_8c.html#aa96455f34de227205787b911dbe51847',1,'get_free_subscription_id():&#160;mato_core.c'],['../mato__core_8h.html#aa96455f34de227205787b911dbe51847',1,'get_free_subscription_id():&#160;mato_core.c']]],
+  ['get_5fptr_5fto_5flast_5fdata_5fof_5fchannel_187',['get_ptr_to_last_data_of_channel',['../mato__core_8c.html#a57b793803980052a4ff737212eb9a658',1,'mato_core.c']]]
 ];

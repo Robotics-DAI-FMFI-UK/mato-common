@@ -66,8 +66,12 @@ void \mbox{\hyperlink{mato__core_8c_a46237792544cdb9542f03f0504d3a73f}{pack\+\_\
 \begin{DoxyCompactList}\small\item\em Remote module is requesting data from our channel, retrieve them and send back. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{mato__core_8c_ad4f4c0cf2b22dad78c8d00bc9c975ab8}{return\+\_\+data\+\_\+to\+\_\+waiting\+\_\+module}} (int get\+\_\+data\+\_\+id, int32\+\_\+t data\+\_\+length, uint8\+\_\+t $\ast$data)
 \item 
+static \mbox{\hyperlink{structchannel__data}{channel\+\_\+data}} $\ast$ \mbox{\hyperlink{mato__core_8c_a57b793803980052a4ff737212eb9a658}{get\+\_\+ptr\+\_\+to\+\_\+last\+\_\+data\+\_\+of\+\_\+channel}} (int node\+\_\+id, int module\+\_\+id, int channel, int $\ast$data\+\_\+length)
+\item 
 void \mbox{\hyperlink{mato__core_8c_a5e81c3dd52599310f9ae512214c80ad1}{copy\+\_\+of\+\_\+last\+\_\+data\+\_\+of\+\_\+channel}} (int node\+\_\+id, int module\+\_\+id, int channel, int $\ast$data\+\_\+length, uint8\+\_\+t $\ast$$\ast$data)
-\begin{DoxyCompactList}\small\item\em From buffers, retrieve the most recent message from a specified module/channel, make a copy of it and return the pointer to and size of the message in the $\ast$data\+\_\+length and $\ast$data variables. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em From buffers, retrieve the most recent message from a specified module/channel, make a copy of it and return the pointer to and size of the message in the $\ast$data\+\_\+length and $\ast$data variables. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{mato__core_8c_abb023f531c9ca9e7a3a699bfa2a04f9d}{borrow\+\_\+last\+\_\+data\+\_\+of\+\_\+channel}} (int node\+\_\+id, int module\+\_\+id, int channel, int $\ast$data\+\_\+length, uint8\+\_\+t $\ast$$\ast$data)
+\begin{DoxyCompactList}\small\item\em From buffers, retrieve the most recent message from a specified module/channel, increase its reference count and return the pointer to and size of the message in the $\ast$data\+\_\+length and $\ast$data variables. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Variables}
 \begin{DoxyCompactItemize}
 \item 
@@ -112,7 +116,17 @@ Implementation of the Mato control framework -\/ internal data structures and al
 
 
 \doxysubsection{Function Documentation}
-\mbox{\Hypertarget{mato__core_8c_a5e81c3dd52599310f9ae512214c80ad1}\label{mato__core_8c_a5e81c3dd52599310f9ae512214c80ad1}} 
+\mbox{\Hypertarget{mato__core_8c_abb023f531c9ca9e7a3a699bfa2a04f9d}\label{mato__core_8c_abb023f531c9ca9e7a3a699bfa2a04f9d}} 
+\index{mato\_core.c@{mato\_core.c}!borrow\_last\_data\_of\_channel@{borrow\_last\_data\_of\_channel}}
+\index{borrow\_last\_data\_of\_channel@{borrow\_last\_data\_of\_channel}!mato\_core.c@{mato\_core.c}}
+\doxysubsubsection{\texorpdfstring{borrow\_last\_data\_of\_channel()}{borrow\_last\_data\_of\_channel()}}
+{\footnotesize\ttfamily void borrow\+\_\+last\+\_\+data\+\_\+of\+\_\+channel (\begin{DoxyParamCaption}\item[{int}]{node\+\_\+id,  }\item[{int}]{module\+\_\+id,  }\item[{int}]{channel,  }\item[{int $\ast$}]{data\+\_\+length,  }\item[{uint8\+\_\+t $\ast$$\ast$}]{data }\end{DoxyParamCaption})}
+
+
+
+From buffers, retrieve the most recent message from a specified module/channel, increase its reference count and return the pointer to and size of the message in the $\ast$data\+\_\+length and $\ast$data variables. 
+
+If there is no data posted by that module yet, both $\ast$data\+\_\+length and $\ast$data will be 0. \mbox{\Hypertarget{mato__core_8c_a5e81c3dd52599310f9ae512214c80ad1}\label{mato__core_8c_a5e81c3dd52599310f9ae512214c80ad1}} 
 \index{mato\_core.c@{mato\_core.c}!copy\_of\_last\_data\_of\_channel@{copy\_of\_last\_data\_of\_channel}}
 \index{copy\_of\_last\_data\_of\_channel@{copy\_of\_last\_data\_of\_channel}!mato\_core.c@{mato\_core.c}}
 \doxysubsubsection{\texorpdfstring{copy\_of\_last\_data\_of\_channel()}{copy\_of\_last\_data\_of\_channel()}}
@@ -171,6 +185,12 @@ Returns the next available module\+\_\+id.
 
 
 Returns the next available subscription\+\_\+id. 
+
+\mbox{\Hypertarget{mato__core_8c_a57b793803980052a4ff737212eb9a658}\label{mato__core_8c_a57b793803980052a4ff737212eb9a658}} 
+\index{mato\_core.c@{mato\_core.c}!get\_ptr\_to\_last\_data\_of\_channel@{get\_ptr\_to\_last\_data\_of\_channel}}
+\index{get\_ptr\_to\_last\_data\_of\_channel@{get\_ptr\_to\_last\_data\_of\_channel}!mato\_core.c@{mato\_core.c}}
+\doxysubsubsection{\texorpdfstring{get\_ptr\_to\_last\_data\_of\_channel()}{get\_ptr\_to\_last\_data\_of\_channel()}}
+{\footnotesize\ttfamily static \mbox{\hyperlink{structchannel__data}{channel\+\_\+data}}$\ast$ get\+\_\+ptr\+\_\+to\+\_\+last\+\_\+data\+\_\+of\+\_\+channel (\begin{DoxyParamCaption}\item[{int}]{node\+\_\+id,  }\item[{int}]{module\+\_\+id,  }\item[{int}]{channel,  }\item[{int $\ast$}]{data\+\_\+length }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
 
 \mbox{\Hypertarget{mato__core_8c_ab8c7efafd11208c96bcb070bfa5c11c6}\label{mato__core_8c_ab8c7efafd11208c96bcb070bfa5c11c6}} 
 \index{mato\_core.c@{mato\_core.c}!intHandler@{intHandler}}
