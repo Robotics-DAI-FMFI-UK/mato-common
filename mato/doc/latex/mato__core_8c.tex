@@ -69,9 +69,14 @@ void \mbox{\hyperlink{mato__core_8c_a8ee143235f543184363dea746b824056}{subscribe
 \mbox{\Hypertarget{mato__core_8c_a53fa60389c0d5ac17eb194e386d89ad2}\label{mato__core_8c_a53fa60389c0d5ac17eb194e386d89ad2}} 
 void \mbox{\hyperlink{mato__core_8c_a53fa60389c0d5ac17eb194e386d89ad2}{unsubscribe\+\_\+channel\+\_\+from\+\_\+remote\+\_\+node}} (int remote\+\_\+node\+\_\+id, int subscribed\+\_\+module\+\_\+id, int channel)
 \begin{DoxyCompactList}\small\item\em Update internal subscriptions\+: a remote node unsubscribing to our module\textquotesingle{}s channel. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato__core_8c_a85eaf4d8c2e0b799ffbb4c089452a0b5}\label{mato__core_8c_a85eaf4d8c2e0b799ffbb4c089452a0b5}} 
-void \mbox{\hyperlink{mato__core_8c_a85eaf4d8c2e0b799ffbb4c089452a0b5}{get\+\_\+data\+\_\+from\+\_\+remote}} (int remote\+\_\+node\+\_\+id, int module\+\_\+id, int channel, int get\+\_\+data\+\_\+id)
-\begin{DoxyCompactList}\small\item\em Remote module is requesting data from our channel, retrieve them and send back. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\mbox{\Hypertarget{mato__core_8c_a46237792544cdb9542f03f0504d3a73f}\label{mato__core_8c_a46237792544cdb9542f03f0504d3a73f}} 
+void \mbox{\hyperlink{mato__core_8c_a46237792544cdb9542f03f0504d3a73f}{pack\+\_\+and\+\_\+send\+\_\+data\+\_\+to\+\_\+remote}} (int remote\+\_\+node\+\_\+id, int module\+\_\+id, int channel, int get\+\_\+data\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Remote module is requesting data from our channel, retrieve them and send back. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{mato__core_8c_ad4f4c0cf2b22dad78c8d00bc9c975ab8}\label{mato__core_8c_ad4f4c0cf2b22dad78c8d00bc9c975ab8}} 
+void {\bfseries return\+\_\+data\+\_\+to\+\_\+waiting\+\_\+module} (int get\+\_\+data\+\_\+id, int32\+\_\+t data\+\_\+length, uint8\+\_\+t $\ast$data)
+\item 
+void \mbox{\hyperlink{mato__core_8c_a5e81c3dd52599310f9ae512214c80ad1}{copy\+\_\+of\+\_\+last\+\_\+data\+\_\+of\+\_\+channel}} (int node\+\_\+id, int module\+\_\+id, int channel, int $\ast$data\+\_\+length, uint8\+\_\+t $\ast$$\ast$data)
+\begin{DoxyCompactList}\small\item\em From buffers, retrieve the most recent message from a specified module/channel, make a copy of it and return the pointer to and size of the message in the $\ast$data\+\_\+length and $\ast$data variables. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Variables}
 \begin{DoxyCompactItemize}
 \item 
@@ -103,7 +108,17 @@ int \mbox{\hyperlink{mato__core_8c_a225d8d1a4c4e855493b258620e5e2be4}{post\+\_\+
 Implementation of the Mato control framework -\/ internal data structures and algorithms. 
 
 \doxysubsection{Function Documentation}
-\mbox{\Hypertarget{mato__core_8c_a948891305b2d86ead8d8b9e98ee992ea}\label{mato__core_8c_a948891305b2d86ead8d8b9e98ee992ea}} 
+\mbox{\Hypertarget{mato__core_8c_a5e81c3dd52599310f9ae512214c80ad1}\label{mato__core_8c_a5e81c3dd52599310f9ae512214c80ad1}} 
+\index{mato\_core.c@{mato\_core.c}!copy\_of\_last\_data\_of\_channel@{copy\_of\_last\_data\_of\_channel}}
+\index{copy\_of\_last\_data\_of\_channel@{copy\_of\_last\_data\_of\_channel}!mato\_core.c@{mato\_core.c}}
+\doxysubsubsection{\texorpdfstring{copy\_of\_last\_data\_of\_channel()}{copy\_of\_last\_data\_of\_channel()}}
+{\footnotesize\ttfamily void copy\+\_\+of\+\_\+last\+\_\+data\+\_\+of\+\_\+channel (\begin{DoxyParamCaption}\item[{int}]{node\+\_\+id,  }\item[{int}]{module\+\_\+id,  }\item[{int}]{channel,  }\item[{int $\ast$}]{data\+\_\+length,  }\item[{uint8\+\_\+t $\ast$$\ast$}]{data }\end{DoxyParamCaption})}
+
+
+
+From buffers, retrieve the most recent message from a specified module/channel, make a copy of it and return the pointer to and size of the message in the $\ast$data\+\_\+length and $\ast$data variables. 
+
+If there is no data posted by that module yet, both $\ast$data\+\_\+length and $\ast$data will be 0. \mbox{\Hypertarget{mato__core_8c_a948891305b2d86ead8d8b9e98ee992ea}\label{mato__core_8c_a948891305b2d86ead8d8b9e98ee992ea}} 
 \index{mato\_core.c@{mato\_core.c}!decrement\_references@{decrement\_references}}
 \index{decrement\_references@{decrement\_references}!mato\_core.c@{mato\_core.c}}
 \doxysubsubsection{\texorpdfstring{decrement\_references()}{decrement\_references()}}

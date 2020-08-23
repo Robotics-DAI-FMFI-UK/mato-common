@@ -64,9 +64,11 @@ void \mbox{\hyperlink{mato__net_8h_a073d05e5bf9e0ffebb49c0251d250c0f}{start\+\_\
 void \mbox{\hyperlink{mato__net_8h_a89b6e0a431131bbd10afb037237fc9d5}{net\+\_\+announce\+\_\+new\+\_\+module}} (int module\+\_\+id)
 \begin{DoxyCompactList}\small\item\em Broadcast information about new local module instance to all other nodes. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{mato__net_8h_a6f5e0a1a54d499b01ed57c8d0ffddeb0}{net\+\_\+send\+\_\+subscribed\+\_\+data}} (int subscribed\+\_\+node\+\_\+id, \mbox{\hyperlink{structchannel__data}{channel\+\_\+data}} $\ast$cd)
-\begin{DoxyCompactList}\small\item\em Broadcast information about new local module instance to all other nodes. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Send a new message posted by our local module to another node that is subscribed to that channel. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{mato__net_8h_ad33f0d39a802c383a33e794724495b81}{net\+\_\+send\+\_\+data}} (int node\+\_\+id, int get\+\_\+data\+\_\+id, uint8\+\_\+t $\ast$data, int32\+\_\+t data\+\_\+length)
-\begin{DoxyCompactList}\small\item\em Broadcast information about new local module instance to all other nodes. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Send data that were requested by M\+S\+G\+\_\+\+G\+E\+T\+\_\+\+D\+A\+TA message to the node that requested. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{mato__net_8h_ae4829c6e194570023c226f85d8e74486}{net\+\_\+send\+\_\+get\+\_\+data}} (int node\+\_\+id, int module\+\_\+id, int channel, int get\+\_\+data\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Request data from a channel of a module on a different node. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{mato__net_8h_affc613d7e6afcf44c6f079084a991b33}\label{mato__net_8h_affc613d7e6afcf44c6f079084a991b33}} 
 void \mbox{\hyperlink{mato__net_8h_affc613d7e6afcf44c6f079084a991b33}{net\+\_\+delete\+\_\+module\+\_\+instance}} (int node\+\_\+id, int module\+\_\+id)
 \begin{DoxyCompactList}\small\item\em Soon to be updated... \end{DoxyCompactList}\end{DoxyCompactItemize}
@@ -117,7 +119,28 @@ Broadcast information about new local module instance to all other nodes.
 
 
 
-Broadcast information about new local module instance to all other nodes. 
+Send data that were requested by M\+S\+G\+\_\+\+G\+E\+T\+\_\+\+D\+A\+TA message to the node that requested. 
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Packet format:}
+\DoxyCodeLine{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}
+\DoxyCodeLine{MSG\_DATA                  int32}
+\DoxyCodeLine{sending\_node\_id           int32}
+\DoxyCodeLine{get\_data\_id               int32}
+\DoxyCodeLine{len(data)                 int32}
+\DoxyCodeLine{data                      variable}
+\DoxyCodeLine{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}
+\end{DoxyCode}
+ \mbox{\Hypertarget{mato__net_8h_ae4829c6e194570023c226f85d8e74486}\label{mato__net_8h_ae4829c6e194570023c226f85d8e74486}} 
+\index{mato\_net.h@{mato\_net.h}!net\_send\_get\_data@{net\_send\_get\_data}}
+\index{net\_send\_get\_data@{net\_send\_get\_data}!mato\_net.h@{mato\_net.h}}
+\doxysubsubsection{\texorpdfstring{net\_send\_get\_data()}{net\_send\_get\_data()}}
+{\footnotesize\ttfamily void net\+\_\+send\+\_\+get\+\_\+data (\begin{DoxyParamCaption}\item[{int}]{node\+\_\+id,  }\item[{int}]{module\+\_\+id,  }\item[{int}]{channel,  }\item[{int}]{get\+\_\+data\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+Request data from a channel of a module on a different node. 
 
 
 \begin{DoxyCode}{0}
@@ -138,7 +161,7 @@ Broadcast information about new local module instance to all other nodes.
 
 
 
-Broadcast information about new local module instance to all other nodes. 
+Send a new message posted by our local module to another node that is subscribed to that channel. 
 
 
 \begin{DoxyCode}{0}

@@ -104,9 +104,13 @@ void \mbox{\hyperlink{mato__core_8h_a8ee143235f543184363dea746b824056}{subscribe
 \mbox{\Hypertarget{mato__core_8h_a53fa60389c0d5ac17eb194e386d89ad2}\label{mato__core_8h_a53fa60389c0d5ac17eb194e386d89ad2}} 
 void \mbox{\hyperlink{mato__core_8h_a53fa60389c0d5ac17eb194e386d89ad2}{unsubscribe\+\_\+channel\+\_\+from\+\_\+remote\+\_\+node}} (int remote\+\_\+node\+\_\+id, int subscribed\+\_\+module\+\_\+id, int channel)
 \begin{DoxyCompactList}\small\item\em Update internal subscriptions\+: a remote node unsubscribing to our module\textquotesingle{}s channel. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato__core_8h_a85eaf4d8c2e0b799ffbb4c089452a0b5}\label{mato__core_8h_a85eaf4d8c2e0b799ffbb4c089452a0b5}} 
-void \mbox{\hyperlink{mato__core_8h_a85eaf4d8c2e0b799ffbb4c089452a0b5}{get\+\_\+data\+\_\+from\+\_\+remote}} (int remote\+\_\+node\+\_\+id, int module\+\_\+id, int channel, int get\+\_\+data\+\_\+id)
-\begin{DoxyCompactList}\small\item\em Remote module is requesting data from our channel, retrieve them and send back. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\mbox{\Hypertarget{mato__core_8h_a46237792544cdb9542f03f0504d3a73f}\label{mato__core_8h_a46237792544cdb9542f03f0504d3a73f}} 
+void \mbox{\hyperlink{mato__core_8h_a46237792544cdb9542f03f0504d3a73f}{pack\+\_\+and\+\_\+send\+\_\+data\+\_\+to\+\_\+remote}} (int remote\+\_\+node\+\_\+id, int module\+\_\+id, int channel, int get\+\_\+data\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Remote module is requesting data from our channel, retrieve them and send back. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{mato__core_8h_ae85edaed4da057ef1db61b7b02c13b1b}{return\+\_\+data\+\_\+to\+\_\+waiting\+\_\+module}} (int get\+\_\+data\+\_\+id, int data\+\_\+length, uint8\+\_\+t $\ast$data)
+\begin{DoxyCompactList}\small\item\em Remote node is sending data that some module of this node requested and waits for. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{mato__core_8h_a5e81c3dd52599310f9ae512214c80ad1}{copy\+\_\+of\+\_\+last\+\_\+data\+\_\+of\+\_\+channel}} (int node\+\_\+id, int module\+\_\+id, int channel, int $\ast$data\+\_\+length, uint8\+\_\+t $\ast$$\ast$data)
+\begin{DoxyCompactList}\small\item\em From buffers, retrieve the most recent message from a specified module/channel, make a copy of it and return the pointer to and size of the message in the $\ast$data\+\_\+length and $\ast$data variables. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Variables}
 \begin{DoxyCompactItemize}
 \item 
@@ -138,7 +142,17 @@ int \mbox{\hyperlink{mato__core_8h_a225d8d1a4c4e855493b258620e5e2be4}{post\+\_\+
 Mato control framework -\/ internal core implementation function protypes and types. 
 
 \doxysubsection{Function Documentation}
-\mbox{\Hypertarget{mato__core_8h_a948891305b2d86ead8d8b9e98ee992ea}\label{mato__core_8h_a948891305b2d86ead8d8b9e98ee992ea}} 
+\mbox{\Hypertarget{mato__core_8h_a5e81c3dd52599310f9ae512214c80ad1}\label{mato__core_8h_a5e81c3dd52599310f9ae512214c80ad1}} 
+\index{mato\_core.h@{mato\_core.h}!copy\_of\_last\_data\_of\_channel@{copy\_of\_last\_data\_of\_channel}}
+\index{copy\_of\_last\_data\_of\_channel@{copy\_of\_last\_data\_of\_channel}!mato\_core.h@{mato\_core.h}}
+\doxysubsubsection{\texorpdfstring{copy\_of\_last\_data\_of\_channel()}{copy\_of\_last\_data\_of\_channel()}}
+{\footnotesize\ttfamily void copy\+\_\+of\+\_\+last\+\_\+data\+\_\+of\+\_\+channel (\begin{DoxyParamCaption}\item[{int}]{node\+\_\+id,  }\item[{int}]{module\+\_\+id,  }\item[{int}]{channel,  }\item[{int $\ast$}]{data\+\_\+length,  }\item[{uint8\+\_\+t $\ast$$\ast$}]{data }\end{DoxyParamCaption})}
+
+
+
+From buffers, retrieve the most recent message from a specified module/channel, make a copy of it and return the pointer to and size of the message in the $\ast$data\+\_\+length and $\ast$data variables. 
+
+If there is no data posted by that module yet, both $\ast$data\+\_\+length and $\ast$data will be 0. \mbox{\Hypertarget{mato__core_8h_a948891305b2d86ead8d8b9e98ee992ea}\label{mato__core_8h_a948891305b2d86ead8d8b9e98ee992ea}} 
 \index{mato\_core.h@{mato\_core.h}!decrement\_references@{decrement\_references}}
 \index{decrement\_references@{decrement\_references}!mato\_core.h@{mato\_core.h}}
 \doxysubsubsection{\texorpdfstring{decrement\_references()}{decrement\_references()}}
@@ -148,7 +162,17 @@ Mato control framework -\/ internal core implementation function protypes and ty
 
 Decrements the number of references to a particular buffer and deallocates the buffer itself as well as the structure describing the buffer. 
 
-It also removes it from the list of the framework-\/maintained messages. 
+It also removes it from the list of the framework-\/maintained messages. \mbox{\Hypertarget{mato__core_8h_ae85edaed4da057ef1db61b7b02c13b1b}\label{mato__core_8h_ae85edaed4da057ef1db61b7b02c13b1b}} 
+\index{mato\_core.h@{mato\_core.h}!return\_data\_to\_waiting\_module@{return\_data\_to\_waiting\_module}}
+\index{return\_data\_to\_waiting\_module@{return\_data\_to\_waiting\_module}!mato\_core.h@{mato\_core.h}}
+\doxysubsubsection{\texorpdfstring{return\_data\_to\_waiting\_module()}{return\_data\_to\_waiting\_module()}}
+{\footnotesize\ttfamily void return\+\_\+data\+\_\+to\+\_\+waiting\+\_\+module (\begin{DoxyParamCaption}\item[{int}]{get\+\_\+data\+\_\+id,  }\item[{int}]{data\+\_\+length,  }\item[{uint8\+\_\+t $\ast$}]{data }\end{DoxyParamCaption})}
+
+
+
+Remote node is sending data that some module of this node requested and waits for. 
+
+Notify it through pipe so that the data is sent down to the module. 
 
 \doxysubsection{Variable Documentation}
 \mbox{\Hypertarget{mato__core_8h_a2822a291e85d87882c86a179b50c99f6}\label{mato__core_8h_a2822a291e85d87882c86a179b50c99f6}} 

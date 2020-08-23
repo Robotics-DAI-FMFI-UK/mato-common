@@ -173,10 +173,16 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__core_8c.html#a53fa60389c0d5ac17eb194e386d89ad2">unsubscribe_channel_from_remote_node</a> (int remote_node_id, int subscribed_module_id, int channel)</td></tr>
 <tr class="memdesc:a53fa60389c0d5ac17eb194e386d89ad2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update internal subscriptions: a remote node unsubscribing to our module's channel. <br /></td></tr>
 <tr class="separator:a53fa60389c0d5ac17eb194e386d89ad2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a85eaf4d8c2e0b799ffbb4c089452a0b5"><td class="memItemLeft" align="right" valign="top"><a id="a85eaf4d8c2e0b799ffbb4c089452a0b5"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__core_8c.html#a85eaf4d8c2e0b799ffbb4c089452a0b5">get_data_from_remote</a> (int remote_node_id, int module_id, int channel, int get_data_id)</td></tr>
-<tr class="memdesc:a85eaf4d8c2e0b799ffbb4c089452a0b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remote module is requesting data from our channel, retrieve them and send back. <br /></td></tr>
-<tr class="separator:a85eaf4d8c2e0b799ffbb4c089452a0b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a46237792544cdb9542f03f0504d3a73f"><td class="memItemLeft" align="right" valign="top"><a id="a46237792544cdb9542f03f0504d3a73f"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__core_8c.html#a46237792544cdb9542f03f0504d3a73f">pack_and_send_data_to_remote</a> (int remote_node_id, int module_id, int channel, int get_data_id)</td></tr>
+<tr class="memdesc:a46237792544cdb9542f03f0504d3a73f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remote module is requesting data from our channel, retrieve them and send back. <br /></td></tr>
+<tr class="separator:a46237792544cdb9542f03f0504d3a73f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad4f4c0cf2b22dad78c8d00bc9c975ab8"><td class="memItemLeft" align="right" valign="top"><a id="ad4f4c0cf2b22dad78c8d00bc9c975ab8"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>return_data_to_waiting_module</b> (int get_data_id, int32_t data_length, uint8_t *data)</td></tr>
+<tr class="separator:ad4f4c0cf2b22dad78c8d00bc9c975ab8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e81c3dd52599310f9ae512214c80ad1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__core_8c.html#a5e81c3dd52599310f9ae512214c80ad1">copy_of_last_data_of_channel</a> (int node_id, int module_id, int channel, int *data_length, uint8_t **data)</td></tr>
+<tr class="memdesc:a5e81c3dd52599310f9ae512214c80ad1"><td class="mdescLeft">&#160;</td><td class="mdescRight">From buffers, retrieve the most recent message from a specified module/channel, make a copy of it and return the pointer to and size of the message in the *data_length and *data variables.  <a href="mato__core_8c.html#a5e81c3dd52599310f9ae512214c80ad1">More...</a><br /></td></tr>
+<tr class="separator:a5e81c3dd52599310f9ae512214c80ad1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
@@ -216,6 +222,55 @@ volatile int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implementation of the Mato control framework - internal data structures and algorithms. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
+<a id="a5e81c3dd52599310f9ae512214c80ad1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5e81c3dd52599310f9ae512214c80ad1">&#9670;&nbsp;</a></span>copy_of_last_data_of_channel()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void copy_of_last_data_of_channel </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>node_id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>module_id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>channel</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>data_length</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t **&#160;</td>
+          <td class="paramname"><em>data</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>From buffers, retrieve the most recent message from a specified module/channel, make a copy of it and return the pointer to and size of the message in the *data_length and *data variables. </p>
+<p>If there is no data posted by that module yet, both *data_length and *data will be 0. </p>
+
+</div>
+</div>
 <a id="a948891305b2d86ead8d8b9e98ee992ea"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a948891305b2d86ead8d8b9e98ee992ea">&#9670;&nbsp;</a></span>decrement_references()</h2>
 
