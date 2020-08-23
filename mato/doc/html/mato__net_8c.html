@@ -158,12 +158,18 @@ GArray *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 </div><div class="memdoc">
 
 <p>Broadcast information about new local module instance to all other nodes. </p>
-<h2><a class="anchor" id="autotoc_md0"></a>
-Packet format:</h2>
-<p>MSG_NEW_MODULE_INSTANCE int32 this_node_id int32 [local]module_id int32 len(module_name)+1 int32 module_name variable len(module_type)+1 int32 module_type variable </p>
-<h2><a class="anchor" id="autotoc_md1"></a>
-number_of_channels        int32</h2>
-
+<div class="fragment"><div class="line">Packet format:</div>
+<div class="line">-------------------------------------</div>
+<div class="line">MSG_NEW_MODULE_INSTANCE   int32</div>
+<div class="line">sending_node_id           int32</div>
+<div class="line">[local]module_id          int32</div>
+<div class="line">len(module_name)+1        int32</div>
+<div class="line">module_name               variable</div>
+<div class="line">len(module_type)+1        int32</div>
+<div class="line">module_type               variable</div>
+<div class="line">number_of_channels        int32</div>
+<div class="line">-------------------------------------</div>
+</div><!-- fragment --> 
 </div>
 </div>
 <a id="ad33f0d39a802c383a33e794724495b81"></a>
@@ -205,12 +211,15 @@ number_of_channels        int32</h2>
 </div><div class="memdoc">
 
 <p>Broadcast information about new local module instance to all other nodes. </p>
-<h2><a class="anchor" id="autotoc_md4"></a>
-Packet format:</h2>
-<p>MSG_DATA int32 this_node_id int32 get_data_id int32 len(data) int32 </p>
-<h2><a class="anchor" id="autotoc_md5"></a>
-data                      variable</h2>
-
+<div class="fragment"><div class="line">Packet format:</div>
+<div class="line">-------------------------------------</div>
+<div class="line">MSG_DATA                  int32</div>
+<div class="line">sending_node_id           int32</div>
+<div class="line">get_data_id               int32</div>
+<div class="line">len(data)                 int32</div>
+<div class="line">data                      variable</div>
+<div class="line">-------------------------------------</div>
+</div><!-- fragment --> 
 </div>
 </div>
 <a id="a6f5e0a1a54d499b01ed57c8d0ffddeb0"></a>
@@ -240,12 +249,16 @@ data                      variable</h2>
 </div><div class="memdoc">
 
 <p>Broadcast information about new local module instance to all other nodes. </p>
-<h2><a class="anchor" id="autotoc_md2"></a>
-Packet format:</h2>
-<p>MSG_SUBSCRIBED_DATA int32 sending_node_id int32 module_id int32 channel int32 length int32 </p>
-<h2><a class="anchor" id="autotoc_md3"></a>
-data                      variable</h2>
-
+<div class="fragment"><div class="line">Packet format:</div>
+<div class="line">-------------------------------------</div>
+<div class="line">MSG_SUBSCRIBED_DATA       int32</div>
+<div class="line">sending_node_id           int32</div>
+<div class="line">module_id                 int32</div>
+<div class="line">channel                   int32</div>
+<div class="line">length                    int32</div>
+<div class="line">data                      variable</div>
+<div class="line">-------------------------------------</div>
+</div><!-- fragment --> 
 </div>
 </div>
 </div><!-- contents -->
