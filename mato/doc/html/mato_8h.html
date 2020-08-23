@@ -120,8 +120,9 @@ typedef enum subscription_type_enum&#160;</td><td class="memItemRight" valign="b
 typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a19ec8ae2c73a767ac23bcc3c861e8b53">delete_instance_callback</a>) (void *instance_data)</td></tr>
 <tr class="memdesc:a19ec8ae2c73a767ac23bcc3c861e8b53"><td class="mdescLeft">&#160;</td><td class="mdescRight">A request to delete the module instance has been made. This callback should deallocate the instance data. <br /></td></tr>
 <tr class="separator:a19ec8ae2c73a767ac23bcc3c861e8b53"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a984f52f0434bb9e42814bf9c74f4791d"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a984f52f0434bb9e42814bf9c74f4791d">global_message_callback</a>) (void *instance_data, int module_id_sender, int message_id, int msg_length, void *message_data)</td></tr>
-<tr class="memdesc:a984f52f0434bb9e42814bf9c74f4791d"><td class="mdescLeft">&#160;</td><td class="mdescRight">When some other module or the main program has sent a global message, this callback of each module is called immediatelly - from the thread of the sender.  <a href="mato_8h.html#a984f52f0434bb9e42814bf9c74f4791d">More...</a><br /></td></tr>
+<tr class="memitem:a984f52f0434bb9e42814bf9c74f4791d"><td class="memItemLeft" align="right" valign="top"><a id="a984f52f0434bb9e42814bf9c74f4791d"></a>
+typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a984f52f0434bb9e42814bf9c74f4791d">global_message_callback</a>) (void *instance_data, int module_id_sender, int message_id, int msg_length, void *message_data)</td></tr>
+<tr class="memdesc:a984f52f0434bb9e42814bf9c74f4791d"><td class="mdescLeft">&#160;</td><td class="mdescRight">When some other module or the main program has sent a global message, this callback of each module is called immediatelly - from the thread of the sender. <br /></td></tr>
 <tr class="separator:a984f52f0434bb9e42814bf9c74f4791d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9345221b935d9505595c583b54d31e86"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a9345221b935d9505595c583b54d31e86">subscriber_callback</a>) (void *instance_data, int sender_module_id, int data_length, void *new_data_ptr)</td></tr>
 <tr class="memdesc:a9345221b935d9505595c583b54d31e86"><td class="mdescLeft">&#160;</td><td class="mdescRight">Modules that subscribe to the data on channels of other module instances provide this callback.  <a href="mato_8h.html#a9345221b935d9505595c583b54d31e86">More...</a><br /></td></tr>
@@ -258,24 +259,6 @@ Variables</h2></td></tr>
 
 <p>Create instance data of a module and initialize it. </p>
 <p>Each module should define this callback. This instance will be from now on always referred by the module_id passed in the argument. It is recommended that the module saves it to its instance_data. The function should return a pointer to the newly allocated instance data. </p>
-
-</div>
-</div>
-<a id="a984f52f0434bb9e42814bf9c74f4791d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a984f52f0434bb9e42814bf9c74f4791d">&#9670;&nbsp;</a></span>global_message_callback</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef void(* global_message_callback) (void *instance_data, int module_id_sender, int message_id, int msg_length, void *message_data)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>When some other module or the main program has sent a global message, this callback of each module is called immediatelly - from the thread of the sender. </p>
-<p><br  />
- </p>
 
 </div>
 </div>
@@ -490,7 +473,7 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Retrieve the most recently posted data of some channel of some module instance. </p>
-<p>Data is copied into the buffer provided, and the length of the data is set to data_length. The calling module should release the memory by calling free() when it is not needed anymore. </p>
+<p>Data is copied into new buffer allocated and its pointer is returned in data variable, and the length of the data is set to data_length. The calling module should release the memory by calling free() when it is not needed anymore. </p>
 
 </div>
 </div>

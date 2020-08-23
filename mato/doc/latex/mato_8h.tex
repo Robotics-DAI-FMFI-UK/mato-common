@@ -1,14 +1,16 @@
 \hypertarget{mato_8h}{}\doxysection{mato.\+h File Reference}
 \label{mato_8h}\index{mato.h@{mato.h}}
 {\ttfamily \#include $<$glib.\+h$>$}\newline
-Include dependency graph for mato.\+h\+:\nopagebreak
+Include dependency graph for mato.\+h\+:
+\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
 \includegraphics[width=131pt]{mato_8h__incl}
 \end{center}
 \end{figure}
-This graph shows which files directly or indirectly include this file\+:\nopagebreak
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -37,6 +39,7 @@ typedef void($\ast$ \mbox{\hyperlink{mato_8h_a5cdf8c706be95dbe5dc32dda2d0aacdf}{
 \mbox{\Hypertarget{mato_8h_a19ec8ae2c73a767ac23bcc3c861e8b53}\label{mato_8h_a19ec8ae2c73a767ac23bcc3c861e8b53}} 
 typedef void($\ast$ \mbox{\hyperlink{mato_8h_a19ec8ae2c73a767ac23bcc3c861e8b53}{delete\+\_\+instance\+\_\+callback}}) (void $\ast$instance\+\_\+data)
 \begin{DoxyCompactList}\small\item\em A request to delete the module instance has been made. This callback should deallocate the instance data. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{mato_8h_a984f52f0434bb9e42814bf9c74f4791d}\label{mato_8h_a984f52f0434bb9e42814bf9c74f4791d}} 
 typedef void($\ast$ \mbox{\hyperlink{mato_8h_a984f52f0434bb9e42814bf9c74f4791d}{global\+\_\+message\+\_\+callback}}) (void $\ast$instance\+\_\+data, int module\+\_\+id\+\_\+sender, int message\+\_\+id, int msg\+\_\+length, void $\ast$message\+\_\+data)
 \begin{DoxyCompactList}\small\item\em When some other module or the main program has sent a global message, this callback of each module is called immediatelly -\/ from the thread of the sender. \end{DoxyCompactList}\item 
 typedef void($\ast$ \mbox{\hyperlink{mato_8h_a9345221b935d9505595c583b54d31e86}{subscriber\+\_\+callback}}) (void $\ast$instance\+\_\+data, int sender\+\_\+module\+\_\+id, int data\+\_\+length, void $\ast$new\+\_\+data\+\_\+ptr)
@@ -146,18 +149,7 @@ Mato control framework -\/ main header file. Declarations of the public interfac
 
 Create instance data of a module and initialize it. 
 
-Each module should define this callback. This instance will be from now on always referred by the module\+\_\+id passed in the argument. It is recommended that the module saves it to its instance\+\_\+data. The function should return a pointer to the newly allocated instance data. \mbox{\Hypertarget{mato_8h_a984f52f0434bb9e42814bf9c74f4791d}\label{mato_8h_a984f52f0434bb9e42814bf9c74f4791d}} 
-\index{mato.h@{mato.h}!global\_message\_callback@{global\_message\_callback}}
-\index{global\_message\_callback@{global\_message\_callback}!mato.h@{mato.h}}
-\doxysubsubsection{\texorpdfstring{global\_message\_callback}{global\_message\_callback}}
-{\footnotesize\ttfamily typedef void($\ast$ global\+\_\+message\+\_\+callback) (void $\ast$instance\+\_\+data, int module\+\_\+id\+\_\+sender, int message\+\_\+id, int msg\+\_\+length, void $\ast$message\+\_\+data)}
-
-
-
-When some other module or the main program has sent a global message, this callback of each module is called immediatelly -\/ from the thread of the sender. 
-
-~\newline
- \mbox{\Hypertarget{mato_8h_a5cdf8c706be95dbe5dc32dda2d0aacdf}\label{mato_8h_a5cdf8c706be95dbe5dc32dda2d0aacdf}} 
+Each module should define this callback. This instance will be from now on always referred by the module\+\_\+id passed in the argument. It is recommended that the module saves it to its instance\+\_\+data. The function should return a pointer to the newly allocated instance data. \mbox{\Hypertarget{mato_8h_a5cdf8c706be95dbe5dc32dda2d0aacdf}\label{mato_8h_a5cdf8c706be95dbe5dc32dda2d0aacdf}} 
 \index{mato.h@{mato.h}!start\_instance\_callback@{start\_instance\_callback}}
 \index{start\_instance\_callback@{start\_instance\_callback}!mato.h@{mato.h}}
 \doxysubsubsection{\texorpdfstring{start\_instance\_callback}{start\_instance\_callback}}
@@ -230,7 +222,7 @@ Each thread that terminates should call this function just before it quits. \mbo
 
 Retrieve the most recently posted data of some channel of some module instance. 
 
-Data is copied into the buffer provided, and the length of the data is set to data\+\_\+length. The calling module should release the memory by calling free() when it is not needed anymore. \mbox{\Hypertarget{mato_8h_a5c6a3a9b7e7969e9d9324b1d937ff2a5}\label{mato_8h_a5c6a3a9b7e7969e9d9324b1d937ff2a5}} 
+Data is copied into new buffer allocated and its pointer is returned in data variable, and the length of the data is set to data\+\_\+length. The calling module should release the memory by calling free() when it is not needed anymore. \mbox{\Hypertarget{mato_8h_a5c6a3a9b7e7969e9d9324b1d937ff2a5}\label{mato_8h_a5c6a3a9b7e7969e9d9324b1d937ff2a5}} 
 \index{mato.h@{mato.h}!mato\_get\_list\_of\_all\_modules@{mato\_get\_list\_of\_all\_modules}}
 \index{mato\_get\_list\_of\_all\_modules@{mato\_get\_list\_of\_all\_modules}!mato.h@{mato.h}}
 \doxysubsubsection{\texorpdfstring{mato\_get\_list\_of\_all\_modules()}{mato\_get\_list\_of\_all\_modules()}}
