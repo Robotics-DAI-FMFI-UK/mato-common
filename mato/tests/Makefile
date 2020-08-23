@@ -28,3 +28,5 @@ test_distributed_AB: 05_distributed_AB/test_distributed_AB.c 05_distributed_AB/A
 clean:
 	rm test_two_modules_A test_modules_A_B test_A_B_with_copy test_A_B_with_borrowed_ptr test_distributed_AB
 
+docs:
+	cd .. && doxygen mato.dox && cd tests

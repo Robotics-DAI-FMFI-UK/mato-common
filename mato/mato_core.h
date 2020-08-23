@@ -167,4 +167,9 @@ void return_data_to_waiting_module(int get_data_id, int data_length, uint8_t *da
 /// If there is no data posted by that module yet, both *data_length and *data will be 0.
 void copy_of_last_data_of_channel(int node_id, int module_id, int channel, int *data_length, uint8_t **data);
 
+/// From buffers, retrieve the most recent message from a specified module/channel, increase its
+/// reference count and return the pointer to and size of the message in the *data_length and *data variables.
+/// If there is no data posted by that module yet, both *data_length and *data will be 0.
+void borrow_last_data_of_channel(int node_id, int module_id, int channel, int *data_length, uint8_t **data);
+
 #endif

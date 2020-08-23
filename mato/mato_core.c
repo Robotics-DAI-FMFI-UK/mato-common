@@ -314,12 +314,8 @@ void remove_subscription(int subscribed_node_id, int subscribed_module_id, int c
             free(s);
             g_array_remove_index_fast(subscriptions_for_channel, i);
             if (subscribed_node_id != this_node_id)
-            {
                 if (subscriptions_for_channel->len == 0)
-                {
-                    // TODO: notify another node about unsubscription for this channel
-                }
-            }
+                    net_send_unsubscribe(subscribed_node_id, subscribed_module_id, channel);
             break;
         }
     }
@@ -462,18 +458,37 @@ void return_data_to_waiting_module(int get_data_id, int32_t data_length, uint8_t
         perror("error writing data to pipe");
 }
 
-void copy_of_last_data_of_channel(int node_id, int module_id, int channel, int *data_length, uint8_t **data)
+static channel_data *get_ptr_to_last_data_of_channel(int node_id, int module_id, int channel, int *data_length)
 {
     GList *waiting_buffers = g_array_index(g_array_index(g_array_index(buffers, GArray *, node_id), GArray *, module_id), GList *, channel);
     if (waiting_buffers == 0)
     {
         *data_length = 0;
-        *data = 0;
-        return;
+        return 0;
     }
     channel_data *cd = (channel_data *)(waiting_buffers->data);
-
     *data_length = cd->length;
-    *data = malloc(cd->length);
-    memcpy(*data, cd->data, cd->length);
+    return cd;
+}
+
+void copy_of_last_data_of_channel(int node_id, int module_id, int channel, int *data_length, uint8_t **data)
+{
+    channel_data *cd = get_ptr_to_last_data_of_channel(node_id, module_id, channel, data_length);
+    if (cd)
+    {
+        *data = malloc(cd->length);
+        memcpy(*data, cd->data, cd->length);
+    }
+    else *data = 0;
+}
+
+void borrow_last_data_of_channel(int node_id, int module_id, int channel, int *data_length, uint8_t **data)
+{
+    channel_data *cd = get_ptr_to_last_data_of_channel(node_id, module_id, channel, data_length);
+    if (cd)
+    {
+        *data = cd->data;
+        cd->references++;
+    }
+    else *data = 0;
 }

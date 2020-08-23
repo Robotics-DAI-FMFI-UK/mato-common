@@ -356,6 +356,18 @@ static void process_node_message(int s, int sending_node_id)
     }
 }
 
+/// Send information about all our modules to a specific node after it has been connected.
+static void inform_about_our_modules(int node_id)
+{
+    lock_framework();
+        int module_count = g_array_index(module_names, GArray *, this_node_id)->len;
+        for (int module_id = 0; module_id < module_count; module_id++)
+        {
+            net_send_new_module(node_id, module_id);
+        }
+    unlock_framework();
+}
+
 //-------------- the core of the networking ----------------------
 
 /// This thread monitors connections to all nodes according to config file and tries to connect/reconnect
@@ -367,42 +379,43 @@ static void *reconnecting_thread(void *arg)
     mato_inc_system_thread_count();
 
     while (program_runs){
-        for(int i = this_node_id + 1; i < nodes->len; i++)
+        for(int node_id = this_node_id + 1; node_id < nodes->len; node_id++)
         {
-            if (g_array_index(nodes,node_info*,i)->is_online == 0)
+            if (g_array_index(nodes, node_info*, node_id)->is_online == 0)
             {
-                printf("trying to connect to node %d, constructing socket...\n", i);
+                printf("trying to connect to node %d, constructing socket...\n", node_id);
 
                 int s = socket(AF_INET, SOCK_STREAM, 0);
-                if( s < 0)
+                if (s < 0)
                 {
                     perror("could not create socket");
                     return 0;
                 }
-                char *IP = g_array_index(nodes,node_info*,i)->IP;
-                int port = g_array_index(nodes,node_info*,i)->port;
+                char *IP = g_array_index(nodes, node_info*, node_id)->IP;
+                int port = g_array_index(nodes, node_info*, node_id)->port;
                 memset(&my_addr, 0, sizeof(struct sockaddr_in));
                 my_addr.sin_family = AF_INET;
                 my_addr.sin_port = htons(port);
-                if (inet_pton(AF_INET, IP, &my_addr.sin_addr)<=0)
+                if (inet_pton(AF_INET, IP, &my_addr.sin_addr) <= 0)
                 {
                     printf("Invalid ip address (%s:%d)\n", IP, port);
                     continue;
                 }
                 printf("calling connect (%s:%d)...\n", IP, port);
-                if(connect(s, (struct sockaddr *)&my_addr, sizeof(struct sockaddr_in))<0)
+                if (connect(s, (struct sockaddr *)&my_addr, sizeof(struct sockaddr_in)) < 0)
                     continue;
-                    printf("sending my node_id\n");
+                printf("sending my node_id\n");
                 int retval = send(s, &this_node_id, sizeof(int32_t), 0);
-                if(retval<0)
+                if (retval < 0)
                 {
                     perror("Could not send this node id");
                     close(s);
                     continue;
                 }
-                g_array_index(sockets, int, i) = s;
-                g_array_index(nodes,node_info*,i)->is_online = 1;
-                printf("connected to %d\n",i);
+                g_array_index(sockets, int, node_id) = s;
+                g_array_index(nodes, node_info*, node_id)->is_online = 1;
+                printf("connected to %d\n", node_id);
+                inform_about_our_modules(node_id);
                 continue;
             }
         }
@@ -457,6 +470,7 @@ static void handle_incomming_connections(fd_set *rfds)
         printf("...from node %d\n", new_node_id);
         g_array_index(sockets, int, new_node_id) = s;
         g_array_index(nodes, node_info*, new_node_id)->is_online = 1;
+        inform_about_our_modules(new_node_id);
     }
 }
 
@@ -629,33 +643,37 @@ void net_send_subscribed_data(int subscribed_node_id, channel_data *cd)
     }
 }
 
-void net_announce_new_module(int module_id)
+void net_broadcast_new_module(int module_id)
 {
     for (int node_id = 0; node_id < nodes->len; node_id++)
     {
         if (node_id == this_node_id) continue;
         node_info *ni = g_array_index(nodes, node_info *, node_id);
         if (ni->is_online == 0) continue;
-
-        int s = g_array_index(sockets, int, node_id);
-        char *module_name = g_array_index(g_array_index(module_names, GArray *, this_node_id), char *, module_id);
-        char *module_type = g_array_index(g_array_index(module_types, GArray *, this_node_id), char *, module_id);
-        module_specification *spec = (module_specification *)g_hash_table_lookup(module_specifications, module_type);
-        int32_t number_of_channels = spec->number_of_channels;
-
-        if (
-            !net_send_int32t(s, MSG_NEW_MODULE_INSTANCE)  ||
-            !net_send_int32t(s, this_node_id) ||
-            !net_send_int32t(s, module_id) ||
-            !net_send_string(s, module_name) ||
-            !net_send_string(s, module_type) ||
-            !net_send_int32t(s, number_of_channels)
-        )
-        {
-            node_disconnected(s, node_id);
-        }
+        net_send_new_module(node_id, module_id);
     }
     printf("announced new module %d to other nodes\n", module_id);
+}
+
+void net_send_new_module(int node_id, int module_id)
+{
+    int s = g_array_index(sockets, int, node_id);
+    char *module_name = g_array_index(g_array_index(module_names, GArray *, this_node_id), char *, module_id);
+    char *module_type = g_array_index(g_array_index(module_types, GArray *, this_node_id), char *, module_id);
+    module_specification *spec = (module_specification *)g_hash_table_lookup(module_specifications, module_type);
+    int32_t number_of_channels = spec->number_of_channels;
+
+    if (
+        !net_send_int32t(s, MSG_NEW_MODULE_INSTANCE)  ||
+        !net_send_int32t(s, this_node_id) ||
+        !net_send_int32t(s, module_id) ||
+        !net_send_string(s, module_name) ||
+        !net_send_string(s, module_type) ||
+        !net_send_int32t(s, number_of_channels)
+    )
+    {
+        node_disconnected(s, node_id);
+    }
 }
 
 void net_send_get_data(int node_id, int module_id, int channel, int get_data_id)
@@ -673,58 +691,76 @@ void net_send_get_data(int node_id, int module_id, int channel, int get_data_id)
     }
 }
 
-/*
-
-/// Receive and process a delete module message from another node. For the packet format see net_send_delete_module() function.
-static void net_process_delete_module(int s, int sending_node_id)
+void net_send_delete_module(int module_id)
 {
-    int32_t node_id, module_id;
-    if (
-      !net_recv_int32t(s, &module_id, sending_node_id)
-    )
-        return;
-    lock_framework();
-        net_delete_module_instance(sending_node_id, module_id);
-    unlock_framework();
+    for (int node_id = 0; node_id < nodes->len; node_id++)
+    {
+        if (node_id == this_node_id) continue;
+        node_info *ni = g_array_index(nodes, node_info *, node_id);
+        if (ni->is_online == 0) continue;
+
+        int s = g_array_index(sockets, int, node_id);
+
+        if (
+            !net_send_int32t(s, MSG_DELETED_MODULE_INSTANCE)  ||
+            !net_send_int32t(s, this_node_id) ||
+            !net_send_int32t(s, module_id)
+        )
+        {
+            node_disconnected(s, node_id);
+        }
+    }
+    printf("announced deleted module %d to other nodes\n", module_id);
 }
 
-/// Receive and process a subscribe channel message from another node. For the packet format see net_send_subscribe() function.
-static void net_process_subscribe_module(int s, int sending_node_id)
+void net_send_subscribe(int node_id, int module_id, int channel)
 {
-    int32_t subscribed_module_id, channel;
-    char *module_name, *module_type;
-    subscriber_callback callback;
+    int s = g_array_index(sockets, int, node_id);
     if (
-      !net_recv_int32t(s, &subscribed_module_id, sending_node_id) ||
-      !net_recv_int32t(s, &channel, sending_node_id)
+      !net_send_int32t(s, MSG_SUBSCRIBE)  ||
+      !net_send_int32t(s, this_node_id) ||
+      !net_send_int32t(s, module_id) ||
+      !net_send_int32t(s, channel)
     )
-        return;
-    subscribe_channel_from_remote_node(sending_node_id, subscribed_module_id, channel);
+    {
+        node_disconnected(s, node_id);
+    }
 }
 
-/// Receive and process a unsubscribe channel message from another node. For the packet format see net_send_subscribe() function.
-static void net_process_unsubscribe_module(int s, int sending_node_id)
+void net_send_unsubscribe(int node_id, int module_id, int channel)
 {
-    int32_t subscribed_module_id, channel;
+    int s = g_array_index(sockets, int, node_id);
     if (
-      !net_recv_int32t(s, &subscribed_module_id, sending_node_id) ||
-      !net_recv_int32t(s, &channel, sending_node_id)
+      !net_send_int32t(s, MSG_UNSUBSCRIBE)  ||
+      !net_send_int32t(s, this_node_id) ||
+      !net_send_int32t(s, module_id) ||
+      !net_send_int32t(s, channel)
     )
-        return;
-    unsubscribe_channel_from_remote_node(sending_node_id, subscribed_module_id, channel);
+    {
+        node_disconnected(s, node_id);
+    }
 }
 
-/// Receive and process a global message from another node. For the packet format see net_send_global_message() function.
-static void net_process_global_message(int s, int sending_node_id)
+void net_send_global_message(int sending_module_id, int message_id, uint8_t *message_data, int message_length)
 {
-    int32_t sending_module_id, message_id, msg_length;
-    uint8_t *message_data;
-    if (
-      !net_recv_int32t(s, &sending_module_id, sending_node_id) ||
-      !net_recv_int32t(s, &message_id, sending_node_id) ||
-      !net_recv_bytes(s, &message_data, &msg_length, sending_node_id)
-    )
-        return;
-    mato_send_global_message(sending_module_id+sending_node_id*NODE_MULTIPLIER, message_id, msg_length, message_data);
+    for (int node_id = 0; node_id < nodes->len; node_id++)
+    {
+        if (node_id == this_node_id) continue;
+        node_info *ni = g_array_index(nodes, node_info *, node_id);
+        if (ni->is_online == 0) continue;
+
+        int s = g_array_index(sockets, int, node_id);
+
+        if (
+            !net_send_int32t(s, MSG_GLOBAL_MESSAGE) ||
+            !net_send_int32t(s, this_node_id) ||
+            !net_send_int32t(s, sending_module_id) ||
+            !net_send_int32t(s, message_id) ||
+            !net_send_bytes(s, message_data, message_length)
+        )
+        {
+            node_disconnected(s, node_id);
+        }
+    }
+    printf("forwarded message %d to other nodes\n", message_id);
 }
-*/

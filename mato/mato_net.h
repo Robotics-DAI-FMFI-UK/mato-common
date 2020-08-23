@@ -39,6 +39,9 @@ void net_mato_shutdown();
 void start_networking();
 
 /// Broadcast information about new local module instance to all other nodes.
+void net_broadcast_new_module(int module_id);
+
+/// Send information about new local module instance to a specific node.
 /// ~~~~
 /// Packet format:
 /// -------------------------------------
@@ -52,7 +55,7 @@ void start_networking();
 /// number_of_channels        int32
 /// -------------------------------------
 /// ~~~~
-void net_announce_new_module(int module_id);
+void net_send_new_module(int node_id, int module_id);
 
 /// Send a new message posted by our local module to another node that is subscribed to that channel.
 /// ~~~~
@@ -85,14 +88,63 @@ void net_send_data(int node_id, int get_data_id, uint8_t *data, int32_t data_len
 /// ~~~~
 /// Packet format:
 /// -------------------------------------
-/// MSG_DATA                  int32
+/// MSG_GET_DATA              int32
 /// sending_node_id           int32
+/// module_id                 int32
+/// channel                   int32
 /// get_data_id               int32
-/// len(data)                 int32
-/// data                      variable
 /// -------------------------------------
 /// ~~~~
 void net_send_get_data(int node_id, int module_id, int channel, int get_data_id);
+
+/// Broadcast information that module at this node has been deleted.
+/// ~~~~
+/// Packet format:
+/// -------------------------------------
+/// MSG_DELETED_MODULE_INSTANCE  int32
+/// sending_node_id              int32
+/// module_id                    int32
+/// -------------------------------------
+/// ~~~~
+void net_send_delete_module(int module_id);
+
+/// Send a subscription to a channel of a module running on a different node.
+/// ~~~~
+/// Packet format:
+/// -------------------------------------
+/// MSG_SUBSCRIBE             int32
+/// sending_node_id           int32
+/// module_id                 int32
+/// channel                   int32
+/// -------------------------------------
+/// ~~~~
+void net_send_subscribe(int node_id, int module_id, int channel);
+
+/// Send a unsubscription to a channel of a module running on a different node.
+/// ~~~~
+/// Packet format:
+/// -------------------------------------
+/// MSG_SUBSCRIBE             int32
+/// sending_node_id           int32
+/// module_id                 int32
+/// channel                   int32
+/// -------------------------------------
+/// ~~~~
+void net_send_unsubscribe(int node_id, int module_id, int channel);
+
+/// Broadcast global message to all other nodes.
+/// ~~~~
+/// Packet format:
+/// -------------------------------------
+/// MSG_GLOBAL_MESSAGE        int32
+/// sending_node_id           int32
+/// sending_module_id         int32
+/// message_id                int32
+/// len(message_data)         int32
+/// message_data              variable
+/// -------------------------------------
+/// ~~~~
+void net_send_global_message(int sending_module_id, int message_id, uint8_t *message_data, int message_length);
 
 void net_delete_module_instance(int node_id, int module_id);
 

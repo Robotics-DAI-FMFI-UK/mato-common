@@ -58,7 +58,7 @@ int mato_create_new_module_instance(const char *module_type, const char *module_
         g_array_append_val(instance_data, module_instance_data);
 //      printf("appended instance data %" PRIuPTR "\n", (uintptr_t)module_instance_data);
 
-        net_announce_new_module(module_id);
+        net_broadcast_new_module(module_id);
     unlock_framework();
 
     return public_module_id;
@@ -126,7 +126,9 @@ void mato_delete_module_instance(int module_id)
         g_array_index(g_array_index(module_names, GArray *, this_node_id), char *, module_id) = 0;
         g_array_index(g_array_index(module_types, GArray *, this_node_id), char *, module_id) = 0;
         g_array_index(instance_data, void *, module_id) = 0;
-        // TODO: notify other nodes that the module has been deleted
+
+        net_send_delete_module(module_id);
+
     unlock_framework();
 }
 
@@ -177,9 +179,7 @@ int mato_subscribe(int subscriber_module_id, int subscribed_module_id, int chann
         GArray *channel_subscriptions = g_array_index(g_array_index(g_array_index(subscriptions, GArray *, subscribed_node_id), GArray *, subscribed_module_id), GArray *, channel);
         g_array_append_val(channel_subscriptions, new_subscription);
         if ((channel_subscriptions->len == 1) && (subscribed_node_id != this_node_id))
-        {
-            //TODO send subscription to another node
-        }
+            net_send_subscribe(subscribed_node_id, subscribed_module_id, channel);
     unlock_framework();
     return new_subscription->subscription_id;
 }
@@ -221,8 +221,7 @@ int mato_send_global_message(int module_id_sender, int message_id, int msg_lengt
         for (int node_id = 0; node_id < nodes->len; node_id++)
         {
             if (this_node_id == node_id) continue;
-            // TODO: forward global message to other node
-
+            net_send_global_message(module_id_sender, message_id, (uint8_t *)message_data, msg_length);
         }
     int our_modules_count = g_array_index(module_names, GArray *, this_node_id)->len;
     for (int module_id = 0; module_id < our_modules_count; module_id++)
@@ -250,9 +249,7 @@ void mato_get_data(int id_module, int channel, int *data_length, void **data)
         int node_id = id_module / NODE_MULTIPLIER;
         id_module %= NODE_MULTIPLIER;
         if (node_id == this_node_id)
-        {
             copy_of_last_data_of_channel(node_id, id_module, channel, data_length, (uint8_t **)data);
-        }
         else
         {
             GArray *node_subscriptions = g_array_index(subscriptions, GArray *, node_id);
@@ -271,38 +268,53 @@ void mato_get_data(int id_module, int channel, int *data_length, void **data)
                     perror("could not retrieve data size from pipe");
                 else if (read(fd[0], data, sizeof(uint8_t *)) < 0)
                     perror("could not retrieve data size from pipe");
+                close(fd[0]);
+                close(fd[1]);
             }
         }
     unlock_framework();
     return;
 }
 
-void mato_borrow_data(int id_module, int channel, int *data_length, void **data)//28.7 nove
+void mato_borrow_data(int id_module, int channel, int *data_length, void **data)
 {
     lock_framework();
         int node_id = id_module / NODE_MULTIPLIER;
         id_module %= NODE_MULTIPLIER;
         if (node_id == this_node_id)
-        {
-            GList *waiting_buffers = g_array_index(g_array_index(g_array_index(buffers,GArray *,this_node_id), GArray *, id_module), GList *, channel);
-            if (waiting_buffers == 0)
-            {
-    unlock_framework();
-                *data_length = 0;
-                *data = 0;
-                return;
-            }
-            channel_data *cd = (channel_data *)waiting_buffers->data;
-
-            *data_length = cd->length;
-            *data = cd->data;
-            cd->references++;
-        }
+            borrow_last_data_of_channel(node_id, id_module, channel, data_length, (uint8_t **)data);
         else
         {
-            //TODO borrow data from other node
-            //if we are subscribed to that channel, just copy the last valid from the buffers,
-            //otherwise request the last valid data from other node
+            GArray *node_subscriptions = g_array_index(subscriptions, GArray *, node_id);
+            GArray *module_subscriptions = g_array_index(node_subscriptions, GArray *, id_module);
+            GArray *channel_subscriptions = g_array_index(module_subscriptions, GArray *, channel);
+            if (channel_subscriptions->len > 0)
+            {  // there is at least 1 subscription on that channel from us
+                borrow_last_data_of_channel(node_id, id_module, channel, data_length, (uint8_t **)data);
+            }
+            else
+            {  // otherwise request the data from another node, store it to buffers and return borrowed pointer
+                int fd[2];
+                pipe(fd);
+    unlock_framework();
+                net_send_get_data(node_id, id_module, channel, fd[1]);
+                if (read(fd[0], data_length, sizeof(int32_t)) < 0)
+                    perror("could not retrieve data size from pipe");
+                else if (read(fd[0], data, sizeof(uint8_t *)) < 0)
+                    perror("could not retrieve data size from pipe");
+                close(fd[0]);
+                close(fd[1]);
+                if (*data)
+                {
+                    channel_data *cd = new_channel_data(node_id, id_module, channel, *data_length, *data);
+                    cd->references++;
+        lock_framework();
+                    GArray *module_buffers = g_array_index(g_array_index(buffers,GArray *, node_id), GArray *, id_module);
+                    GList *channel_list = g_array_index(module_buffers, GList *, channel);
+                    channel_list = g_list_prepend(channel_list, cd);
+                    g_array_index(module_buffers, GList *, channel) = channel_list;
+                }
+            }
         }
     unlock_framework();
     return;
@@ -356,14 +368,15 @@ GArray* mato_get_list_of_modules(char *type)
         GArray *modules = g_array_new(0, 0, sizeof(module_info *));
         for (int node_id = 0; node_id < nodes->len; node_id++)
         {
-            for (int i = 0; i < g_array_index(module_names, GArray *, node_id)->len; i++)
+            int module_count = g_array_index(module_names, GArray *, node_id)->len;
+            for (int module_id = 0; module_id < module_count; module_id++)
             {
-                char *module_name = g_array_index(g_array_index(module_names, GArray *, node_id), char *, i);
+                char *module_name = g_array_index(g_array_index(module_names, GArray *, node_id), char *, module_id);
                 if (module_name == 0) continue;
-                char *module_type = g_array_index(g_array_index(module_types, GArray *, node_id), char *, i);
+                char *module_type = g_array_index(g_array_index(module_types, GArray *, node_id), char *, module_id);
                 if ((type == 0) || (strcmp(module_type, type) == 0))
                 {
-                    module_info *info = new_module_info(node_id, i + node_id * NODE_MULTIPLIER, module_name, module_type);
+                    module_info *info = new_module_info(node_id, module_id + node_id * NODE_MULTIPLIER, module_name, module_type);
                     g_array_append_val(modules, info);
                 }
             }
