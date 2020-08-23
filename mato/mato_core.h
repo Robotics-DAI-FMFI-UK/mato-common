@@ -156,6 +156,15 @@ void subscribe_channel_from_remote_node(int remote_node_id, int subscribed_modul
 void unsubscribe_channel_from_remote_node(int remote_node_id, int subscribed_module_id, int channel);
 
 /// Remote module is requesting data from our channel, retrieve them and send back
-void get_data_from_remote(int remote_node_id, int module_id, int channel, int get_data_id);
+void pack_and_send_data_to_remote(int remote_node_id, int module_id, int channel, int get_data_id);
+
+/// Remote node is sending data that some module of this node requested and waits for.
+/// Notify it through pipe so that the data is sent down to the module.
+void return_data_to_waiting_module(int get_data_id, int data_length, uint8_t *data);
+
+/// From buffers, retrieve the most recent message from a specified module/channel, make a copy of it
+/// and return the pointer to and size of the message in the *data_length and *data variables.
+/// If there is no data posted by that module yet, both *data_length and *data will be 0.
+void copy_of_last_data_of_channel(int node_id, int module_id, int channel, int *data_length, uint8_t **data);
 
 #endif

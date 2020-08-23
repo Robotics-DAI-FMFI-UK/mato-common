@@ -39,11 +39,11 @@ void net_mato_shutdown();
 void start_networking();
 
 /// Broadcast information about new local module instance to all other nodes.
-///
+/// ~~~~
 /// Packet format:
 /// -------------------------------------
 /// MSG_NEW_MODULE_INSTANCE   int32
-/// this_node_id              int32
+/// sending_node_id           int32
 /// [local]module_id          int32
 /// len(module_name)+1        int32
 /// module_name               variable
@@ -51,10 +51,11 @@ void start_networking();
 /// module_type               variable
 /// number_of_channels        int32
 /// -------------------------------------
+/// ~~~~
 void net_announce_new_module(int module_id);
 
-/// Broadcast information about new local module instance to all other nodes.
-///
+/// Send a new message posted by our local module to another node that is subscribed to that channel.
+/// ~~~~
 /// Packet format:
 /// -------------------------------------
 /// MSG_SUBSCRIBED_DATA       int32
@@ -64,19 +65,34 @@ void net_announce_new_module(int module_id);
 /// length                    int32
 /// data                      variable
 /// -------------------------------------
+/// ~~~~
 void net_send_subscribed_data(int subscribed_node_id, channel_data *cd);
 
-/// Broadcast information about new local module instance to all other nodes.
-///
+/// Send data that were requested by MSG_GET_DATA message to the node that requested.
+/// ~~~~
 /// Packet format:
 /// -------------------------------------
 /// MSG_DATA                  int32
-/// this_node_id              int32
+/// sending_node_id           int32
 /// get_data_id               int32
 /// len(data)                 int32
 /// data                      variable
 /// -------------------------------------
+/// ~~~~
 void net_send_data(int node_id, int get_data_id, uint8_t *data, int32_t data_length);
+
+/// Request data from a channel of a module on a different node.
+/// ~~~~
+/// Packet format:
+/// -------------------------------------
+/// MSG_DATA                  int32
+/// sending_node_id           int32
+/// get_data_id               int32
+/// len(data)                 int32
+/// data                      variable
+/// -------------------------------------
+/// ~~~~
+void net_send_get_data(int node_id, int module_id, int channel, int get_data_id);
 
 void net_delete_module_instance(int node_id, int module_id);
 

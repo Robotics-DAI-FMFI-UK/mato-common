@@ -251,25 +251,27 @@ void mato_get_data(int id_module, int channel, int *data_length, void **data)
         id_module %= NODE_MULTIPLIER;
         if (node_id == this_node_id)
         {
-            GList *waiting_buffers = g_array_index(g_array_index(g_array_index(buffers,GArray *,this_node_id), GArray *, id_module), GList *, channel);
-            if (waiting_buffers == 0)
-            {
-    unlock_framework();
-                *data_length = 0;
-                *data = 0;
-                return;
-            }
-            channel_data *cd = (channel_data *)(waiting_buffers->data);
-
-            *data_length = cd->length;
-            *data = malloc(cd->length);
-            memcpy(*data, cd->data, cd->length);
+            copy_of_last_data_of_channel(node_id, id_module, channel, data_length, (uint8_t **)data);
         }
         else
         {
-            //TODO get data from other node
-            //if we are subscribed to that channel, just copy the last valid from the buffers,
-            //otherwise request the last valid data from other node
+            GArray *node_subscriptions = g_array_index(subscriptions, GArray *, node_id);
+            GArray *module_subscriptions = g_array_index(node_subscriptions, GArray *, id_module);
+            GArray *channel_subscriptions = g_array_index(module_subscriptions, GArray *, channel);
+            if (channel_subscriptions->len > 0)
+            {  // there is at least 1 subscription on that channel from us
+                copy_of_last_data_of_channel(node_id, id_module, channel, data_length, (uint8_t **)data);
+            }
+            else
+            {  // otherwise request the data from another node
+                int fd[2];
+                pipe(fd);
+                net_send_get_data(node_id, id_module, channel, fd[1]);
+                if (read(fd[0], data_length, sizeof(int32_t)) < 0)
+                    perror("could not retrieve data size from pipe");
+                else if (read(fd[0], data, sizeof(uint8_t *)) < 0)
+                    perror("could not retrieve data size from pipe");
+            }
         }
     unlock_framework();
     return;

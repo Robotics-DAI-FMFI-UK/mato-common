@@ -214,10 +214,10 @@ static void net_process_new_module(int s, int sending_node_id)
     int32_t node_id, module_id, number_of_channels, ignore;
     char *module_name, *module_type;
     if (
-      !net_recv_int32t(s, &module_id, sending_node_id) ||
-      !net_recv_bytes(s, (uint8_t **)&module_name, &ignore, sending_node_id)  ||
-      !net_recv_bytes(s, (uint8_t **)&module_type, &ignore, sending_node_id)  ||
-      !net_recv_int32t(s, &number_of_channels, sending_node_id)
+        !net_recv_int32t(s, &module_id, sending_node_id) ||
+        !net_recv_bytes(s, (uint8_t **)&module_name, &ignore, sending_node_id)  ||
+        !net_recv_bytes(s, (uint8_t **)&module_type, &ignore, sending_node_id)  ||
+        !net_recv_int32t(s, &number_of_channels, sending_node_id)
     )
         return;
     store_new_remote_module(sending_node_id, module_id, module_name, module_type, number_of_channels);
@@ -228,7 +228,7 @@ static void net_process_delete_module(int s, int sending_node_id)
 {
     int32_t node_id, module_id;
     if (
-      !net_recv_int32t(s, &module_id, sending_node_id)
+        !net_recv_int32t(s, &module_id, sending_node_id)
     )
         return;
     lock_framework();
@@ -243,8 +243,8 @@ static void net_process_subscribe_module(int s, int sending_node_id)
     char *module_name, *module_type;
     subscriber_callback callback;
     if (
-      !net_recv_int32t(s, &subscribed_module_id, sending_node_id) ||
-      !net_recv_int32t(s, &channel, sending_node_id)
+        !net_recv_int32t(s, &subscribed_module_id, sending_node_id) ||
+        !net_recv_int32t(s, &channel, sending_node_id)
     )
         return;
     subscribe_channel_from_remote_node(sending_node_id, subscribed_module_id, channel);
@@ -255,8 +255,8 @@ static void net_process_unsubscribe_module(int s, int sending_node_id)
 {
     int32_t subscribed_module_id, channel;
     if (
-      !net_recv_int32t(s, &subscribed_module_id, sending_node_id) ||
-      !net_recv_int32t(s, &channel, sending_node_id)
+        !net_recv_int32t(s, &subscribed_module_id, sending_node_id) ||
+        !net_recv_int32t(s, &channel, sending_node_id)
     )
         return;
     unsubscribe_channel_from_remote_node(sending_node_id, subscribed_module_id, channel);
@@ -268,12 +268,28 @@ static void net_process_get_data(int s, int sending_node_id)
     int32_t module_id, channel, get_data_id;
 
     if (
-      !net_recv_int32t(s, &module_id, sending_node_id) ||
-      !net_recv_int32t(s, &channel, sending_node_id) ||
-      !net_recv_int32t(s, &get_data_id, sending_node_id)
+        !net_recv_int32t(s, &module_id, sending_node_id) ||
+        !net_recv_int32t(s, &channel, sending_node_id) ||
+        !net_recv_int32t(s, &get_data_id, sending_node_id)
     )
         return;
-    get_data_from_remote(sending_node_id, module_id, channel, get_data_id);
+    pack_and_send_data_to_remote(sending_node_id, module_id, channel, get_data_id);
+}
+
+/// Receive and process a data message that this node have requested by get_data message earlier. For the packet format see net_send_data() function.
+static void net_process_data(int s, int sending_node_id)
+{
+    int32_t get_data_id;
+    int32_t data_length;
+    uint8_t *data;
+
+    if (
+       !net_recv_int32t(s, &get_data_id, sending_node_id) ||
+       !net_recv_bytes(s, &data, &data_length, sending_node_id)
+    )
+       return;
+
+    return_data_to_waiting_module(get_data_id, data_length, data);
 }
 
 /// Receive and process a subscribed data message from another node. For the packet format see net_send_subscribed_data() function.
@@ -282,10 +298,10 @@ static void net_process_subscribed_data(int s, int sending_node_id)
     int32_t sending_module_id, channel, data_length;
     uint8_t *data;
     if (
-      !net_recv_int32t(s, &sending_module_id, sending_node_id) ||
-      !net_recv_int32t(s, &channel, sending_node_id) ||
-      !net_recv_int32t(s, &data_length, sending_node_id) ||
-      !net_recv_bytes(s, &data, &data_length, sending_node_id)
+        !net_recv_int32t(s, &sending_module_id, sending_node_id) ||
+        !net_recv_int32t(s, &channel, sending_node_id) ||
+        !net_recv_int32t(s, &data_length, sending_node_id) ||
+        !net_recv_bytes(s, &data, &data_length, sending_node_id)
     )
         return;
     mato_post_data(sending_module_id + sending_node_id * NODE_MULTIPLIER, channel, data_length, data);
@@ -297,9 +313,9 @@ static void net_process_global_message(int s, int sending_node_id)
     int32_t sending_module_id, message_id, msg_length;
     uint8_t *message_data;
     if (
-      !net_recv_int32t(s, &sending_module_id, sending_node_id) ||
-      !net_recv_int32t(s, &message_id, sending_node_id) ||
-      !net_recv_bytes(s, &message_data, &msg_length, sending_node_id)
+        !net_recv_int32t(s, &sending_module_id, sending_node_id) ||
+        !net_recv_int32t(s, &message_id, sending_node_id) ||
+        !net_recv_bytes(s, &message_data, &msg_length, sending_node_id)
     )
         return;
     mato_send_global_message(sending_module_id+sending_node_id*NODE_MULTIPLIER, message_id, msg_length, message_data);
@@ -327,6 +343,9 @@ static void process_node_message(int s, int sending_node_id)
             break;
         case MSG_GET_DATA:
             net_process_get_data(s, sending_node_id);
+            break;
+        case MSG_DATA:
+            net_process_data(s, sending_node_id);
             break;
         case MSG_SUBSCRIBED_DATA:
             net_process_subscribed_data(s, sending_node_id);
@@ -562,8 +581,9 @@ static int net_send_bytes(int socket, uint8_t *data, int32_t length)
 {
     if (write(socket, &length, sizeof(int32_t)) < 0)
         return 0;
-    if (write(socket, data, length) < 0)
-        return 0;
+    if (length > 0)
+        if (write(socket, data, length) < 0)
+            return 0;
     return 1;
 }
 
@@ -598,11 +618,11 @@ void net_send_subscribed_data(int subscribed_node_id, channel_data *cd)
     int socket = g_array_index(sockets, int, subscribed_node_id);
 
     if (
-      !net_send_int32t(socket, MSG_SUBSCRIBED_DATA)  ||
-      !net_send_int32t(socket, this_node_id) ||
-      !net_send_int32t(socket, cd->module_id) ||
-      !net_send_int32t(socket, cd->channel_id) ||
-      !net_send_bytes(socket, cd->data, cd->length)
+        !net_send_int32t(socket, MSG_SUBSCRIBED_DATA)  ||
+        !net_send_int32t(socket, this_node_id) ||
+        !net_send_int32t(socket, cd->module_id) ||
+        !net_send_int32t(socket, cd->channel_id) ||
+        !net_send_bytes(socket, cd->data, cd->length)
     )
     {
         node_disconnected(socket, subscribed_node_id);
@@ -624,12 +644,12 @@ void net_announce_new_module(int module_id)
         int32_t number_of_channels = spec->number_of_channels;
 
         if (
-          !net_send_int32t(s, MSG_NEW_MODULE_INSTANCE)  ||
-          !net_send_int32t(s, this_node_id) ||
-          !net_send_int32t(s, module_id) ||
-          !net_send_string(s, module_name) ||
-          !net_send_string(s, module_type) ||
-          !net_send_int32t(s, number_of_channels)
+            !net_send_int32t(s, MSG_NEW_MODULE_INSTANCE)  ||
+            !net_send_int32t(s, this_node_id) ||
+            !net_send_int32t(s, module_id) ||
+            !net_send_string(s, module_name) ||
+            !net_send_string(s, module_type) ||
+            !net_send_int32t(s, number_of_channels)
         )
         {
             node_disconnected(s, node_id);
@@ -637,3 +657,74 @@ void net_announce_new_module(int module_id)
     }
     printf("announced new module %d to other nodes\n", module_id);
 }
+
+void net_send_get_data(int node_id, int module_id, int channel, int get_data_id)
+{
+    int s = g_array_index(sockets, int, node_id);
+    if (
+      !net_send_int32t(s, MSG_GET_DATA)  ||
+      !net_send_int32t(s, this_node_id) ||
+      !net_send_int32t(s, module_id) ||
+      !net_send_int32t(s, channel) ||
+      !net_send_int32t(s, get_data_id)
+    )
+    {
+        node_disconnected(s, node_id);
+    }
+}
+
+/*
+
+/// Receive and process a delete module message from another node. For the packet format see net_send_delete_module() function.
+static void net_process_delete_module(int s, int sending_node_id)
+{
+    int32_t node_id, module_id;
+    if (
+      !net_recv_int32t(s, &module_id, sending_node_id)
+    )
+        return;
+    lock_framework();
+        net_delete_module_instance(sending_node_id, module_id);
+    unlock_framework();
+}
+
+/// Receive and process a subscribe channel message from another node. For the packet format see net_send_subscribe() function.
+static void net_process_subscribe_module(int s, int sending_node_id)
+{
+    int32_t subscribed_module_id, channel;
+    char *module_name, *module_type;
+    subscriber_callback callback;
+    if (
+      !net_recv_int32t(s, &subscribed_module_id, sending_node_id) ||
+      !net_recv_int32t(s, &channel, sending_node_id)
+    )
+        return;
+    subscribe_channel_from_remote_node(sending_node_id, subscribed_module_id, channel);
+}
+
+/// Receive and process a unsubscribe channel message from another node. For the packet format see net_send_subscribe() function.
+static void net_process_unsubscribe_module(int s, int sending_node_id)
+{
+    int32_t subscribed_module_id, channel;
+    if (
+      !net_recv_int32t(s, &subscribed_module_id, sending_node_id) ||
+      !net_recv_int32t(s, &channel, sending_node_id)
+    )
+        return;
+    unsubscribe_channel_from_remote_node(sending_node_id, subscribed_module_id, channel);
+}
+
+/// Receive and process a global message from another node. For the packet format see net_send_global_message() function.
+static void net_process_global_message(int s, int sending_node_id)
+{
+    int32_t sending_module_id, message_id, msg_length;
+    uint8_t *message_data;
+    if (
+      !net_recv_int32t(s, &sending_module_id, sending_node_id) ||
+      !net_recv_int32t(s, &message_id, sending_node_id) ||
+      !net_recv_bytes(s, &message_data, &msg_length, sending_node_id)
+    )
+        return;
+    mato_send_global_message(sending_module_id+sending_node_id*NODE_MULTIPLIER, message_id, msg_length, message_data);
+}
+*/

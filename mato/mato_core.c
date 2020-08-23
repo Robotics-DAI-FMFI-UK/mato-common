@@ -429,24 +429,51 @@ void unsubscribe_channel_from_remote_node(int remote_node_id, int subscribed_mod
     unlock_framework();
 }
 
-void get_data_from_remote(int remote_node_id, int module_id, int channel, int get_data_id)
+void pack_and_send_data_to_remote(int remote_node_id, int module_id, int channel, int get_data_id)
 {
     lock_framework();
-        GList *waiting_buffers = g_array_index(g_array_index(g_array_index(buffers, GArray *,this_node_id), GArray *, module_id), GList *, channel);
-        if (waiting_buffers == 0)
+        GArray *module_buffers = g_array_index(g_array_index(buffers, GArray *,this_node_id), GArray *, module_id);
+        GList *waiting_buffers = g_array_index(module_buffers, GList *, channel);
+
+        if (waiting_buffers == 0)  // module has not provided any data yet, send 0 response
         {
     unlock_framework();
-          //  TODO
-          //  *data_length = 0;
-          //  *data = 0;
+            net_send_data(remote_node_id, get_data_id, 0, 0);
             return;
         }
+        // retrieve the last valid data pointer (and increment reference count)
         channel_data *cd = (channel_data *)(waiting_buffers->data);
-
-        // TODO
-        //*data_length = cd->length;
-        //*data = malloc(cd->length);
-        //memcpy(*data, cd->data, cd->length);
+        cd->references++;
     unlock_framework();
-    return;
+        // sending outside of the lock, could take some time
+        net_send_data(remote_node_id, get_data_id, cd->data, cd->length);
+    lock_framework();
+        waiting_buffers = g_array_index(module_buffers, GList *, channel);
+        waiting_buffers = decrement_references(waiting_buffers, cd);
+        g_array_index(module_buffers, GList *, channel) = waiting_buffers;
+    unlock_framework();
+}
+
+void return_data_to_waiting_module(int get_data_id, int32_t data_length, uint8_t *data)
+{
+    if (write(get_data_id, &data_length, sizeof(int32_t)) < 0)
+        perror("error writing data size to pipe");
+    else if (write(get_data_id, &data, sizeof(uint8_t *)) < 0)
+        perror("error writing data to pipe");
+}
+
+void copy_of_last_data_of_channel(int node_id, int module_id, int channel, int *data_length, uint8_t **data)
+{
+    GList *waiting_buffers = g_array_index(g_array_index(g_array_index(buffers, GArray *, node_id), GArray *, module_id), GList *, channel);
+    if (waiting_buffers == 0)
+    {
+        *data_length = 0;
+        *data = 0;
+        return;
+    }
+    channel_data *cd = (channel_data *)(waiting_buffers->data);
+
+    *data_length = cd->length;
+    *data = malloc(cd->length);
+    memcpy(*data, cd->data, cd->length);
 }
