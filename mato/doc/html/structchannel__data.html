@@ -77,29 +77,108 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a26a57ec5d500291a4f3643b3ed07eb9c"><td class="memItemLeft" align="right" valign="top"><a id="a26a57ec5d500291a4f3643b3ed07eb9c"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>module_id</b></td></tr>
+<tr class="memitem:a26a57ec5d500291a4f3643b3ed07eb9c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structchannel__data.html#a26a57ec5d500291a4f3643b3ed07eb9c">module_id</a></td></tr>
 <tr class="separator:a26a57ec5d500291a4f3643b3ed07eb9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae9388d7569b3238a6e45b8998b6e3a72"><td class="memItemLeft" align="right" valign="top"><a id="ae9388d7569b3238a6e45b8998b6e3a72"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>channel_id</b></td></tr>
+<tr class="memitem:ae9388d7569b3238a6e45b8998b6e3a72"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structchannel__data.html#ae9388d7569b3238a6e45b8998b6e3a72">channel_id</a></td></tr>
 <tr class="separator:ae9388d7569b3238a6e45b8998b6e3a72"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a349379b38254399a55b56f23f33ce56e"><td class="memItemLeft" align="right" valign="top"><a id="a349379b38254399a55b56f23f33ce56e"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>length</b></td></tr>
+<tr class="memitem:a349379b38254399a55b56f23f33ce56e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structchannel__data.html#a349379b38254399a55b56f23f33ce56e">length</a></td></tr>
 <tr class="separator:a349379b38254399a55b56f23f33ce56e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7d19899d7f1b7c41d5ad06f5d18f7291"><td class="memItemLeft" align="right" valign="top"><a id="a7d19899d7f1b7c41d5ad06f5d18f7291"></a>
-void *&#160;</td><td class="memItemRight" valign="bottom"><b>data</b></td></tr>
+<tr class="memitem:a7d19899d7f1b7c41d5ad06f5d18f7291"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structchannel__data.html#a7d19899d7f1b7c41d5ad06f5d18f7291">data</a></td></tr>
 <tr class="separator:a7d19899d7f1b7c41d5ad06f5d18f7291"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac8a042c5a12b0245f0c4b0444b898d1e"><td class="memItemLeft" align="right" valign="top"><a id="ac8a042c5a12b0245f0c4b0444b898d1e"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>references</b></td></tr>
+<tr class="memitem:ac8a042c5a12b0245f0c4b0444b898d1e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structchannel__data.html#ac8a042c5a12b0245f0c4b0444b898d1e">references</a></td></tr>
 <tr class="separator:ac8a042c5a12b0245f0c4b0444b898d1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a91a979400329eb59fdc27db67281497a"><td class="memItemLeft" align="right" valign="top"><a id="a91a979400329eb59fdc27db67281497a"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>node_id</b></td></tr>
+<tr class="memitem:a91a979400329eb59fdc27db67281497a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structchannel__data.html#a91a979400329eb59fdc27db67281497a">node_id</a></td></tr>
 <tr class="separator:a91a979400329eb59fdc27db67281497a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The structure holds one message that was posted by a module to one of its output channels. </p>
 <p>It contains the module_id of the posting module, the channel number where the message was posted, the length of the data and pointer to malloc-ed data buffer that holds the actual data, and the number of references, i.e. how many users (typically modules) have received the data pointer and must return it back. </p>
-</div><hr/>The documentation for this struct was generated from the following file:<ul>
+</div><h2 class="groupheader">Member Data Documentation</h2>
+<a id="ae9388d7569b3238a6e45b8998b6e3a72"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae9388d7569b3238a6e45b8998b6e3a72">&#9670;&nbsp;</a></span>channel_id</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int channel_data::channel_id</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a7d19899d7f1b7c41d5ad06f5d18f7291"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7d19899d7f1b7c41d5ad06f5d18f7291">&#9670;&nbsp;</a></span>data</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void* channel_data::data</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a349379b38254399a55b56f23f33ce56e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a349379b38254399a55b56f23f33ce56e">&#9670;&nbsp;</a></span>length</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int channel_data::length</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a26a57ec5d500291a4f3643b3ed07eb9c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a26a57ec5d500291a4f3643b3ed07eb9c">&#9670;&nbsp;</a></span>module_id</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int channel_data::module_id</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a91a979400329eb59fdc27db67281497a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a91a979400329eb59fdc27db67281497a">&#9670;&nbsp;</a></span>node_id</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int channel_data::node_id</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac8a042c5a12b0245f0c4b0444b898d1e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac8a042c5a12b0245f0c4b0444b898d1e">&#9670;&nbsp;</a></span>references</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int channel_data::references</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<hr/>The documentation for this struct was generated from the following file:<ul>
 <li><a class="el" href="mato__core_8h_source.html">mato_core.h</a></li>
 </ul>
 </div><!-- contents -->

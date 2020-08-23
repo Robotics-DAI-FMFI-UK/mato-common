@@ -100,23 +100,102 @@ Include dependency graph for mato_net.c:</div>
 </map>
 </div>
 </div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:a369266c24eacffb87046522897a570d5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#a369266c24eacffb87046522897a570d5">_GNU_SOURCE</a></td></tr>
+<tr class="separator:a369266c24eacffb87046522897a570d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ab4af7bdf1f7414a15270c1162eb25bea"><td class="memItemLeft" align="right" valign="top"><a id="ab4af7bdf1f7414a15270c1162eb25bea"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>net_mato_init</b> (int this_node_identifier)</td></tr>
+<tr class="memitem:a54a2b1fd06b74aa7c4538a1c96682697"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#a54a2b1fd06b74aa7c4538a1c96682697">config_error</a> (int ln)</td></tr>
+<tr class="memdesc:a54a2b1fd06b74aa7c4538a1c96682697"><td class="mdescLeft">&#160;</td><td class="mdescRight">Print error about reading config at the specified line.  <a href="mato__net_8c.html#a54a2b1fd06b74aa7c4538a1c96682697">More...</a><br /></td></tr>
+<tr class="separator:a54a2b1fd06b74aa7c4538a1c96682697"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac11580f45a37c70d0eb9789edc078866"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="structnode__info.html">node_info</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#ac11580f45a37c70d0eb9789edc078866">new_node_info</a> (int node_id, char *ip, int port, char *name, int is_online)</td></tr>
+<tr class="memdesc:ac11580f45a37c70d0eb9789edc078866"><td class="mdescLeft">&#160;</td><td class="mdescRight">Node_info structure constructor, just fills newly allocated copies of data.  <a href="mato__net_8c.html#ac11580f45a37c70d0eb9789edc078866">More...</a><br /></td></tr>
+<tr class="separator:ac11580f45a37c70d0eb9789edc078866"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8cb5e555140d8b4e8afca9670150e482"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#a8cb5e555140d8b4e8afca9670150e482">read_mato_config</a> ()</td></tr>
+<tr class="memdesc:a8cb5e555140d8b4e8afca9670150e482"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads mato networking config file.  <a href="mato__net_8c.html#a8cb5e555140d8b4e8afca9670150e482">More...</a><br /></td></tr>
+<tr class="separator:a8cb5e555140d8b4e8afca9670150e482"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab4af7bdf1f7414a15270c1162eb25bea"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#ab4af7bdf1f7414a15270c1162eb25bea">net_mato_init</a> (int this_node_identifier)</td></tr>
 <tr class="separator:ab4af7bdf1f7414a15270c1162eb25bea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aef72140c8f7454f33e028ea9e8e50ce8"><td class="memItemLeft" align="right" valign="top"><a id="aef72140c8f7454f33e028ea9e8e50ce8"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#aef72140c8f7454f33e028ea9e8e50ce8">net_mato_shutdown</a> ()</td></tr>
-<tr class="memdesc:aef72140c8f7454f33e028ea9e8e50ce8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close and release resources used by the networking. <br /></td></tr>
+<tr class="memitem:aef72140c8f7454f33e028ea9e8e50ce8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#aef72140c8f7454f33e028ea9e8e50ce8">net_mato_shutdown</a> ()</td></tr>
+<tr class="memdesc:aef72140c8f7454f33e028ea9e8e50ce8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close and release resources used by the networking.  <a href="mato__net_8c.html#aef72140c8f7454f33e028ea9e8e50ce8">More...</a><br /></td></tr>
 <tr class="separator:aef72140c8f7454f33e028ea9e8e50ce8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:affc613d7e6afcf44c6f079084a991b33"><td class="memItemLeft" align="right" valign="top"><a id="affc613d7e6afcf44c6f079084a991b33"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#affc613d7e6afcf44c6f079084a991b33">net_delete_module_instance</a> (int node_id, int module_id)</td></tr>
-<tr class="memdesc:affc613d7e6afcf44c6f079084a991b33"><td class="mdescLeft">&#160;</td><td class="mdescRight">Soon to be updated... <br /></td></tr>
+<tr class="memitem:ae19e829cee966e6a6e69ce5dc4b2086b"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#ae19e829cee966e6a6e69ce5dc4b2086b">node_disconnected</a> (int s, int node_id)</td></tr>
+<tr class="memdesc:ae19e829cee966e6a6e69ce5dc4b2086b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clean up all traces of a node (and its modules) after it got disconnected.  <a href="mato__net_8c.html#ae19e829cee966e6a6e69ce5dc4b2086b">More...</a><br /></td></tr>
+<tr class="separator:ae19e829cee966e6a6e69ce5dc4b2086b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:addd190c72656384c5dbbd3e57b2350a8"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#addd190c72656384c5dbbd3e57b2350a8">net_recv_int32t</a> (int s, int32_t *num, int sending_node_id)</td></tr>
+<tr class="memdesc:addd190c72656384c5dbbd3e57b2350a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Receive one 32-bit integer from a socket.  <a href="mato__net_8c.html#addd190c72656384c5dbbd3e57b2350a8">More...</a><br /></td></tr>
+<tr class="separator:addd190c72656384c5dbbd3e57b2350a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a63ba58e83b8e160b349c3d191a0040b0"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#a63ba58e83b8e160b349c3d191a0040b0">net_recv_bytes</a> (int s, uint8_t **str, int32_t *str_len, int sending_node_id)</td></tr>
+<tr class="memdesc:a63ba58e83b8e160b349c3d191a0040b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Receive string of bytes from a socket.  <a href="mato__net_8c.html#a63ba58e83b8e160b349c3d191a0040b0">More...</a><br /></td></tr>
+<tr class="separator:a63ba58e83b8e160b349c3d191a0040b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a98ab20a5ce5735e2351054fa072ac6de"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#a98ab20a5ce5735e2351054fa072ac6de">net_delete_module_buffers</a> (int node_id, int module_id)</td></tr>
+<tr class="memdesc:a98ab20a5ce5735e2351054fa072ac6de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gently delete buffers of the module: that is only decrement the reference of the "last valid" packet if we have one.  <a href="mato__net_8c.html#a98ab20a5ce5735e2351054fa072ac6de">More...</a><br /></td></tr>
+<tr class="separator:a98ab20a5ce5735e2351054fa072ac6de"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:affc613d7e6afcf44c6f079084a991b33"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#affc613d7e6afcf44c6f079084a991b33">net_delete_module_instance</a> (int node_id, int module_id)</td></tr>
+<tr class="memdesc:affc613d7e6afcf44c6f079084a991b33"><td class="mdescLeft">&#160;</td><td class="mdescRight">Soon to be updated...  <a href="mato__net_8c.html#affc613d7e6afcf44c6f079084a991b33">More...</a><br /></td></tr>
 <tr class="separator:affc613d7e6afcf44c6f079084a991b33"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a073d05e5bf9e0ffebb49c0251d250c0f"><td class="memItemLeft" align="right" valign="top"><a id="a073d05e5bf9e0ffebb49c0251d250c0f"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#a073d05e5bf9e0ffebb49c0251d250c0f">start_networking</a> ()</td></tr>
-<tr class="memdesc:a073d05e5bf9e0ffebb49c0251d250c0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create listening socket for other nodes, start reconnecting and communication threads. <br /></td></tr>
+<tr class="memitem:a6ef35d6c4410f72ccce513a286367c92"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#a6ef35d6c4410f72ccce513a286367c92">net_process_new_module</a> (int s, int sending_node_id)</td></tr>
+<tr class="memdesc:a6ef35d6c4410f72ccce513a286367c92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Receive and process new module instance message from another node. For the packet format, see <a class="el" href="mato__net_8c.html#a89b6e0a431131bbd10afb037237fc9d5" title="Broadcast information about new local module instance to all other nodes.">net_announce_new_module()</a> function.  <a href="mato__net_8c.html#a6ef35d6c4410f72ccce513a286367c92">More...</a><br /></td></tr>
+<tr class="separator:a6ef35d6c4410f72ccce513a286367c92"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6add413c66479ff6bb9c9f075edded47"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#a6add413c66479ff6bb9c9f075edded47">net_process_delete_module</a> (int s, int sending_node_id)</td></tr>
+<tr class="memdesc:a6add413c66479ff6bb9c9f075edded47"><td class="mdescLeft">&#160;</td><td class="mdescRight">Receive and process a delete module message from another node. For the packet format see net_send_delete_module() function.  <a href="mato__net_8c.html#a6add413c66479ff6bb9c9f075edded47">More...</a><br /></td></tr>
+<tr class="separator:a6add413c66479ff6bb9c9f075edded47"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af3fe49b3a4ba7ce3ee70a013308538be"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#af3fe49b3a4ba7ce3ee70a013308538be">net_process_subscribe_module</a> (int s, int sending_node_id)</td></tr>
+<tr class="memdesc:af3fe49b3a4ba7ce3ee70a013308538be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Receive and process a subscribe channel message from another node. For the packet format see net_send_subscribe() function.  <a href="mato__net_8c.html#af3fe49b3a4ba7ce3ee70a013308538be">More...</a><br /></td></tr>
+<tr class="separator:af3fe49b3a4ba7ce3ee70a013308538be"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9dc5cd600b0a514495a03bf6cd353a88"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#a9dc5cd600b0a514495a03bf6cd353a88">net_process_unsubscribe_module</a> (int s, int sending_node_id)</td></tr>
+<tr class="memdesc:a9dc5cd600b0a514495a03bf6cd353a88"><td class="mdescLeft">&#160;</td><td class="mdescRight">Receive and process a unsubscribe channel message from another node. For the packet format see net_send_subscribe() function.  <a href="mato__net_8c.html#a9dc5cd600b0a514495a03bf6cd353a88">More...</a><br /></td></tr>
+<tr class="separator:a9dc5cd600b0a514495a03bf6cd353a88"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7f943d97a95578ff08592ccd1b7230d6"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#a7f943d97a95578ff08592ccd1b7230d6">net_process_get_data</a> (int s, int sending_node_id)</td></tr>
+<tr class="memdesc:a7f943d97a95578ff08592ccd1b7230d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Receive and process a get_data message from another node. For the packet format see <a class="el" href="mato__net_8c.html#ae4829c6e194570023c226f85d8e74486" title="Request data from a channel of a module on a different node.">net_send_get_data()</a> function.  <a href="mato__net_8c.html#a7f943d97a95578ff08592ccd1b7230d6">More...</a><br /></td></tr>
+<tr class="separator:a7f943d97a95578ff08592ccd1b7230d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:accd4dbbb93c1ffc4e2c0bc65459df20a"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#accd4dbbb93c1ffc4e2c0bc65459df20a">net_process_data</a> (int s, int sending_node_id)</td></tr>
+<tr class="memdesc:accd4dbbb93c1ffc4e2c0bc65459df20a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Receive and process a data message that this node have requested by get_data message earlier. For the packet format see <a class="el" href="mato__net_8c.html#ad33f0d39a802c383a33e794724495b81" title="Send data that were requested by MSG_GET_DATA message to the node that requested.">net_send_data()</a> function.  <a href="mato__net_8c.html#accd4dbbb93c1ffc4e2c0bc65459df20a">More...</a><br /></td></tr>
+<tr class="separator:accd4dbbb93c1ffc4e2c0bc65459df20a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a44a1f554213d3b183c38eae6294f6755"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#a44a1f554213d3b183c38eae6294f6755">net_process_subscribed_data</a> (int s, int sending_node_id)</td></tr>
+<tr class="memdesc:a44a1f554213d3b183c38eae6294f6755"><td class="mdescLeft">&#160;</td><td class="mdescRight">Receive and process a subscribed data message from another node. For the packet format see <a class="el" href="mato__net_8c.html#a6f5e0a1a54d499b01ed57c8d0ffddeb0" title="Send a new message posted by our local module to another node that is subscribed to that channel.">net_send_subscribed_data()</a> function.  <a href="mato__net_8c.html#a44a1f554213d3b183c38eae6294f6755">More...</a><br /></td></tr>
+<tr class="separator:a44a1f554213d3b183c38eae6294f6755"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a1964cd218d9288ce3746f8506c5b04"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#a9a1964cd218d9288ce3746f8506c5b04">net_process_global_message</a> (int s, int sending_node_id)</td></tr>
+<tr class="memdesc:a9a1964cd218d9288ce3746f8506c5b04"><td class="mdescLeft">&#160;</td><td class="mdescRight">Receive and process a global message from another node. For the packet format see net_send_global_message() function.  <a href="mato__net_8c.html#a9a1964cd218d9288ce3746f8506c5b04">More...</a><br /></td></tr>
+<tr class="separator:a9a1964cd218d9288ce3746f8506c5b04"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47626d486a29967f77acbebbf03d593e"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#a47626d486a29967f77acbebbf03d593e">process_node_message</a> (int s, int sending_node_id)</td></tr>
+<tr class="memdesc:a47626d486a29967f77acbebbf03d593e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Receive, unpack, and process a new message arriving from another node from socket s.  <a href="mato__net_8c.html#a47626d486a29967f77acbebbf03d593e">More...</a><br /></td></tr>
+<tr class="separator:a47626d486a29967f77acbebbf03d593e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab9c6229368418b3bf2b413ae3d5783f1"><td class="memItemLeft" align="right" valign="top">static void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#ab9c6229368418b3bf2b413ae3d5783f1">reconnecting_thread</a> (void *arg)</td></tr>
+<tr class="memdesc:ab9c6229368418b3bf2b413ae3d5783f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">This thread monitors connections to all nodes according to config file and tries to connect/reconnect those that are not currently connected.  <a href="mato__net_8c.html#ab9c6229368418b3bf2b413ae3d5783f1">More...</a><br /></td></tr>
+<tr class="separator:ab9c6229368418b3bf2b413ae3d5783f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aac8e61ea43e2c61d202ad28c646194d3"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#aac8e61ea43e2c61d202ad28c646194d3">fill_select_fd_set</a> (fd_set *rfds, int *nfd)</td></tr>
+<tr class="memdesc:aac8e61ea43e2c61d202ad28c646194d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fills the set of "read" file descriptor sets for the <a class="el" href="mato__net_8c.html#a4a41ba955d2ae774ef47e9a00442e59b" title="The network receiving thread: uses select() to wait for data arriving from all nodes including new no...">communication_thread()</a> function.  <a href="mato__net_8c.html#aac8e61ea43e2c61d202ad28c646194d3">More...</a><br /></td></tr>
+<tr class="separator:aac8e61ea43e2c61d202ad28c646194d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a86c49d5fb2c98e853e623a1a846cdbdf"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#a86c49d5fb2c98e853e623a1a846cdbdf">handle_incomming_connections</a> (fd_set *rfds)</td></tr>
+<tr class="memdesc:a86c49d5fb2c98e853e623a1a846cdbdf"><td class="mdescLeft">&#160;</td><td class="mdescRight">In case the listening socket is selected in rfds, accept the new connection, retrieve the login packet from the other node, store its socket, and mark it online.  <a href="mato__net_8c.html#a86c49d5fb2c98e853e623a1a846cdbdf">More...</a><br /></td></tr>
+<tr class="separator:a86c49d5fb2c98e853e623a1a846cdbdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9240dd1d60fc0a144d43812df1432b82"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#a9240dd1d60fc0a144d43812df1432b82">handle_wakeup_signal</a> (fd_set *rfds)</td></tr>
+<tr class="memdesc:a9240dd1d60fc0a144d43812df1432b82"><td class="mdescLeft">&#160;</td><td class="mdescRight">In case a notifications from other threads through wakeup pipe arrives, pick it up.  <a href="mato__net_8c.html#a9240dd1d60fc0a144d43812df1432b82">More...</a><br /></td></tr>
+<tr class="separator:a9240dd1d60fc0a144d43812df1432b82"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7420e33d1907b957903559e7ab3e1d37"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#a7420e33d1907b957903559e7ab3e1d37">handle_messages_from_other_nodes</a> (fd_set *rfds)</td></tr>
+<tr class="memdesc:a7420e33d1907b957903559e7ab3e1d37"><td class="mdescLeft">&#160;</td><td class="mdescRight">For the messages received from other nodes: process them.  <a href="mato__net_8c.html#a7420e33d1907b957903559e7ab3e1d37">More...</a><br /></td></tr>
+<tr class="separator:a7420e33d1907b957903559e7ab3e1d37"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f6b5932137a12c531a4a8b972b841d9"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#a0f6b5932137a12c531a4a8b972b841d9">wait_on_select</a> (fd_set *rfds, int nfd)</td></tr>
+<tr class="memdesc:a0f6b5932137a12c531a4a8b972b841d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Call the select() OS system call to wait for any communication arriving.  <a href="mato__net_8c.html#a0f6b5932137a12c531a4a8b972b841d9">More...</a><br /></td></tr>
+<tr class="separator:a0f6b5932137a12c531a4a8b972b841d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4a41ba955d2ae774ef47e9a00442e59b"><td class="memItemLeft" align="right" valign="top">static void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#a4a41ba955d2ae774ef47e9a00442e59b">communication_thread</a> (void *arg)</td></tr>
+<tr class="memdesc:a4a41ba955d2ae774ef47e9a00442e59b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The network receiving thread: uses select() to wait for data arriving from all nodes including new nodes connecting.  <a href="mato__net_8c.html#a4a41ba955d2ae774ef47e9a00442e59b">More...</a><br /></td></tr>
+<tr class="separator:a4a41ba955d2ae774ef47e9a00442e59b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a073d05e5bf9e0ffebb49c0251d250c0f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#a073d05e5bf9e0ffebb49c0251d250c0f">start_networking</a> ()</td></tr>
+<tr class="memdesc:a073d05e5bf9e0ffebb49c0251d250c0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create listening socket for other nodes, start reconnecting and communication threads.  <a href="mato__net_8c.html#a073d05e5bf9e0ffebb49c0251d250c0f">More...</a><br /></td></tr>
 <tr class="separator:a073d05e5bf9e0ffebb49c0251d250c0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9ea1de88471a17079784028998ea2318"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#a9ea1de88471a17079784028998ea2318">net_send_string</a> (int socket, char *str)</td></tr>
+<tr class="memdesc:a9ea1de88471a17079784028998ea2318"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a zero-terminated character string to socket.  <a href="mato__net_8c.html#a9ea1de88471a17079784028998ea2318">More...</a><br /></td></tr>
+<tr class="separator:a9ea1de88471a17079784028998ea2318"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aee22705308a288921d023d92f678abb6"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#aee22705308a288921d023d92f678abb6">net_send_bytes</a> (int socket, uint8_t *data, int32_t length)</td></tr>
+<tr class="memdesc:aee22705308a288921d023d92f678abb6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send an array of bytes to socket.  <a href="mato__net_8c.html#aee22705308a288921d023d92f678abb6">More...</a><br /></td></tr>
+<tr class="separator:aee22705308a288921d023d92f678abb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6bea61f44e339ce28149f82c5fbbc533"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#a6bea61f44e339ce28149f82c5fbbc533">net_send_int32t</a> (int socket, int32_t num)</td></tr>
+<tr class="memdesc:a6bea61f44e339ce28149f82c5fbbc533"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send 32-bit signed integer to a socket.  <a href="mato__net_8c.html#a6bea61f44e339ce28149f82c5fbbc533">More...</a><br /></td></tr>
+<tr class="separator:a6bea61f44e339ce28149f82c5fbbc533"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad33f0d39a802c383a33e794724495b81"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#ad33f0d39a802c383a33e794724495b81">net_send_data</a> (int node_id, int get_data_id, uint8_t *data, int32_t data_length)</td></tr>
 <tr class="memdesc:ad33f0d39a802c383a33e794724495b81"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send data that were requested by MSG_GET_DATA message to the node that requested.  <a href="mato__net_8c.html#ad33f0d39a802c383a33e794724495b81">More...</a><br /></td></tr>
 <tr class="separator:ad33f0d39a802c383a33e794724495b81"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -132,18 +211,220 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:aeed909953e337ee4b9dc137a8263685f"><td class="memItemLeft" align="right" valign="top"><a id="aeed909953e337ee4b9dc137a8263685f"></a>
-int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#aeed909953e337ee4b9dc137a8263685f">this_node_id</a></td></tr>
-<tr class="memdesc:aeed909953e337ee4b9dc137a8263685f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Id of this computational node. <br /></td></tr>
+<tr class="memitem:aeed909953e337ee4b9dc137a8263685f"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#aeed909953e337ee4b9dc137a8263685f">this_node_id</a></td></tr>
+<tr class="memdesc:aeed909953e337ee4b9dc137a8263685f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Id of this computational node.  <a href="mato__net_8c.html#aeed909953e337ee4b9dc137a8263685f">More...</a><br /></td></tr>
 <tr class="separator:aeed909953e337ee4b9dc137a8263685f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeda73a8fe41e64b74dd570e4ff50963f"><td class="memItemLeft" align="right" valign="top"><a id="aeda73a8fe41e64b74dd570e4ff50963f"></a>
-GArray *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#aeda73a8fe41e64b74dd570e4ff50963f">nodes</a></td></tr>
-<tr class="memdesc:aeda73a8fe41e64b74dd570e4ff50963f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains node info for all computational nodes filled from config file in mato_init. <br /></td></tr>
+<tr class="memitem:aeda73a8fe41e64b74dd570e4ff50963f"><td class="memItemLeft" align="right" valign="top">GArray *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#aeda73a8fe41e64b74dd570e4ff50963f">nodes</a></td></tr>
+<tr class="memdesc:aeda73a8fe41e64b74dd570e4ff50963f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains node info for all computational nodes filled from config file in mato_init.  <a href="mato__net_8c.html#aeda73a8fe41e64b74dd570e4ff50963f">More...</a><br /></td></tr>
 <tr class="separator:aeda73a8fe41e64b74dd570e4ff50963f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5839ffc6c4efa53af772074d7723df9"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#ab5839ffc6c4efa53af772074d7723df9">listening_socket</a></td></tr>
+<tr class="memdesc:ab5839ffc6c4efa53af772074d7723df9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Socket for accepting connections from other nodes.  <a href="mato__net_8c.html#ab5839ffc6c4efa53af772074d7723df9">More...</a><br /></td></tr>
+<tr class="separator:ab5839ffc6c4efa53af772074d7723df9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7ae885d6a7da0fc88e0f0eaa0c3cd2d"><td class="memItemLeft" align="right" valign="top">static GArray *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#ae7ae885d6a7da0fc88e0f0eaa0c3cd2d">sockets</a></td></tr>
+<tr class="memdesc:ae7ae885d6a7da0fc88e0f0eaa0c3cd2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Communication sockets with all the other nodes.  <a href="mato__net_8c.html#ae7ae885d6a7da0fc88e0f0eaa0c3cd2d">More...</a><br /></td></tr>
+<tr class="separator:ae7ae885d6a7da0fc88e0f0eaa0c3cd2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a256097db23e1f2f59cf3afd9605c5deb"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato__net_8c.html#a256097db23e1f2f59cf3afd9605c5deb">select_wakeup_pipe</a> [2]</td></tr>
+<tr class="memdesc:a256097db23e1f2f59cf3afd9605c5deb"><td class="mdescLeft">&#160;</td><td class="mdescRight">pipe for sending a signal to select() waiting on msgs from nodes - it has to be interrupted when new node connects (or similar events occur)  <a href="mato__net_8c.html#a256097db23e1f2f59cf3afd9605c5deb">More...</a><br /></td></tr>
+<tr class="separator:a256097db23e1f2f59cf3afd9605c5deb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implementation of the Mato control framework - networking with other nodes. </p>
-</div><h2 class="groupheader">Function Documentation</h2>
+</div><h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="a369266c24eacffb87046522897a570d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a369266c24eacffb87046522897a570d5">&#9670;&nbsp;</a></span>_GNU_SOURCE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define _GNU_SOURCE</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="a4a41ba955d2ae774ef47e9a00442e59b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4a41ba955d2ae774ef47e9a00442e59b">&#9670;&nbsp;</a></span>communication_thread()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void* communication_thread </td>
+          <td>(</td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>arg</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The network receiving thread: uses select() to wait for data arriving from all nodes including new nodes connecting. </p>
+<p>Dispatches the arriving messages to the <a class="el" href="mato__net_8c.html#a47626d486a29967f77acbebbf03d593e" title="Receive, unpack, and process a new message arriving from another node from socket s.">process_node_message()</a> function. </p>
+
+</div>
+</div>
+<a id="a54a2b1fd06b74aa7c4538a1c96682697"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a54a2b1fd06b74aa7c4538a1c96682697">&#9670;&nbsp;</a></span>config_error()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int config_error </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>ln</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Print error about reading config at the specified line. </p>
+
+</div>
+</div>
+<a id="aac8e61ea43e2c61d202ad28c646194d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aac8e61ea43e2c61d202ad28c646194d3">&#9670;&nbsp;</a></span>fill_select_fd_set()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void fill_select_fd_set </td>
+          <td>(</td>
+          <td class="paramtype">fd_set *&#160;</td>
+          <td class="paramname"><em>rfds</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>nfd</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Fills the set of "read" file descriptor sets for the <a class="el" href="mato__net_8c.html#a4a41ba955d2ae774ef47e9a00442e59b" title="The network receiving thread: uses select() to wait for data arriving from all nodes including new no...">communication_thread()</a> function. </p>
+<p>Includes the listening_socket, read end of the select_wakeup_pipe, and all open sockets with the other connected nodes. </p>
+
+</div>
+</div>
+<a id="a86c49d5fb2c98e853e623a1a846cdbdf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a86c49d5fb2c98e853e623a1a846cdbdf">&#9670;&nbsp;</a></span>handle_incomming_connections()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void handle_incomming_connections </td>
+          <td>(</td>
+          <td class="paramtype">fd_set *&#160;</td>
+          <td class="paramname"><em>rfds</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>In case the listening socket is selected in rfds, accept the new connection, retrieve the login packet from the other node, store its socket, and mark it online. </p>
+
+</div>
+</div>
+<a id="a7420e33d1907b957903559e7ab3e1d37"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7420e33d1907b957903559e7ab3e1d37">&#9670;&nbsp;</a></span>handle_messages_from_other_nodes()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void handle_messages_from_other_nodes </td>
+          <td>(</td>
+          <td class="paramtype">fd_set *&#160;</td>
+          <td class="paramname"><em>rfds</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>For the messages received from other nodes: process them. </p>
+
+</div>
+</div>
+<a id="a9240dd1d60fc0a144d43812df1432b82"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9240dd1d60fc0a144d43812df1432b82">&#9670;&nbsp;</a></span>handle_wakeup_signal()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void handle_wakeup_signal </td>
+          <td>(</td>
+          <td class="paramtype">fd_set *&#160;</td>
+          <td class="paramname"><em>rfds</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>In case a notifications from other threads through wakeup pipe arrives, pick it up. </p>
+
+</div>
+</div>
 <a id="a89b6e0a431131bbd10afb037237fc9d5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a89b6e0a431131bbd10afb037237fc9d5">&#9670;&nbsp;</a></span>net_announce_new_module()</h2>
 
@@ -163,7 +444,7 @@ GArray *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 <p>Broadcast information about new local module instance to all other nodes. </p>
 <div class="fragment"><div class="line">Packet format:</div>
 <div class="line">-------------------------------------</div>
-<div class="line">MSG_NEW_MODULE_INSTANCE   int32</div>
+<div class="line"><a class="code" href="mato__net_8h.html#a0e3a7df94130de2dacc9b60df772627c">MSG_NEW_MODULE_INSTANCE</a>   int32</div>
 <div class="line">sending_node_id           int32</div>
 <div class="line">[local]module_id          int32</div>
 <div class="line">len(module_name)+1        int32</div>
@@ -173,6 +454,557 @@ GArray *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 <div class="line">number_of_channels        int32</div>
 <div class="line">-------------------------------------</div>
 </div><!-- fragment --> 
+</div>
+</div>
+<a id="a98ab20a5ce5735e2351054fa072ac6de"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a98ab20a5ce5735e2351054fa072ac6de">&#9670;&nbsp;</a></span>net_delete_module_buffers()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void net_delete_module_buffers </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>node_id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>module_id</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gently delete buffers of the module: that is only decrement the reference of the "last valid" packet if we have one. </p>
+<p>But this is not a good idea, it will go away soon. </p>
+
+</div>
+</div>
+<a id="affc613d7e6afcf44c6f079084a991b33"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#affc613d7e6afcf44c6f079084a991b33">&#9670;&nbsp;</a></span>net_delete_module_instance()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void net_delete_module_instance </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>node_id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>module_id</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Soon to be updated... </p>
+
+</div>
+</div>
+<a id="ab4af7bdf1f7414a15270c1162eb25bea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab4af7bdf1f7414a15270c1162eb25bea">&#9670;&nbsp;</a></span>net_mato_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void net_mato_init </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>this_node_identifier</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aef72140c8f7454f33e028ea9e8e50ce8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aef72140c8f7454f33e028ea9e8e50ce8">&#9670;&nbsp;</a></span>net_mato_shutdown()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void net_mato_shutdown </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Close and release resources used by the networking. </p>
+
+</div>
+</div>
+<a id="accd4dbbb93c1ffc4e2c0bc65459df20a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#accd4dbbb93c1ffc4e2c0bc65459df20a">&#9670;&nbsp;</a></span>net_process_data()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void net_process_data </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>s</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>sending_node_id</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Receive and process a data message that this node have requested by get_data message earlier. For the packet format see <a class="el" href="mato__net_8c.html#ad33f0d39a802c383a33e794724495b81" title="Send data that were requested by MSG_GET_DATA message to the node that requested.">net_send_data()</a> function. </p>
+
+</div>
+</div>
+<a id="a6add413c66479ff6bb9c9f075edded47"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6add413c66479ff6bb9c9f075edded47">&#9670;&nbsp;</a></span>net_process_delete_module()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void net_process_delete_module </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>s</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>sending_node_id</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Receive and process a delete module message from another node. For the packet format see net_send_delete_module() function. </p>
+
+</div>
+</div>
+<a id="a7f943d97a95578ff08592ccd1b7230d6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7f943d97a95578ff08592ccd1b7230d6">&#9670;&nbsp;</a></span>net_process_get_data()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void net_process_get_data </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>s</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>sending_node_id</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Receive and process a get_data message from another node. For the packet format see <a class="el" href="mato__net_8c.html#ae4829c6e194570023c226f85d8e74486" title="Request data from a channel of a module on a different node.">net_send_get_data()</a> function. </p>
+
+</div>
+</div>
+<a id="a9a1964cd218d9288ce3746f8506c5b04"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9a1964cd218d9288ce3746f8506c5b04">&#9670;&nbsp;</a></span>net_process_global_message()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void net_process_global_message </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>s</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>sending_node_id</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Receive and process a global message from another node. For the packet format see net_send_global_message() function. </p>
+
+</div>
+</div>
+<a id="a6ef35d6c4410f72ccce513a286367c92"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6ef35d6c4410f72ccce513a286367c92">&#9670;&nbsp;</a></span>net_process_new_module()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void net_process_new_module </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>s</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>sending_node_id</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Receive and process new module instance message from another node. For the packet format, see <a class="el" href="mato__net_8c.html#a89b6e0a431131bbd10afb037237fc9d5" title="Broadcast information about new local module instance to all other nodes.">net_announce_new_module()</a> function. </p>
+
+</div>
+</div>
+<a id="af3fe49b3a4ba7ce3ee70a013308538be"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af3fe49b3a4ba7ce3ee70a013308538be">&#9670;&nbsp;</a></span>net_process_subscribe_module()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void net_process_subscribe_module </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>s</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>sending_node_id</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Receive and process a subscribe channel message from another node. For the packet format see net_send_subscribe() function. </p>
+
+</div>
+</div>
+<a id="a44a1f554213d3b183c38eae6294f6755"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a44a1f554213d3b183c38eae6294f6755">&#9670;&nbsp;</a></span>net_process_subscribed_data()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void net_process_subscribed_data </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>s</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>sending_node_id</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Receive and process a subscribed data message from another node. For the packet format see <a class="el" href="mato__net_8c.html#a6f5e0a1a54d499b01ed57c8d0ffddeb0" title="Send a new message posted by our local module to another node that is subscribed to that channel.">net_send_subscribed_data()</a> function. </p>
+
+</div>
+</div>
+<a id="a9dc5cd600b0a514495a03bf6cd353a88"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9dc5cd600b0a514495a03bf6cd353a88">&#9670;&nbsp;</a></span>net_process_unsubscribe_module()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void net_process_unsubscribe_module </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>s</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>sending_node_id</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Receive and process a unsubscribe channel message from another node. For the packet format see net_send_subscribe() function. </p>
+
+</div>
+</div>
+<a id="a63ba58e83b8e160b349c3d191a0040b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a63ba58e83b8e160b349c3d191a0040b0">&#9670;&nbsp;</a></span>net_recv_bytes()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int net_recv_bytes </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>s</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t **&#160;</td>
+          <td class="paramname"><em>str</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int32_t *&#160;</td>
+          <td class="paramname"><em>str_len</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>sending_node_id</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Receive string of bytes from a socket. </p>
+<p>This could be a zero-terminated string, or any other bunch of bytes. String is sent as int32_t (length+1) and then data. Returns 0 on failure (and the sending node is updated to be off-line), otherwise returns 1. See <a class="el" href="mato__net_8c.html#a9ea1de88471a17079784028998ea2318" title="Send a zero-terminated character string to socket.">net_send_string()</a> function. </p>
+
+</div>
+</div>
+<a id="addd190c72656384c5dbbd3e57b2350a8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#addd190c72656384c5dbbd3e57b2350a8">&#9670;&nbsp;</a></span>net_recv_int32t()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int net_recv_int32t </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>s</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int32_t *&#160;</td>
+          <td class="paramname"><em>num</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>sending_node_id</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Receive one 32-bit integer from a socket. </p>
+<p>Returns 0 on failure (and the sending node is updated to be off-line), otherwise returns 1. See net_send_int32_t() function. </p>
+
+</div>
+</div>
+<a id="aee22705308a288921d023d92f678abb6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aee22705308a288921d023d92f678abb6">&#9670;&nbsp;</a></span>net_send_bytes()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int net_send_bytes </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>socket</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *&#160;</td>
+          <td class="paramname"><em>data</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int32_t&#160;</td>
+          <td class="paramname"><em>length</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Send an array of bytes to socket. </p>
+<p>First send its length as int32_t and then data. See <a class="el" href="mato__net_8c.html#a9ea1de88471a17079784028998ea2318" title="Send a zero-terminated character string to socket.">net_send_string()</a> and <a class="el" href="mato__net_8c.html#a63ba58e83b8e160b349c3d191a0040b0" title="Receive string of bytes from a socket.">net_recv_bytes()</a> functions. </p>
+
 </div>
 </div>
 <a id="ad33f0d39a802c383a33e794724495b81"></a>
@@ -216,7 +1048,7 @@ GArray *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 <p>Send data that were requested by MSG_GET_DATA message to the node that requested. </p>
 <div class="fragment"><div class="line">Packet format:</div>
 <div class="line">-------------------------------------</div>
-<div class="line">MSG_DATA                  int32</div>
+<div class="line"><a class="code" href="mato__net_8h.html#ac319d4cc777b829878d4012f076ad5fa">MSG_DATA</a>                  int32</div>
 <div class="line">sending_node_id           int32</div>
 <div class="line">get_data_id               int32</div>
 <div class="line">len(data)                 int32</div>
@@ -266,13 +1098,91 @@ GArray *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 <p>Request data from a channel of a module on a different node. </p>
 <div class="fragment"><div class="line">Packet format:</div>
 <div class="line">-------------------------------------</div>
-<div class="line">MSG_DATA                  int32</div>
+<div class="line"><a class="code" href="mato__net_8h.html#ac319d4cc777b829878d4012f076ad5fa">MSG_DATA</a>                  int32</div>
 <div class="line">sending_node_id           int32</div>
 <div class="line">get_data_id               int32</div>
 <div class="line">len(data)                 int32</div>
 <div class="line">data                      variable</div>
 <div class="line">-------------------------------------</div>
 </div><!-- fragment --> 
+</div>
+</div>
+<a id="a6bea61f44e339ce28149f82c5fbbc533"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6bea61f44e339ce28149f82c5fbbc533">&#9670;&nbsp;</a></span>net_send_int32t()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int net_send_int32t </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>socket</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int32_t&#160;</td>
+          <td class="paramname"><em>num</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Send 32-bit signed integer to a socket. </p>
+<p>See net_recv_int32_t() function. </p>
+
+</div>
+</div>
+<a id="a9ea1de88471a17079784028998ea2318"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9ea1de88471a17079784028998ea2318">&#9670;&nbsp;</a></span>net_send_string()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int net_send_string </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>socket</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>str</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Send a zero-terminated character string to socket. </p>
+<p>First send its length+1 as int32_t and then data. See <a class="el" href="mato__net_8c.html#aee22705308a288921d023d92f678abb6" title="Send an array of bytes to socket.">net_send_bytes()</a> and <a class="el" href="mato__net_8c.html#a63ba58e83b8e160b349c3d191a0040b0" title="Receive string of bytes from a socket.">net_recv_bytes()</a> functions. </p>
+
 </div>
 </div>
 <a id="a6f5e0a1a54d499b01ed57c8d0ffddeb0"></a>
@@ -304,7 +1214,7 @@ GArray *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 <p>Send a new message posted by our local module to another node that is subscribed to that channel. </p>
 <div class="fragment"><div class="line">Packet format:</div>
 <div class="line">-------------------------------------</div>
-<div class="line">MSG_SUBSCRIBED_DATA       int32</div>
+<div class="line"><a class="code" href="mato__net_8h.html#ac0f7dba19b63a99a5a7391ba234ccc7f">MSG_SUBSCRIBED_DATA</a>       int32</div>
 <div class="line">sending_node_id           int32</div>
 <div class="line">module_id                 int32</div>
 <div class="line">channel                   int32</div>
@@ -314,7 +1224,360 @@ GArray *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 </div><!-- fragment --> 
 </div>
 </div>
+<a id="ac11580f45a37c70d0eb9789edc078866"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac11580f45a37c70d0eb9789edc078866">&#9670;&nbsp;</a></span>new_node_info()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="structnode__info.html">node_info</a>* new_node_info </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>node_id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>ip</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>port</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>is_online</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Node_info structure constructor, just fills newly allocated copies of data. </p>
+
+</div>
+</div>
+<a id="ae19e829cee966e6a6e69ce5dc4b2086b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae19e829cee966e6a6e69ce5dc4b2086b">&#9670;&nbsp;</a></span>node_disconnected()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void node_disconnected </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>s</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>node_id</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Clean up all traces of a node (and its modules) after it got disconnected. </p>
+
+</div>
+</div>
+<a id="a47626d486a29967f77acbebbf03d593e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a47626d486a29967f77acbebbf03d593e">&#9670;&nbsp;</a></span>process_node_message()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void process_node_message </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>s</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>sending_node_id</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Receive, unpack, and process a new message arriving from another node from socket s. </p>
+
+</div>
+</div>
+<a id="a8cb5e555140d8b4e8afca9670150e482"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8cb5e555140d8b4e8afca9670150e482">&#9670;&nbsp;</a></span>read_mato_config()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int read_mato_config </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Reads mato networking config file. </p>
+
+</div>
+</div>
+<a id="ab9c6229368418b3bf2b413ae3d5783f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab9c6229368418b3bf2b413ae3d5783f1">&#9670;&nbsp;</a></span>reconnecting_thread()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void* reconnecting_thread </td>
+          <td>(</td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>arg</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>This thread monitors connections to all nodes according to config file and tries to connect/reconnect those that are not currently connected. </p>
+<p>It runs in the background from the start till the framework shutdown. </p>
+
+</div>
+</div>
+<a id="a073d05e5bf9e0ffebb49c0251d250c0f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a073d05e5bf9e0ffebb49c0251d250c0f">&#9670;&nbsp;</a></span>start_networking()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void start_networking </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create listening socket for other nodes, start reconnecting and communication threads. </p>
+
+</div>
+</div>
+<a id="a0f6b5932137a12c531a4a8b972b841d9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0f6b5932137a12c531a4a8b972b841d9">&#9670;&nbsp;</a></span>wait_on_select()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int wait_on_select </td>
+          <td>(</td>
+          <td class="paramtype">fd_set *&#160;</td>
+          <td class="paramname"><em>rfds</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nfd</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Call the select() OS system call to wait for any communication arriving. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Variable Documentation</h2>
+<a id="ab5839ffc6c4efa53af772074d7723df9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab5839ffc6c4efa53af772074d7723df9">&#9670;&nbsp;</a></span>listening_socket</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int listening_socket</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Socket for accepting connections from other nodes. </p>
+
+</div>
+</div>
+<a id="aeda73a8fe41e64b74dd570e4ff50963f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeda73a8fe41e64b74dd570e4ff50963f">&#9670;&nbsp;</a></span>nodes</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">GArray* nodes</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Contains node info for all computational nodes filled from config file in mato_init. </p>
+
+</div>
+</div>
+<a id="a256097db23e1f2f59cf3afd9605c5deb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a256097db23e1f2f59cf3afd9605c5deb">&#9670;&nbsp;</a></span>select_wakeup_pipe</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int select_wakeup_pipe[2]</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>pipe for sending a signal to select() waiting on msgs from nodes - it has to be interrupted when new node connects (or similar events occur) </p>
+
+</div>
+</div>
+<a id="ae7ae885d6a7da0fc88e0f0eaa0c3cd2d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae7ae885d6a7da0fc88e0f0eaa0c3cd2d">&#9670;&nbsp;</a></span>sockets</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">GArray* sockets</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Communication sockets with all the other nodes. </p>
+
+</div>
+</div>
+<a id="aeed909953e337ee4b9dc137a8263685f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeed909953e337ee4b9dc137a8263685f">&#9670;&nbsp;</a></span>this_node_id</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int32_t this_node_id</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Id of this computational node. </p>
+
+</div>
+</div>
 </div><!-- contents -->
+<div class="ttc" id="amato__net_8h_html_a0e3a7df94130de2dacc9b60df772627c"><div class="ttname"><a href="mato__net_8h.html#a0e3a7df94130de2dacc9b60df772627c">MSG_NEW_MODULE_INSTANCE</a></div><div class="ttdeci">#define MSG_NEW_MODULE_INSTANCE</div><div class="ttdef"><b>Definition:</b> mato_net.h:17</div></div>
+<div class="ttc" id="amato__net_8h_html_ac319d4cc777b829878d4012f076ad5fa"><div class="ttname"><a href="mato__net_8h.html#ac319d4cc777b829878d4012f076ad5fa">MSG_DATA</a></div><div class="ttdeci">#define MSG_DATA</div><div class="ttdef"><b>Definition:</b> mato_net.h:22</div></div>
+<div class="ttc" id="amato__net_8h_html_ac0f7dba19b63a99a5a7391ba234ccc7f"><div class="ttname"><a href="mato__net_8h.html#ac0f7dba19b63a99a5a7391ba234ccc7f">MSG_SUBSCRIBED_DATA</a></div><div class="ttdeci">#define MSG_SUBSCRIBED_DATA</div><div class="ttdef"><b>Definition:</b> mato_net.h:23</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">

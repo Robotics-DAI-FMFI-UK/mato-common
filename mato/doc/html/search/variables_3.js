@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['nodes_148',['nodes',['../mato__net_8c.html#aeda73a8fe41e64b74dd570e4ff50963f',1,'nodes():&#160;mato_net.c'],['../mato__net_8h.html#aeda73a8fe41e64b74dd570e4ff50963f',1,'nodes():&#160;mato_net.c']]]
+  ['framework_5fmutex_260',['framework_mutex',['../mato__core_8c.html#ace00a3e120249460a8acf8381667cc75',1,'mato_core.c']]]
 ];

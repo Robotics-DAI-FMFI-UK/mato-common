@@ -36,75 +36,53 @@ struct \mbox{\hyperlink{structchannel__data}{channel\+\_\+data}}
 \doxysubsection*{Macros}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{mato__core_8h_a369266c24eacffb87046522897a570d5}\label{mato__core_8h_a369266c24eacffb87046522897a570d5}} 
-\#define {\bfseries \+\_\+\+G\+N\+U\+\_\+\+S\+O\+U\+R\+CE}
+\#define \mbox{\hyperlink{mato__core_8h_a369266c24eacffb87046522897a570d5}{\+\_\+\+G\+N\+U\+\_\+\+S\+O\+U\+R\+CE}}
 \item 
-\mbox{\Hypertarget{mato__core_8h_ae6d453b3e091eec09ca47ece12bb3adf}\label{mato__core_8h_ae6d453b3e091eec09ca47ece12bb3adf}} 
-\#define {\bfseries N\+O\+D\+E\+\_\+\+M\+U\+L\+T\+I\+P\+L\+I\+ER}~100000L
+\#define \mbox{\hyperlink{mato__core_8h_ae6d453b3e091eec09ca47ece12bb3adf}{N\+O\+D\+E\+\_\+\+M\+U\+L\+T\+I\+P\+L\+I\+ER}}~100000L
 \item 
-\mbox{\Hypertarget{mato__core_8h_af3a37ddad69a98c185798e80a58dcbdb}\label{mato__core_8h_af3a37ddad69a98c185798e80a58dcbdb}} 
-\#define {\bfseries C\+O\+N\+F\+I\+G\+\_\+\+F\+I\+L\+E\+N\+A\+ME}~\char`\"{}mato\+\_\+nodes.\+conf\char`\"{}
+\#define \mbox{\hyperlink{mato__core_8h_af3a37ddad69a98c185798e80a58dcbdb}{C\+O\+N\+F\+I\+G\+\_\+\+F\+I\+L\+E\+N\+A\+ME}}~\char`\"{}mato\+\_\+nodes.\+conf\char`\"{}
 \end{DoxyCompactItemize}
 \doxysubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{mato__core_8h_a2da0b2b93801c2136969b06d8045ac69}\label{mato__core_8h_a2da0b2b93801c2136969b06d8045ac69}} 
 \mbox{\hyperlink{structchannel__data}{channel\+\_\+data}} $\ast$ \mbox{\hyperlink{mato__core_8h_a2da0b2b93801c2136969b06d8045ac69}{new\+\_\+channel\+\_\+data}} (int node\+\_\+id, int module\+\_\+id, int channel\+\_\+id, int length, void $\ast$data)
 \begin{DoxyCompactList}\small\item\em A constructor for the \mbox{\hyperlink{structchannel__data}{channel\+\_\+data}} structure. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato__core_8h_af1150c35e05b0d14d3e5e6f064558d83}\label{mato__core_8h_af1150c35e05b0d14d3e5e6f064558d83}} 
 void \mbox{\hyperlink{mato__core_8h_af1150c35e05b0d14d3e5e6f064558d83}{core\+\_\+mato\+\_\+init}} ()
 \begin{DoxyCompactList}\small\item\em Initialize data structures maintained by the core. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato__core_8h_a0d4eb232de3e0d9c18edc91eb1316421}\label{mato__core_8h_a0d4eb232de3e0d9c18edc91eb1316421}} 
 void \mbox{\hyperlink{mato__core_8h_a0d4eb232de3e0d9c18edc91eb1316421}{core\+\_\+mato\+\_\+shutdown}} ()
 \begin{DoxyCompactList}\small\item\em Release resources used by the core. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato__core_8h_a438cf6032d01d451d50cf8cd7b14d8f0}\label{mato__core_8h_a438cf6032d01d451d50cf8cd7b14d8f0}} 
 void \mbox{\hyperlink{mato__core_8h_a438cf6032d01d451d50cf8cd7b14d8f0}{lock\+\_\+framework}} ()
 \begin{DoxyCompactList}\small\item\em Enter mutually-\/exclusive area accessing internal framework data structures. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato__core_8h_a39c60cf29218c107f4115b73270a5114}\label{mato__core_8h_a39c60cf29218c107f4115b73270a5114}} 
 void \mbox{\hyperlink{mato__core_8h_a39c60cf29218c107f4115b73270a5114}{unlock\+\_\+framework}} ()
 \begin{DoxyCompactList}\small\item\em Leave mutually-\/exclusive area with a protected acces to internal framework data structures. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato__core_8h_ae97dbf0eeadf4345327dcf392d02c30c}\label{mato__core_8h_ae97dbf0eeadf4345327dcf392d02c30c}} 
 int \mbox{\hyperlink{mato__core_8h_ae97dbf0eeadf4345327dcf392d02c30c}{get\+\_\+free\+\_\+module\+\_\+id}} ()
 \begin{DoxyCompactList}\small\item\em Returns the next available module\+\_\+id. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato__core_8h_aa96455f34de227205787b911dbe51847}\label{mato__core_8h_aa96455f34de227205787b911dbe51847}} 
 int \mbox{\hyperlink{mato__core_8h_aa96455f34de227205787b911dbe51847}{get\+\_\+free\+\_\+subscription\+\_\+id}} ()
 \begin{DoxyCompactList}\small\item\em Returns the next available subscription\+\_\+id. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato__core_8h_a979625f0ce491a3abd1eb68ca93d803b}\label{mato__core_8h_a979625f0ce491a3abd1eb68ca93d803b}} 
-void {\bfseries remove\+\_\+subscription} (int subscribed\+\_\+node\+\_\+id, int subscribed\+\_\+module\+\_\+id, int channel, int subscription\+\_\+id)
+void \mbox{\hyperlink{mato__core_8h_a979625f0ce491a3abd1eb68ca93d803b}{remove\+\_\+subscription}} (int subscribed\+\_\+node\+\_\+id, int subscribed\+\_\+module\+\_\+id, int channel, int subscription\+\_\+id)
 \item 
 G\+List $\ast$ \mbox{\hyperlink{mato__core_8h_a948891305b2d86ead8d8b9e98ee992ea}{decrement\+\_\+references}} (G\+List $\ast$data\+\_\+buffers, \mbox{\hyperlink{structchannel__data}{channel\+\_\+data}} $\ast$to\+\_\+be\+\_\+decremented)
 \begin{DoxyCompactList}\small\item\em Decrements the number of references to a particular buffer and deallocates the buffer itself as well as the structure describing the buffer. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato__core_8h_a041903e9b52f56435f88cff5f41aff3e}\label{mato__core_8h_a041903e9b52f56435f88cff5f41aff3e}} 
 \mbox{\hyperlink{structmodule__info}{module\+\_\+info}} $\ast$ \mbox{\hyperlink{mato__core_8h_a041903e9b52f56435f88cff5f41aff3e}{new\+\_\+module\+\_\+info}} (int node\+\_\+id, int module\+\_\+id, char $\ast$module\+\_\+name, char $\ast$module\+\_\+type)
 \begin{DoxyCompactList}\small\item\em A constructor for the \mbox{\hyperlink{structmodule__info}{module\+\_\+info}} structure. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato__core_8h_a9dfe1d249e65f9c9277279f03c54c90f}\label{mato__core_8h_a9dfe1d249e65f9c9277279f03c54c90f}} 
 int \mbox{\hyperlink{mato__core_8h_a9dfe1d249e65f9c9277279f03c54c90f}{mato\+\_\+system\+\_\+threads\+\_\+running}} ()
 \begin{DoxyCompactList}\small\item\em The number of mato system threads that are currently running (not terminated yet). \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato__core_8h_afdc3809f243d54fc76dd0539fbd847f0}\label{mato__core_8h_afdc3809f243d54fc76dd0539fbd847f0}} 
-void {\bfseries remove\+\_\+node\+\_\+buffers} (int node\+\_\+id)
+void \mbox{\hyperlink{mato__core_8h_afdc3809f243d54fc76dd0539fbd847f0}{remove\+\_\+node\+\_\+buffers}} (int node\+\_\+id)
 \item 
-\mbox{\Hypertarget{mato__core_8h_a4bee50d9bc9c78f39d7f7cf6354a540d}\label{mato__core_8h_a4bee50d9bc9c78f39d7f7cf6354a540d}} 
-void {\bfseries remove\+\_\+node\+\_\+from\+\_\+subscriptions} (int node\+\_\+id)
+void \mbox{\hyperlink{mato__core_8h_a4bee50d9bc9c78f39d7f7cf6354a540d}{remove\+\_\+node\+\_\+from\+\_\+subscriptions}} (int node\+\_\+id)
 \item 
-\mbox{\Hypertarget{mato__core_8h_a7800709ec7535d9abc6454e510212d6c}\label{mato__core_8h_a7800709ec7535d9abc6454e510212d6c}} 
-void {\bfseries remove\+\_\+names\+\_\+types} (int node\+\_\+id)
+void \mbox{\hyperlink{mato__core_8h_a7800709ec7535d9abc6454e510212d6c}{remove\+\_\+names\+\_\+types}} (int node\+\_\+id)
 \item 
-\mbox{\Hypertarget{mato__core_8h_af4e477c79e3ad08d61c3d4473baea950}\label{mato__core_8h_af4e477c79e3ad08d61c3d4473baea950}} 
 void \mbox{\hyperlink{mato__core_8h_af4e477c79e3ad08d61c3d4473baea950}{store\+\_\+new\+\_\+remote\+\_\+module}} (int node\+\_\+id, int module\+\_\+id, char $\ast$module\+\_\+name, char $\ast$module\+\_\+type, int number\+\_\+of\+\_\+channels)
 \begin{DoxyCompactList}\small\item\em Update internal data structures as necessary when a new module announcement arrives from another node. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato__core_8h_a94a6b505bcf5e3cca4665cba3bbab3cd}\label{mato__core_8h_a94a6b505bcf5e3cca4665cba3bbab3cd}} 
 void \mbox{\hyperlink{mato__core_8h_a94a6b505bcf5e3cca4665cba3bbab3cd}{mato\+\_\+inc\+\_\+system\+\_\+thread\+\_\+count}} ()
 \begin{DoxyCompactList}\small\item\em Increment the number of internal framework threads running. This should be called by each framework thread that has been started. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato__core_8h_a87731b4b9da695d14f237dc6825c9186}\label{mato__core_8h_a87731b4b9da695d14f237dc6825c9186}} 
 void \mbox{\hyperlink{mato__core_8h_a87731b4b9da695d14f237dc6825c9186}{mato\+\_\+dec\+\_\+system\+\_\+thread\+\_\+count}} ()
 \begin{DoxyCompactList}\small\item\em Decrement the number of internal framework threads running. It should be called by each framework thread that terminates. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato__core_8h_a8ee143235f543184363dea746b824056}\label{mato__core_8h_a8ee143235f543184363dea746b824056}} 
 void \mbox{\hyperlink{mato__core_8h_a8ee143235f543184363dea746b824056}{subscribe\+\_\+channel\+\_\+from\+\_\+remote\+\_\+node}} (int remote\+\_\+node\+\_\+id, int subscribed\+\_\+module\+\_\+id, int channel)
 \begin{DoxyCompactList}\small\item\em Update internal subscriptions\+: a remote node subscribing to our module\textquotesingle{}s channel. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato__core_8h_a53fa60389c0d5ac17eb194e386d89ad2}\label{mato__core_8h_a53fa60389c0d5ac17eb194e386d89ad2}} 
 void \mbox{\hyperlink{mato__core_8h_a53fa60389c0d5ac17eb194e386d89ad2}{unsubscribe\+\_\+channel\+\_\+from\+\_\+remote\+\_\+node}} (int remote\+\_\+node\+\_\+id, int subscribed\+\_\+module\+\_\+id, int channel)
 \begin{DoxyCompactList}\small\item\em Update internal subscriptions\+: a remote node unsubscribing to our module\textquotesingle{}s channel. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato__core_8h_a46237792544cdb9542f03f0504d3a73f}\label{mato__core_8h_a46237792544cdb9542f03f0504d3a73f}} 
 void \mbox{\hyperlink{mato__core_8h_a46237792544cdb9542f03f0504d3a73f}{pack\+\_\+and\+\_\+send\+\_\+data\+\_\+to\+\_\+remote}} (int remote\+\_\+node\+\_\+id, int module\+\_\+id, int channel, int get\+\_\+data\+\_\+id)
 \begin{DoxyCompactList}\small\item\em Remote module is requesting data from our channel, retrieve them and send back. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{mato__core_8h_ae85edaed4da057ef1db61b7b02c13b1b}{return\+\_\+data\+\_\+to\+\_\+waiting\+\_\+module}} (int get\+\_\+data\+\_\+id, int data\+\_\+length, uint8\+\_\+t $\ast$data)
@@ -116,10 +94,8 @@ void \mbox{\hyperlink{mato__core_8h_a5e81c3dd52599310f9ae512214c80ad1}{copy\+\_\
 \item 
 volatile int \mbox{\hyperlink{mato__core_8h_a0f80851fe27966d69a2a0dfbafdb7160}{program\+\_\+runs}}
 \begin{DoxyCompactList}\small\item\em This variable is set to non-\/zero when the program is about to terminate. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato__core_8h_a23868df494ffd83e64765b50b2f59de0}\label{mato__core_8h_a23868df494ffd83e64765b50b2f59de0}} 
 volatile int \mbox{\hyperlink{mato__core_8h_a23868df494ffd83e64765b50b2f59de0}{threads\+\_\+started}}
 \begin{DoxyCompactList}\small\item\em Contains the number of threads that are running. Use the functions \mbox{\hyperlink{mato_8c_a6b31044a7afec17426ec4d4e3354aa9f}{mato\+\_\+inc\+\_\+thread\+\_\+count()}} and \mbox{\hyperlink{mato_8c_a480acc181ff3a7d7c925d64e3d4a7442}{mato\+\_\+dec\+\_\+thread\+\_\+count()}}. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato__core_8h_acc307467ee069828e40a521f193e8b80}\label{mato__core_8h_acc307467ee069828e40a521f193e8b80}} 
 volatile int \mbox{\hyperlink{mato__core_8h_acc307467ee069828e40a521f193e8b80}{system\+\_\+threads\+\_\+started}}
 \begin{DoxyCompactList}\small\item\em Contains the number of internal framework threads that are running. Use the functions \mbox{\hyperlink{mato__core_8h_a94a6b505bcf5e3cca4665cba3bbab3cd}{mato\+\_\+inc\+\_\+system\+\_\+thread\+\_\+count()}} and \mbox{\hyperlink{mato__core_8h_a87731b4b9da695d14f237dc6825c9186}{mato\+\_\+dec\+\_\+system\+\_\+thread\+\_\+count()}}. \end{DoxyCompactList}\item 
 G\+Array $\ast$ \mbox{\hyperlink{mato__core_8h_a7ccdd7e11e9c4bbf1887270e9d74779a}{module\+\_\+names}}
@@ -141,6 +117,27 @@ int \mbox{\hyperlink{mato__core_8h_a225d8d1a4c4e855493b258620e5e2be4}{post\+\_\+
 \doxysubsection{Detailed Description}
 Mato control framework -\/ internal core implementation function protypes and types. 
 
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{mato__core_8h_a369266c24eacffb87046522897a570d5}\label{mato__core_8h_a369266c24eacffb87046522897a570d5}} 
+\index{mato\_core.h@{mato\_core.h}!\_GNU\_SOURCE@{\_GNU\_SOURCE}}
+\index{\_GNU\_SOURCE@{\_GNU\_SOURCE}!mato\_core.h@{mato\_core.h}}
+\doxysubsubsection{\texorpdfstring{\_GNU\_SOURCE}{\_GNU\_SOURCE}}
+{\footnotesize\ttfamily \#define \+\_\+\+G\+N\+U\+\_\+\+S\+O\+U\+R\+CE}
+
+\mbox{\Hypertarget{mato__core_8h_af3a37ddad69a98c185798e80a58dcbdb}\label{mato__core_8h_af3a37ddad69a98c185798e80a58dcbdb}} 
+\index{mato\_core.h@{mato\_core.h}!CONFIG\_FILENAME@{CONFIG\_FILENAME}}
+\index{CONFIG\_FILENAME@{CONFIG\_FILENAME}!mato\_core.h@{mato\_core.h}}
+\doxysubsubsection{\texorpdfstring{CONFIG\_FILENAME}{CONFIG\_FILENAME}}
+{\footnotesize\ttfamily \#define C\+O\+N\+F\+I\+G\+\_\+\+F\+I\+L\+E\+N\+A\+ME~\char`\"{}mato\+\_\+nodes.\+conf\char`\"{}}
+
+\mbox{\Hypertarget{mato__core_8h_ae6d453b3e091eec09ca47ece12bb3adf}\label{mato__core_8h_ae6d453b3e091eec09ca47ece12bb3adf}} 
+\index{mato\_core.h@{mato\_core.h}!NODE\_MULTIPLIER@{NODE\_MULTIPLIER}}
+\index{NODE\_MULTIPLIER@{NODE\_MULTIPLIER}!mato\_core.h@{mato\_core.h}}
+\doxysubsubsection{\texorpdfstring{NODE\_MULTIPLIER}{NODE\_MULTIPLIER}}
+{\footnotesize\ttfamily \#define N\+O\+D\+E\+\_\+\+M\+U\+L\+T\+I\+P\+L\+I\+ER~100000L}
+
+
+
 \doxysubsection{Function Documentation}
 \mbox{\Hypertarget{mato__core_8h_a5e81c3dd52599310f9ae512214c80ad1}\label{mato__core_8h_a5e81c3dd52599310f9ae512214c80ad1}} 
 \index{mato\_core.h@{mato\_core.h}!copy\_of\_last\_data\_of\_channel@{copy\_of\_last\_data\_of\_channel}}
@@ -152,7 +149,27 @@ Mato control framework -\/ internal core implementation function protypes and ty
 
 From buffers, retrieve the most recent message from a specified module/channel, make a copy of it and return the pointer to and size of the message in the $\ast$data\+\_\+length and $\ast$data variables. 
 
-If there is no data posted by that module yet, both $\ast$data\+\_\+length and $\ast$data will be 0. \mbox{\Hypertarget{mato__core_8h_a948891305b2d86ead8d8b9e98ee992ea}\label{mato__core_8h_a948891305b2d86ead8d8b9e98ee992ea}} 
+If there is no data posted by that module yet, both $\ast$data\+\_\+length and $\ast$data will be 0. \mbox{\Hypertarget{mato__core_8h_af1150c35e05b0d14d3e5e6f064558d83}\label{mato__core_8h_af1150c35e05b0d14d3e5e6f064558d83}} 
+\index{mato\_core.h@{mato\_core.h}!core\_mato\_init@{core\_mato\_init}}
+\index{core\_mato\_init@{core\_mato\_init}!mato\_core.h@{mato\_core.h}}
+\doxysubsubsection{\texorpdfstring{core\_mato\_init()}{core\_mato\_init()}}
+{\footnotesize\ttfamily void core\+\_\+mato\+\_\+init (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Initialize data structures maintained by the core. 
+
+\mbox{\Hypertarget{mato__core_8h_a0d4eb232de3e0d9c18edc91eb1316421}\label{mato__core_8h_a0d4eb232de3e0d9c18edc91eb1316421}} 
+\index{mato\_core.h@{mato\_core.h}!core\_mato\_shutdown@{core\_mato\_shutdown}}
+\index{core\_mato\_shutdown@{core\_mato\_shutdown}!mato\_core.h@{mato\_core.h}}
+\doxysubsubsection{\texorpdfstring{core\_mato\_shutdown()}{core\_mato\_shutdown()}}
+{\footnotesize\ttfamily void core\+\_\+mato\+\_\+shutdown (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Release resources used by the core. 
+
+\mbox{\Hypertarget{mato__core_8h_a948891305b2d86ead8d8b9e98ee992ea}\label{mato__core_8h_a948891305b2d86ead8d8b9e98ee992ea}} 
 \index{mato\_core.h@{mato\_core.h}!decrement\_references@{decrement\_references}}
 \index{decrement\_references@{decrement\_references}!mato\_core.h@{mato\_core.h}}
 \doxysubsubsection{\texorpdfstring{decrement\_references()}{decrement\_references()}}
@@ -162,7 +179,121 @@ If there is no data posted by that module yet, both $\ast$data\+\_\+length and $
 
 Decrements the number of references to a particular buffer and deallocates the buffer itself as well as the structure describing the buffer. 
 
-It also removes it from the list of the framework-\/maintained messages. \mbox{\Hypertarget{mato__core_8h_ae85edaed4da057ef1db61b7b02c13b1b}\label{mato__core_8h_ae85edaed4da057ef1db61b7b02c13b1b}} 
+It also removes it from the list of the framework-\/maintained messages. \mbox{\Hypertarget{mato__core_8h_ae97dbf0eeadf4345327dcf392d02c30c}\label{mato__core_8h_ae97dbf0eeadf4345327dcf392d02c30c}} 
+\index{mato\_core.h@{mato\_core.h}!get\_free\_module\_id@{get\_free\_module\_id}}
+\index{get\_free\_module\_id@{get\_free\_module\_id}!mato\_core.h@{mato\_core.h}}
+\doxysubsubsection{\texorpdfstring{get\_free\_module\_id()}{get\_free\_module\_id()}}
+{\footnotesize\ttfamily int get\+\_\+free\+\_\+module\+\_\+id (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Returns the next available module\+\_\+id. 
+
+\mbox{\Hypertarget{mato__core_8h_aa96455f34de227205787b911dbe51847}\label{mato__core_8h_aa96455f34de227205787b911dbe51847}} 
+\index{mato\_core.h@{mato\_core.h}!get\_free\_subscription\_id@{get\_free\_subscription\_id}}
+\index{get\_free\_subscription\_id@{get\_free\_subscription\_id}!mato\_core.h@{mato\_core.h}}
+\doxysubsubsection{\texorpdfstring{get\_free\_subscription\_id()}{get\_free\_subscription\_id()}}
+{\footnotesize\ttfamily int get\+\_\+free\+\_\+subscription\+\_\+id (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Returns the next available subscription\+\_\+id. 
+
+\mbox{\Hypertarget{mato__core_8h_a438cf6032d01d451d50cf8cd7b14d8f0}\label{mato__core_8h_a438cf6032d01d451d50cf8cd7b14d8f0}} 
+\index{mato\_core.h@{mato\_core.h}!lock\_framework@{lock\_framework}}
+\index{lock\_framework@{lock\_framework}!mato\_core.h@{mato\_core.h}}
+\doxysubsubsection{\texorpdfstring{lock\_framework()}{lock\_framework()}}
+{\footnotesize\ttfamily void lock\+\_\+framework (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Enter mutually-\/exclusive area accessing internal framework data structures. 
+
+\mbox{\Hypertarget{mato__core_8h_a87731b4b9da695d14f237dc6825c9186}\label{mato__core_8h_a87731b4b9da695d14f237dc6825c9186}} 
+\index{mato\_core.h@{mato\_core.h}!mato\_dec\_system\_thread\_count@{mato\_dec\_system\_thread\_count}}
+\index{mato\_dec\_system\_thread\_count@{mato\_dec\_system\_thread\_count}!mato\_core.h@{mato\_core.h}}
+\doxysubsubsection{\texorpdfstring{mato\_dec\_system\_thread\_count()}{mato\_dec\_system\_thread\_count()}}
+{\footnotesize\ttfamily void mato\+\_\+dec\+\_\+system\+\_\+thread\+\_\+count (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Decrement the number of internal framework threads running. It should be called by each framework thread that terminates. 
+
+\mbox{\Hypertarget{mato__core_8h_a94a6b505bcf5e3cca4665cba3bbab3cd}\label{mato__core_8h_a94a6b505bcf5e3cca4665cba3bbab3cd}} 
+\index{mato\_core.h@{mato\_core.h}!mato\_inc\_system\_thread\_count@{mato\_inc\_system\_thread\_count}}
+\index{mato\_inc\_system\_thread\_count@{mato\_inc\_system\_thread\_count}!mato\_core.h@{mato\_core.h}}
+\doxysubsubsection{\texorpdfstring{mato\_inc\_system\_thread\_count()}{mato\_inc\_system\_thread\_count()}}
+{\footnotesize\ttfamily void mato\+\_\+inc\+\_\+system\+\_\+thread\+\_\+count (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Increment the number of internal framework threads running. This should be called by each framework thread that has been started. 
+
+\mbox{\Hypertarget{mato__core_8h_a9dfe1d249e65f9c9277279f03c54c90f}\label{mato__core_8h_a9dfe1d249e65f9c9277279f03c54c90f}} 
+\index{mato\_core.h@{mato\_core.h}!mato\_system\_threads\_running@{mato\_system\_threads\_running}}
+\index{mato\_system\_threads\_running@{mato\_system\_threads\_running}!mato\_core.h@{mato\_core.h}}
+\doxysubsubsection{\texorpdfstring{mato\_system\_threads\_running()}{mato\_system\_threads\_running()}}
+{\footnotesize\ttfamily int mato\+\_\+system\+\_\+threads\+\_\+running (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+The number of mato system threads that are currently running (not terminated yet). 
+
+\mbox{\Hypertarget{mato__core_8h_a2da0b2b93801c2136969b06d8045ac69}\label{mato__core_8h_a2da0b2b93801c2136969b06d8045ac69}} 
+\index{mato\_core.h@{mato\_core.h}!new\_channel\_data@{new\_channel\_data}}
+\index{new\_channel\_data@{new\_channel\_data}!mato\_core.h@{mato\_core.h}}
+\doxysubsubsection{\texorpdfstring{new\_channel\_data()}{new\_channel\_data()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structchannel__data}{channel\+\_\+data}}$\ast$ new\+\_\+channel\+\_\+data (\begin{DoxyParamCaption}\item[{int}]{node\+\_\+id,  }\item[{int}]{module\+\_\+id,  }\item[{int}]{channel\+\_\+id,  }\item[{int}]{length,  }\item[{void $\ast$}]{data }\end{DoxyParamCaption})}
+
+
+
+A constructor for the \mbox{\hyperlink{structchannel__data}{channel\+\_\+data}} structure. 
+
+\mbox{\Hypertarget{mato__core_8h_a041903e9b52f56435f88cff5f41aff3e}\label{mato__core_8h_a041903e9b52f56435f88cff5f41aff3e}} 
+\index{mato\_core.h@{mato\_core.h}!new\_module\_info@{new\_module\_info}}
+\index{new\_module\_info@{new\_module\_info}!mato\_core.h@{mato\_core.h}}
+\doxysubsubsection{\texorpdfstring{new\_module\_info()}{new\_module\_info()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structmodule__info}{module\+\_\+info}}$\ast$ new\+\_\+module\+\_\+info (\begin{DoxyParamCaption}\item[{int}]{node\+\_\+id,  }\item[{int}]{module\+\_\+id,  }\item[{char $\ast$}]{module\+\_\+name,  }\item[{char $\ast$}]{module\+\_\+type }\end{DoxyParamCaption})}
+
+
+
+A constructor for the \mbox{\hyperlink{structmodule__info}{module\+\_\+info}} structure. 
+
+\mbox{\Hypertarget{mato__core_8h_a46237792544cdb9542f03f0504d3a73f}\label{mato__core_8h_a46237792544cdb9542f03f0504d3a73f}} 
+\index{mato\_core.h@{mato\_core.h}!pack\_and\_send\_data\_to\_remote@{pack\_and\_send\_data\_to\_remote}}
+\index{pack\_and\_send\_data\_to\_remote@{pack\_and\_send\_data\_to\_remote}!mato\_core.h@{mato\_core.h}}
+\doxysubsubsection{\texorpdfstring{pack\_and\_send\_data\_to\_remote()}{pack\_and\_send\_data\_to\_remote()}}
+{\footnotesize\ttfamily void pack\+\_\+and\+\_\+send\+\_\+data\+\_\+to\+\_\+remote (\begin{DoxyParamCaption}\item[{int}]{remote\+\_\+node\+\_\+id,  }\item[{int}]{module\+\_\+id,  }\item[{int}]{channel,  }\item[{int}]{get\+\_\+data\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+Remote module is requesting data from our channel, retrieve them and send back. 
+
+\mbox{\Hypertarget{mato__core_8h_a7800709ec7535d9abc6454e510212d6c}\label{mato__core_8h_a7800709ec7535d9abc6454e510212d6c}} 
+\index{mato\_core.h@{mato\_core.h}!remove\_names\_types@{remove\_names\_types}}
+\index{remove\_names\_types@{remove\_names\_types}!mato\_core.h@{mato\_core.h}}
+\doxysubsubsection{\texorpdfstring{remove\_names\_types()}{remove\_names\_types()}}
+{\footnotesize\ttfamily void remove\+\_\+names\+\_\+types (\begin{DoxyParamCaption}\item[{int}]{node\+\_\+id }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{mato__core_8h_afdc3809f243d54fc76dd0539fbd847f0}\label{mato__core_8h_afdc3809f243d54fc76dd0539fbd847f0}} 
+\index{mato\_core.h@{mato\_core.h}!remove\_node\_buffers@{remove\_node\_buffers}}
+\index{remove\_node\_buffers@{remove\_node\_buffers}!mato\_core.h@{mato\_core.h}}
+\doxysubsubsection{\texorpdfstring{remove\_node\_buffers()}{remove\_node\_buffers()}}
+{\footnotesize\ttfamily void remove\+\_\+node\+\_\+buffers (\begin{DoxyParamCaption}\item[{int}]{node\+\_\+id }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{mato__core_8h_a4bee50d9bc9c78f39d7f7cf6354a540d}\label{mato__core_8h_a4bee50d9bc9c78f39d7f7cf6354a540d}} 
+\index{mato\_core.h@{mato\_core.h}!remove\_node\_from\_subscriptions@{remove\_node\_from\_subscriptions}}
+\index{remove\_node\_from\_subscriptions@{remove\_node\_from\_subscriptions}!mato\_core.h@{mato\_core.h}}
+\doxysubsubsection{\texorpdfstring{remove\_node\_from\_subscriptions()}{remove\_node\_from\_subscriptions()}}
+{\footnotesize\ttfamily void remove\+\_\+node\+\_\+from\+\_\+subscriptions (\begin{DoxyParamCaption}\item[{int}]{node\+\_\+id }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{mato__core_8h_a979625f0ce491a3abd1eb68ca93d803b}\label{mato__core_8h_a979625f0ce491a3abd1eb68ca93d803b}} 
+\index{mato\_core.h@{mato\_core.h}!remove\_subscription@{remove\_subscription}}
+\index{remove\_subscription@{remove\_subscription}!mato\_core.h@{mato\_core.h}}
+\doxysubsubsection{\texorpdfstring{remove\_subscription()}{remove\_subscription()}}
+{\footnotesize\ttfamily void remove\+\_\+subscription (\begin{DoxyParamCaption}\item[{int}]{subscribed\+\_\+node\+\_\+id,  }\item[{int}]{subscribed\+\_\+module\+\_\+id,  }\item[{int}]{channel,  }\item[{int}]{subscription\+\_\+id }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{mato__core_8h_ae85edaed4da057ef1db61b7b02c13b1b}\label{mato__core_8h_ae85edaed4da057ef1db61b7b02c13b1b}} 
 \index{mato\_core.h@{mato\_core.h}!return\_data\_to\_waiting\_module@{return\_data\_to\_waiting\_module}}
 \index{return\_data\_to\_waiting\_module@{return\_data\_to\_waiting\_module}!mato\_core.h@{mato\_core.h}}
 \doxysubsubsection{\texorpdfstring{return\_data\_to\_waiting\_module()}{return\_data\_to\_waiting\_module()}}
@@ -172,7 +303,47 @@ It also removes it from the list of the framework-\/maintained messages. \mbox{\
 
 Remote node is sending data that some module of this node requested and waits for. 
 
-Notify it through pipe so that the data is sent down to the module. 
+Notify it through pipe so that the data is sent down to the module. \mbox{\Hypertarget{mato__core_8h_af4e477c79e3ad08d61c3d4473baea950}\label{mato__core_8h_af4e477c79e3ad08d61c3d4473baea950}} 
+\index{mato\_core.h@{mato\_core.h}!store\_new\_remote\_module@{store\_new\_remote\_module}}
+\index{store\_new\_remote\_module@{store\_new\_remote\_module}!mato\_core.h@{mato\_core.h}}
+\doxysubsubsection{\texorpdfstring{store\_new\_remote\_module()}{store\_new\_remote\_module()}}
+{\footnotesize\ttfamily void store\+\_\+new\+\_\+remote\+\_\+module (\begin{DoxyParamCaption}\item[{int}]{node\+\_\+id,  }\item[{int}]{module\+\_\+id,  }\item[{char $\ast$}]{module\+\_\+name,  }\item[{char $\ast$}]{module\+\_\+type,  }\item[{int}]{number\+\_\+of\+\_\+channels }\end{DoxyParamCaption})}
+
+
+
+Update internal data structures as necessary when a new module announcement arrives from another node. 
+
+\mbox{\Hypertarget{mato__core_8h_a8ee143235f543184363dea746b824056}\label{mato__core_8h_a8ee143235f543184363dea746b824056}} 
+\index{mato\_core.h@{mato\_core.h}!subscribe\_channel\_from\_remote\_node@{subscribe\_channel\_from\_remote\_node}}
+\index{subscribe\_channel\_from\_remote\_node@{subscribe\_channel\_from\_remote\_node}!mato\_core.h@{mato\_core.h}}
+\doxysubsubsection{\texorpdfstring{subscribe\_channel\_from\_remote\_node()}{subscribe\_channel\_from\_remote\_node()}}
+{\footnotesize\ttfamily void subscribe\+\_\+channel\+\_\+from\+\_\+remote\+\_\+node (\begin{DoxyParamCaption}\item[{int}]{remote\+\_\+node\+\_\+id,  }\item[{int}]{subscribed\+\_\+module\+\_\+id,  }\item[{int}]{channel }\end{DoxyParamCaption})}
+
+
+
+Update internal subscriptions\+: a remote node subscribing to our module\textquotesingle{}s channel. 
+
+\mbox{\Hypertarget{mato__core_8h_a39c60cf29218c107f4115b73270a5114}\label{mato__core_8h_a39c60cf29218c107f4115b73270a5114}} 
+\index{mato\_core.h@{mato\_core.h}!unlock\_framework@{unlock\_framework}}
+\index{unlock\_framework@{unlock\_framework}!mato\_core.h@{mato\_core.h}}
+\doxysubsubsection{\texorpdfstring{unlock\_framework()}{unlock\_framework()}}
+{\footnotesize\ttfamily void unlock\+\_\+framework (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Leave mutually-\/exclusive area with a protected acces to internal framework data structures. 
+
+\mbox{\Hypertarget{mato__core_8h_a53fa60389c0d5ac17eb194e386d89ad2}\label{mato__core_8h_a53fa60389c0d5ac17eb194e386d89ad2}} 
+\index{mato\_core.h@{mato\_core.h}!unsubscribe\_channel\_from\_remote\_node@{unsubscribe\_channel\_from\_remote\_node}}
+\index{unsubscribe\_channel\_from\_remote\_node@{unsubscribe\_channel\_from\_remote\_node}!mato\_core.h@{mato\_core.h}}
+\doxysubsubsection{\texorpdfstring{unsubscribe\_channel\_from\_remote\_node()}{unsubscribe\_channel\_from\_remote\_node()}}
+{\footnotesize\ttfamily void unsubscribe\+\_\+channel\+\_\+from\+\_\+remote\+\_\+node (\begin{DoxyParamCaption}\item[{int}]{remote\+\_\+node\+\_\+id,  }\item[{int}]{subscribed\+\_\+module\+\_\+id,  }\item[{int}]{channel }\end{DoxyParamCaption})}
+
+
+
+Update internal subscriptions\+: a remote node unsubscribing to our module\textquotesingle{}s channel. 
+
+
 
 \doxysubsection{Variable Documentation}
 \mbox{\Hypertarget{mato__core_8h_a2822a291e85d87882c86a179b50c99f6}\label{mato__core_8h_a2822a291e85d87882c86a179b50c99f6}} 
@@ -255,4 +426,23 @@ All threads should terminate at the earliest possbility \mbox{\Hypertarget{mato_
 
 Contains all descriptions of subscriptions, instances of subscription structures. 
 
-The G\+Array is indexed by the module\+\_\+id and contains G\+Arrays indexed by channel number Finally, the nested G\+Array elements are again G\+Arrays containing all subscriptions to that particular channel of that particular module. 
+The G\+Array is indexed by the module\+\_\+id and contains G\+Arrays indexed by channel number Finally, the nested G\+Array elements are again G\+Arrays containing all subscriptions to that particular channel of that particular module. \mbox{\Hypertarget{mato__core_8h_acc307467ee069828e40a521f193e8b80}\label{mato__core_8h_acc307467ee069828e40a521f193e8b80}} 
+\index{mato\_core.h@{mato\_core.h}!system\_threads\_started@{system\_threads\_started}}
+\index{system\_threads\_started@{system\_threads\_started}!mato\_core.h@{mato\_core.h}}
+\doxysubsubsection{\texorpdfstring{system\_threads\_started}{system\_threads\_started}}
+{\footnotesize\ttfamily volatile int system\+\_\+threads\+\_\+started}
+
+
+
+Contains the number of internal framework threads that are running. Use the functions \mbox{\hyperlink{mato__core_8h_a94a6b505bcf5e3cca4665cba3bbab3cd}{mato\+\_\+inc\+\_\+system\+\_\+thread\+\_\+count()}} and \mbox{\hyperlink{mato__core_8h_a87731b4b9da695d14f237dc6825c9186}{mato\+\_\+dec\+\_\+system\+\_\+thread\+\_\+count()}}. 
+
+\mbox{\Hypertarget{mato__core_8h_a23868df494ffd83e64765b50b2f59de0}\label{mato__core_8h_a23868df494ffd83e64765b50b2f59de0}} 
+\index{mato\_core.h@{mato\_core.h}!threads\_started@{threads\_started}}
+\index{threads\_started@{threads\_started}!mato\_core.h@{mato\_core.h}}
+\doxysubsubsection{\texorpdfstring{threads\_started}{threads\_started}}
+{\footnotesize\ttfamily volatile int threads\+\_\+started}
+
+
+
+Contains the number of threads that are running. Use the functions \mbox{\hyperlink{mato_8c_a6b31044a7afec17426ec4d4e3354aa9f}{mato\+\_\+inc\+\_\+thread\+\_\+count()}} and \mbox{\hyperlink{mato_8c_a480acc181ff3a7d7c925d64e3d4a7442}{mato\+\_\+dec\+\_\+thread\+\_\+count()}}. 
+

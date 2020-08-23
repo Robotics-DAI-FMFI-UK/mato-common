@@ -111,8 +111,7 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:a15a2c242b513b39cb717bf70978ce3fa"><td class="memItemLeft" align="right" valign="top"><a id="a15a2c242b513b39cb717bf70978ce3fa"></a>
-typedef enum subscription_type_enum&#160;</td><td class="memItemRight" valign="bottom"><b>subscription_type</b></td></tr>
+<tr class="memitem:a15a2c242b513b39cb717bf70978ce3fa"><td class="memItemLeft" align="right" valign="top">typedef enum <a class="el" href="mato_8h.html#a97f25ffc5cfdea7210d6d23eec033087">subscription_type_enum</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a15a2c242b513b39cb717bf70978ce3fa">subscription_type</a></td></tr>
 <tr class="separator:a15a2c242b513b39cb717bf70978ce3fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad20873465b8c85f182244c5a553f2837"><td class="memItemLeft" align="right" valign="top">typedef void *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#ad20873465b8c85f182244c5a553f2837">create_instance_callback</a>) (int module_id)</td></tr>
 <tr class="memdesc:ad20873465b8c85f182244c5a553f2837"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create instance data of a module and initialize it.  <a href="mato_8h.html#ad20873465b8c85f182244c5a553f2837">More...</a><br /></td></tr>
@@ -120,13 +119,11 @@ typedef enum subscription_type_enum&#160;</td><td class="memItemRight" valign="b
 <tr class="memitem:a5cdf8c706be95dbe5dc32dda2d0aacdf"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a5cdf8c706be95dbe5dc32dda2d0aacdf">start_instance_callback</a>) (void *<a class="el" href="mato__core_8h.html#a0e0d7e8d878428833528a1123d6558c5">instance_data</a>)</td></tr>
 <tr class="memdesc:a5cdf8c706be95dbe5dc32dda2d0aacdf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the module instance.  <a href="mato_8h.html#a5cdf8c706be95dbe5dc32dda2d0aacdf">More...</a><br /></td></tr>
 <tr class="separator:a5cdf8c706be95dbe5dc32dda2d0aacdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a19ec8ae2c73a767ac23bcc3c861e8b53"><td class="memItemLeft" align="right" valign="top"><a id="a19ec8ae2c73a767ac23bcc3c861e8b53"></a>
-typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a19ec8ae2c73a767ac23bcc3c861e8b53">delete_instance_callback</a>) (void *<a class="el" href="mato__core_8h.html#a0e0d7e8d878428833528a1123d6558c5">instance_data</a>)</td></tr>
-<tr class="memdesc:a19ec8ae2c73a767ac23bcc3c861e8b53"><td class="mdescLeft">&#160;</td><td class="mdescRight">A request to delete the module instance has been made. This callback should deallocate the instance data. <br /></td></tr>
+<tr class="memitem:a19ec8ae2c73a767ac23bcc3c861e8b53"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a19ec8ae2c73a767ac23bcc3c861e8b53">delete_instance_callback</a>) (void *<a class="el" href="mato__core_8h.html#a0e0d7e8d878428833528a1123d6558c5">instance_data</a>)</td></tr>
+<tr class="memdesc:a19ec8ae2c73a767ac23bcc3c861e8b53"><td class="mdescLeft">&#160;</td><td class="mdescRight">A request to delete the module instance has been made. This callback should deallocate the instance data.  <a href="mato_8h.html#a19ec8ae2c73a767ac23bcc3c861e8b53">More...</a><br /></td></tr>
 <tr class="separator:a19ec8ae2c73a767ac23bcc3c861e8b53"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a984f52f0434bb9e42814bf9c74f4791d"><td class="memItemLeft" align="right" valign="top"><a id="a984f52f0434bb9e42814bf9c74f4791d"></a>
-typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a984f52f0434bb9e42814bf9c74f4791d">global_message_callback</a>) (void *<a class="el" href="mato__core_8h.html#a0e0d7e8d878428833528a1123d6558c5">instance_data</a>, int module_id_sender, int message_id, int msg_length, void *message_data)</td></tr>
-<tr class="memdesc:a984f52f0434bb9e42814bf9c74f4791d"><td class="mdescLeft">&#160;</td><td class="mdescRight">When some other module or the main program has sent a global message, this callback of each module is called immediatelly - from the thread of the sender. <br /></td></tr>
+<tr class="memitem:a984f52f0434bb9e42814bf9c74f4791d"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a984f52f0434bb9e42814bf9c74f4791d">global_message_callback</a>) (void *<a class="el" href="mato__core_8h.html#a0e0d7e8d878428833528a1123d6558c5">instance_data</a>, int module_id_sender, int message_id, int msg_length, void *message_data)</td></tr>
+<tr class="memdesc:a984f52f0434bb9e42814bf9c74f4791d"><td class="mdescLeft">&#160;</td><td class="mdescRight">When some other module or the main program has sent a global message, this callback of each module is called immediatelly - from the thread of the sender.  <a href="mato_8h.html#a984f52f0434bb9e42814bf9c74f4791d">More...</a><br /></td></tr>
 <tr class="separator:a984f52f0434bb9e42814bf9c74f4791d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9345221b935d9505595c583b54d31e86"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a9345221b935d9505595c583b54d31e86">subscriber_callback</a>) (void *<a class="el" href="mato__core_8h.html#a0e0d7e8d878428833528a1123d6558c5">instance_data</a>, int sender_module_id, int data_length, void *new_data_ptr)</td></tr>
 <tr class="memdesc:a9345221b935d9505595c583b54d31e86"><td class="mdescLeft">&#160;</td><td class="mdescRight">Modules that subscribe to the data on channels of other module instances provide this callback.  <a href="mato_8h.html#a9345221b935d9505595c583b54d31e86">More...</a><br /></td></tr>
@@ -134,17 +131,16 @@ typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" 
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:a97f25ffc5cfdea7210d6d23eec033087"><td class="memItemLeft" align="right" valign="top"><a id="a97f25ffc5cfdea7210d6d23eec033087"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>subscription_type_enum</b> { <b>direct_data_ptr</b> = 1, 
-<b>data_copy</b> = 2, 
-<b>borrowed_pointer</b> = 3
+<tr class="memitem:a97f25ffc5cfdea7210d6d23eec033087"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a97f25ffc5cfdea7210d6d23eec033087">subscription_type_enum</a> { <a class="el" href="mato_8h.html#a97f25ffc5cfdea7210d6d23eec033087a4524ed0329240a42b91b1eeb91b0cd4d">direct_data_ptr</a> = 1, 
+<a class="el" href="mato_8h.html#a97f25ffc5cfdea7210d6d23eec033087a3e614e6d052aaf4bbd12adec21198ad4">data_copy</a> = 2, 
+<a class="el" href="mato_8h.html#a97f25ffc5cfdea7210d6d23eec033087adc0eb6623b833816a19b683c2766e4b2">borrowed_pointer</a> = 3
  }</td></tr>
 <tr class="separator:a97f25ffc5cfdea7210d6d23eec033087"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a31f3887a8e72dc1323b6bfbcfbf9d038"><td class="memItemLeft" align="right" valign="top"><a id="a31f3887a8e72dc1323b6bfbcfbf9d038"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a31f3887a8e72dc1323b6bfbcfbf9d038">mato_init</a> (int this_node_identifier)</td></tr>
-<tr class="memdesc:a31f3887a8e72dc1323b6bfbcfbf9d038"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the framework. It must be the first function of the framework to be called. It should be called only once. <br /></td></tr>
+<tr class="memitem:a31f3887a8e72dc1323b6bfbcfbf9d038"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a31f3887a8e72dc1323b6bfbcfbf9d038">mato_init</a> (int this_node_identifier)</td></tr>
+<tr class="memdesc:a31f3887a8e72dc1323b6bfbcfbf9d038"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the framework. It must be the first function of the framework to be called. It should be called only once.  <a href="mato_8h.html#a31f3887a8e72dc1323b6bfbcfbf9d038">More...</a><br /></td></tr>
 <tr class="separator:a31f3887a8e72dc1323b6bfbcfbf9d038"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a43f0570e3ab59d7a021e93113437dcaf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a43f0570e3ab59d7a021e93113437dcaf">mato_register_new_type_of_module</a> (char *type, <a class="el" href="structmodule__specification.html">module_specification</a> *specification)</td></tr>
 <tr class="memdesc:a43f0570e3ab59d7a021e93113437dcaf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a new module type.  <a href="mato_8h.html#a43f0570e3ab59d7a021e93113437dcaf">More...</a><br /></td></tr>
@@ -152,48 +148,38 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato
 <tr class="memitem:a411a20bcfa908edbebe617fe5cc54667"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a411a20bcfa908edbebe617fe5cc54667">mato_create_new_module_instance</a> (const char *module_type, const char *module_name)</td></tr>
 <tr class="memdesc:a411a20bcfa908edbebe617fe5cc54667"><td class="mdescLeft">&#160;</td><td class="mdescRight">The main program (or other module) can call this function to request creation of a module instance.  <a href="mato_8h.html#a411a20bcfa908edbebe617fe5cc54667">More...</a><br /></td></tr>
 <tr class="separator:a411a20bcfa908edbebe617fe5cc54667"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a02ef7e731c9c9eaa342352a7e802c183"><td class="memItemLeft" align="right" valign="top"><a id="a02ef7e731c9c9eaa342352a7e802c183"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a02ef7e731c9c9eaa342352a7e802c183">mato_start</a> ()</td></tr>
-<tr class="memdesc:a02ef7e731c9c9eaa342352a7e802c183"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the framework and all modules. This is typically called after all module instances have been created. <br /></td></tr>
+<tr class="memitem:a02ef7e731c9c9eaa342352a7e802c183"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a02ef7e731c9c9eaa342352a7e802c183">mato_start</a> ()</td></tr>
+<tr class="memdesc:a02ef7e731c9c9eaa342352a7e802c183"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the framework and all modules. This is typically called after all module instances have been created.  <a href="mato_8h.html#a02ef7e731c9c9eaa342352a7e802c183">More...</a><br /></td></tr>
 <tr class="separator:a02ef7e731c9c9eaa342352a7e802c183"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a62a0865fa5114c0a254435a1369531cf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a62a0865fa5114c0a254435a1369531cf">mato_start_module</a> (int module_id)</td></tr>
 <tr class="memdesc:a62a0865fa5114c0a254435a1369531cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start a newly created instance of a particular module.  <a href="mato_8h.html#a62a0865fa5114c0a254435a1369531cf">More...</a><br /></td></tr>
 <tr class="separator:a62a0865fa5114c0a254435a1369531cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6e94d7d4dc09ad58485227e60df20035"><td class="memItemLeft" align="right" valign="top"><a id="a6e94d7d4dc09ad58485227e60df20035"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a6e94d7d4dc09ad58485227e60df20035">mato_delete_module_instance</a> (int module_id)</td></tr>
-<tr class="memdesc:a6e94d7d4dc09ad58485227e60df20035"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allows to dynamically delete a module instance that was previously created. <br /></td></tr>
+<tr class="memitem:a6e94d7d4dc09ad58485227e60df20035"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a6e94d7d4dc09ad58485227e60df20035">mato_delete_module_instance</a> (int module_id)</td></tr>
+<tr class="memdesc:a6e94d7d4dc09ad58485227e60df20035"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allows to dynamically delete a module instance that was previously created.  <a href="mato_8h.html#a6e94d7d4dc09ad58485227e60df20035">More...</a><br /></td></tr>
 <tr class="separator:a6e94d7d4dc09ad58485227e60df20035"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa753d75335e7a6ae0e00a6dcdbdb1412"><td class="memItemLeft" align="right" valign="top"><a id="aa753d75335e7a6ae0e00a6dcdbdb1412"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#aa753d75335e7a6ae0e00a6dcdbdb1412">mato_get_module_id</a> (const char *module_name)</td></tr>
-<tr class="memdesc:aa753d75335e7a6ae0e00a6dcdbdb1412"><td class="mdescLeft">&#160;</td><td class="mdescRight">Translate a module name of some existing module instance to its module id. Returns -1, if module name is not known. <br /></td></tr>
+<tr class="memitem:aa753d75335e7a6ae0e00a6dcdbdb1412"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#aa753d75335e7a6ae0e00a6dcdbdb1412">mato_get_module_id</a> (const char *module_name)</td></tr>
+<tr class="memdesc:aa753d75335e7a6ae0e00a6dcdbdb1412"><td class="mdescLeft">&#160;</td><td class="mdescRight">Translate a module name of some existing module instance to its module id. Returns -1, if module name is not known.  <a href="mato_8h.html#aa753d75335e7a6ae0e00a6dcdbdb1412">More...</a><br /></td></tr>
 <tr class="separator:aa753d75335e7a6ae0e00a6dcdbdb1412"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2e839c2dcf0c134166ceca799e7987fd"><td class="memItemLeft" align="right" valign="top"><a id="a2e839c2dcf0c134166ceca799e7987fd"></a>
-char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a2e839c2dcf0c134166ceca799e7987fd">mato_get_module_name</a> (int module_id)</td></tr>
-<tr class="memdesc:a2e839c2dcf0c134166ceca799e7987fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine the name of a module with the specified module_id. <br /></td></tr>
+<tr class="memitem:a2e839c2dcf0c134166ceca799e7987fd"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a2e839c2dcf0c134166ceca799e7987fd">mato_get_module_name</a> (int module_id)</td></tr>
+<tr class="memdesc:a2e839c2dcf0c134166ceca799e7987fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine the name of a module with the specified module_id.  <a href="mato_8h.html#a2e839c2dcf0c134166ceca799e7987fd">More...</a><br /></td></tr>
 <tr class="separator:a2e839c2dcf0c134166ceca799e7987fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a28a6ba77196f8504bab5f3da059c5d5b"><td class="memItemLeft" align="right" valign="top"><a id="a28a6ba77196f8504bab5f3da059c5d5b"></a>
-char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a28a6ba77196f8504bab5f3da059c5d5b">mato_get_module_type</a> (int module_id)</td></tr>
-<tr class="memdesc:a28a6ba77196f8504bab5f3da059c5d5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine the type of a module with the specified module_id. <br /></td></tr>
+<tr class="memitem:a28a6ba77196f8504bab5f3da059c5d5b"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a28a6ba77196f8504bab5f3da059c5d5b">mato_get_module_type</a> (int module_id)</td></tr>
+<tr class="memdesc:a28a6ba77196f8504bab5f3da059c5d5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine the type of a module with the specified module_id.  <a href="mato_8h.html#a28a6ba77196f8504bab5f3da059c5d5b">More...</a><br /></td></tr>
 <tr class="separator:a28a6ba77196f8504bab5f3da059c5d5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af07c3febed32408feb8a11c4d66c2251"><td class="memItemLeft" align="right" valign="top"><a id="af07c3febed32408feb8a11c4d66c2251"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#af07c3febed32408feb8a11c4d66c2251">mato_subscribe</a> (int subscriber_module_id, int subscribed_module_id, int channel, <a class="el" href="mato_8h.html#a9345221b935d9505595c583b54d31e86">subscriber_callback</a> callback, int subscription_type)</td></tr>
-<tr class="memdesc:af07c3febed32408feb8a11c4d66c2251"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subscribe on a channel of some module instance. Returns a number that represents this subscription (a subscription_id). <br /></td></tr>
+<tr class="memitem:af07c3febed32408feb8a11c4d66c2251"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#af07c3febed32408feb8a11c4d66c2251">mato_subscribe</a> (int subscriber_module_id, int subscribed_module_id, int channel, <a class="el" href="mato_8h.html#a9345221b935d9505595c583b54d31e86">subscriber_callback</a> callback, int <a class="el" href="mato_8h.html#a15a2c242b513b39cb717bf70978ce3fa">subscription_type</a>)</td></tr>
+<tr class="memdesc:af07c3febed32408feb8a11c4d66c2251"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subscribe on a channel of some module instance. Returns a number that represents this subscription (a subscription_id).  <a href="mato_8h.html#af07c3febed32408feb8a11c4d66c2251">More...</a><br /></td></tr>
 <tr class="separator:af07c3febed32408feb8a11c4d66c2251"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a14f9462b777a24c86af37b64d84142d0"><td class="memItemLeft" align="right" valign="top"><a id="a14f9462b777a24c86af37b64d84142d0"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a14f9462b777a24c86af37b64d84142d0">mato_unsubscribe</a> (int module_id, int channel, int subscription_id)</td></tr>
-<tr class="memdesc:a14f9462b777a24c86af37b64d84142d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a subscription_id, cancel the ongoing subscription to a channel of some module instance. <br /></td></tr>
+<tr class="memitem:a14f9462b777a24c86af37b64d84142d0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a14f9462b777a24c86af37b64d84142d0">mato_unsubscribe</a> (int module_id, int channel, int subscription_id)</td></tr>
+<tr class="memdesc:a14f9462b777a24c86af37b64d84142d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a subscription_id, cancel the ongoing subscription to a channel of some module instance.  <a href="mato_8h.html#a14f9462b777a24c86af37b64d84142d0">More...</a><br /></td></tr>
 <tr class="separator:a14f9462b777a24c86af37b64d84142d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7c5249cc4fbb65587357c130ab618427"><td class="memItemLeft" align="right" valign="top"><a id="a7c5249cc4fbb65587357c130ab618427"></a>
-void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a7c5249cc4fbb65587357c130ab618427">mato_get_data_buffer</a> (int size)</td></tr>
-<tr class="memdesc:a7c5249cc4fbb65587357c130ab618427"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate a memory for a new message to be posted with post_data. <br /></td></tr>
+<tr class="memitem:a7c5249cc4fbb65587357c130ab618427"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a7c5249cc4fbb65587357c130ab618427">mato_get_data_buffer</a> (int size)</td></tr>
+<tr class="memdesc:a7c5249cc4fbb65587357c130ab618427"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate a memory for a new message to be posted with post_data.  <a href="mato_8h.html#a7c5249cc4fbb65587357c130ab618427">More...</a><br /></td></tr>
 <tr class="separator:a7c5249cc4fbb65587357c130ab618427"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aebd06bdcd1d952465c8c222c663d76fb"><td class="memItemLeft" align="right" valign="top"><a id="aebd06bdcd1d952465c8c222c663d76fb"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#aebd06bdcd1d952465c8c222c663d76fb">mato_post_data</a> (int id_of_posting_module, int channel, int data_length, void *data)</td></tr>
-<tr class="memdesc:aebd06bdcd1d952465c8c222c663d76fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">A module instance posts a new message to its own output data channel by calling this function. <br /></td></tr>
+<tr class="memitem:aebd06bdcd1d952465c8c222c663d76fb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#aebd06bdcd1d952465c8c222c663d76fb">mato_post_data</a> (int id_of_posting_module, int channel, int data_length, void *data)</td></tr>
+<tr class="memdesc:aebd06bdcd1d952465c8c222c663d76fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">A module instance posts a new message to its own output data channel by calling this function.  <a href="mato_8h.html#aebd06bdcd1d952465c8c222c663d76fb">More...</a><br /></td></tr>
 <tr class="separator:aebd06bdcd1d952465c8c222c663d76fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae76f55dbca38f9a69095cda5f089a80b"><td class="memItemLeft" align="right" valign="top"><a id="ae76f55dbca38f9a69095cda5f089a80b"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#ae76f55dbca38f9a69095cda5f089a80b">mato_send_global_message</a> (int module_id_sender, int message_id, int msg_length, void *message_data)</td></tr>
-<tr class="memdesc:ae76f55dbca38f9a69095cda5f089a80b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The main program or any module instance can post a global message to be posted to all modules immediatelly in the same thread by calling this function. <br /></td></tr>
+<tr class="memitem:ae76f55dbca38f9a69095cda5f089a80b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#ae76f55dbca38f9a69095cda5f089a80b">mato_send_global_message</a> (int module_id_sender, int message_id, int msg_length, void *message_data)</td></tr>
+<tr class="memdesc:ae76f55dbca38f9a69095cda5f089a80b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The main program or any module instance can post a global message to be posted to all modules immediatelly in the same thread by calling this function.  <a href="mato_8h.html#ae76f55dbca38f9a69095cda5f089a80b">More...</a><br /></td></tr>
 <tr class="separator:ae76f55dbca38f9a69095cda5f089a80b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af356c7284b6f1d6be285de40d9e23b77"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#af356c7284b6f1d6be285de40d9e23b77">mato_get_data</a> (int id_module, int channel, int *data_length, void **data)</td></tr>
 <tr class="memdesc:af356c7284b6f1d6be285de40d9e23b77"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the most recently posted data of some channel of some module instance.  <a href="mato_8h.html#af356c7284b6f1d6be285de40d9e23b77">More...</a><br /></td></tr>
@@ -210,13 +196,11 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_
 <tr class="memitem:ac8c86d7dbb7acd09f1884c2e80ec698c"><td class="memItemLeft" align="right" valign="top">GArray *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#ac8c86d7dbb7acd09f1884c2e80ec698c">mato_get_list_of_modules</a> (char *type)</td></tr>
 <tr class="memdesc:ac8c86d7dbb7acd09f1884c2e80ec698c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the list of currently running modules of the specified type.  <a href="mato_8h.html#ac8c86d7dbb7acd09f1884c2e80ec698c">More...</a><br /></td></tr>
 <tr class="separator:ac8c86d7dbb7acd09f1884c2e80ec698c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a89c5f00aa3a55188b8a2364314a0b644"><td class="memItemLeft" align="right" valign="top"><a id="a89c5f00aa3a55188b8a2364314a0b644"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a89c5f00aa3a55188b8a2364314a0b644">mato_get_number_of_modules</a> ()</td></tr>
-<tr class="memdesc:a89c5f00aa3a55188b8a2364314a0b644"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the number of currently running modules. <br /></td></tr>
+<tr class="memitem:a89c5f00aa3a55188b8a2364314a0b644"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a89c5f00aa3a55188b8a2364314a0b644">mato_get_number_of_modules</a> ()</td></tr>
+<tr class="memdesc:a89c5f00aa3a55188b8a2364314a0b644"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the number of currently running modules.  <a href="mato_8h.html#a89c5f00aa3a55188b8a2364314a0b644">More...</a><br /></td></tr>
 <tr class="separator:a89c5f00aa3a55188b8a2364314a0b644"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeafc9d85e29a73b9b5423cd661bd54c2"><td class="memItemLeft" align="right" valign="top"><a id="aeafc9d85e29a73b9b5423cd661bd54c2"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#aeafc9d85e29a73b9b5423cd661bd54c2">mato_free_list_of_modules</a> (GArray *a)</td></tr>
-<tr class="memdesc:aeafc9d85e29a73b9b5423cd661bd54c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free the list of modules returned by either of the two functions <a class="el" href="mato_8h.html#ac8c86d7dbb7acd09f1884c2e80ec698c" title="Retrieve the list of currently running modules of the specified type.">mato_get_list_of_modules()</a> or <a class="el" href="mato_8h.html#ac8c86d7dbb7acd09f1884c2e80ec698c" title="Retrieve the list of currently running modules of the specified type.">mato_get_list_of_modules()</a>. <br /></td></tr>
+<tr class="memitem:aeafc9d85e29a73b9b5423cd661bd54c2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#aeafc9d85e29a73b9b5423cd661bd54c2">mato_free_list_of_modules</a> (GArray *a)</td></tr>
+<tr class="memdesc:aeafc9d85e29a73b9b5423cd661bd54c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free the list of modules returned by either of the two functions <a class="el" href="mato_8h.html#ac8c86d7dbb7acd09f1884c2e80ec698c" title="Retrieve the list of currently running modules of the specified type.">mato_get_list_of_modules()</a> or <a class="el" href="mato_8h.html#ac8c86d7dbb7acd09f1884c2e80ec698c" title="Retrieve the list of currently running modules of the specified type.">mato_get_list_of_modules()</a>.  <a href="mato_8h.html#aeafc9d85e29a73b9b5423cd661bd54c2">More...</a><br /></td></tr>
 <tr class="separator:aeafc9d85e29a73b9b5423cd661bd54c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab49165685fd95d2e9f70f484e367c6f2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#ab49165685fd95d2e9f70f484e367c6f2">mato_data_buffer_usage</a> (int module_id, int channel, int *number_of_allocated_buffers, int *total_sum_of_ref_count)</td></tr>
 <tr class="memdesc:ab49165685fd95d2e9f70f484e367c6f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provide a diagnostic information on use of the buffers by a particular channel of a particular module.  <a href="mato_8h.html#ab49165685fd95d2e9f70f484e367c6f2">More...</a><br /></td></tr>
@@ -227,13 +211,11 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato
 <tr class="memitem:a480acc181ff3a7d7c925d64e3d4a7442"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a480acc181ff3a7d7c925d64e3d4a7442">mato_dec_thread_count</a> ()</td></tr>
 <tr class="memdesc:a480acc181ff3a7d7c925d64e3d4a7442"><td class="mdescLeft">&#160;</td><td class="mdescRight">Each thread that terminates should call this function just before it quits.  <a href="mato_8h.html#a480acc181ff3a7d7c925d64e3d4a7442">More...</a><br /></td></tr>
 <tr class="separator:a480acc181ff3a7d7c925d64e3d4a7442"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a314629d6f743c699b26a534175986865"><td class="memItemLeft" align="right" valign="top"><a id="a314629d6f743c699b26a534175986865"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a314629d6f743c699b26a534175986865">mato_threads_running</a> ()</td></tr>
-<tr class="memdesc:a314629d6f743c699b26a534175986865"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of threads currently running in the system. <br /></td></tr>
+<tr class="memitem:a314629d6f743c699b26a534175986865"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a314629d6f743c699b26a534175986865">mato_threads_running</a> ()</td></tr>
+<tr class="memdesc:a314629d6f743c699b26a534175986865"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of threads currently running in the system.  <a href="mato_8h.html#a314629d6f743c699b26a534175986865">More...</a><br /></td></tr>
 <tr class="separator:a314629d6f743c699b26a534175986865"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae1a30212d4d2d4f1121684dbd1bb854a"><td class="memItemLeft" align="right" valign="top"><a id="ae1a30212d4d2d4f1121684dbd1bb854a"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#ae1a30212d4d2d4f1121684dbd1bb854a">mato_shutdown</a> ()</td></tr>
-<tr class="memdesc:ae1a30212d4d2d4f1121684dbd1bb854a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Releases all resources used by the framework, recommended to be called before the main program terminates. <br /></td></tr>
+<tr class="memitem:ae1a30212d4d2d4f1121684dbd1bb854a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#ae1a30212d4d2d4f1121684dbd1bb854a">mato_shutdown</a> ()</td></tr>
+<tr class="memdesc:ae1a30212d4d2d4f1121684dbd1bb854a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Releases all resources used by the framework, recommended to be called before the main program terminates.  <a href="mato_8h.html#ae1a30212d4d2d4f1121684dbd1bb854a">More...</a><br /></td></tr>
 <tr class="separator:ae1a30212d4d2d4f1121684dbd1bb854a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
@@ -264,6 +246,38 @@ Variables</h2></td></tr>
 
 <p>Create instance data of a module and initialize it. </p>
 <p>Each module should define this callback. This instance will be from now on always referred by the module_id passed in the argument. It is recommended that the module saves it to its instance_data. The function should return a pointer to the newly allocated instance data. </p>
+
+</div>
+</div>
+<a id="a19ec8ae2c73a767ac23bcc3c861e8b53"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a19ec8ae2c73a767ac23bcc3c861e8b53">&#9670;&nbsp;</a></span>delete_instance_callback</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef void(* delete_instance_callback) (void *<a class="el" href="mato__core_8h.html#a0e0d7e8d878428833528a1123d6558c5">instance_data</a>)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A request to delete the module instance has been made. This callback should deallocate the instance data. </p>
+
+</div>
+</div>
+<a id="a984f52f0434bb9e42814bf9c74f4791d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a984f52f0434bb9e42814bf9c74f4791d">&#9670;&nbsp;</a></span>global_message_callback</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef void(* global_message_callback) (void *<a class="el" href="mato__core_8h.html#a0e0d7e8d878428833528a1123d6558c5">instance_data</a>, int module_id_sender, int message_id, int msg_length, void *message_data)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>When some other module or the main program has sent a global message, this callback of each module is called immediatelly - from the thread of the sender. </p>
 
 </div>
 </div>
@@ -298,6 +312,40 @@ Variables</h2></td></tr>
 
 <p>Modules that subscribe to the data on channels of other module instances provide this callback. </p>
 <p>It receives the instance data of the subscriber, the id of the sender module, and the actual raw data of the message and its length </p>
+
+</div>
+</div>
+<a id="a15a2c242b513b39cb717bf70978ce3fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a15a2c242b513b39cb717bf70978ce3fa">&#9670;&nbsp;</a></span>subscription_type</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef enum <a class="el" href="mato_8h.html#a97f25ffc5cfdea7210d6d23eec033087">subscription_type_enum</a> <a class="el" href="mato_8h.html#a15a2c242b513b39cb717bf70978ce3fa">subscription_type</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Enumeration Type Documentation</h2>
+<a id="a97f25ffc5cfdea7210d6d23eec033087"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a97f25ffc5cfdea7210d6d23eec033087">&#9670;&nbsp;</a></span>subscription_type_enum</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="mato_8h.html#a97f25ffc5cfdea7210d6d23eec033087">subscription_type_enum</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a97f25ffc5cfdea7210d6d23eec033087a4524ed0329240a42b91b1eeb91b0cd4d"></a>direct_data_ptr&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a97f25ffc5cfdea7210d6d23eec033087a3e614e6d052aaf4bbd12adec21198ad4"></a>data_copy&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a97f25ffc5cfdea7210d6d23eec033087adc0eb6623b833816a19b683c2766e4b2"></a>borrowed_pointer&#160;</td><td class="fielddoc"></td></tr>
+</table>
 
 </div>
 </div>
@@ -439,6 +487,46 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="a6e94d7d4dc09ad58485227e60df20035"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6e94d7d4dc09ad58485227e60df20035">&#9670;&nbsp;</a></span>mato_delete_module_instance()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void mato_delete_module_instance </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>module_id</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Allows to dynamically delete a module instance that was previously created. </p>
+
+</div>
+</div>
+<a id="aeafc9d85e29a73b9b5423cd661bd54c2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeafc9d85e29a73b9b5423cd661bd54c2">&#9670;&nbsp;</a></span>mato_free_list_of_modules()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void mato_free_list_of_modules </td>
+          <td>(</td>
+          <td class="paramtype">GArray *&#160;</td>
+          <td class="paramname"><em>a</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Free the list of modules returned by either of the two functions <a class="el" href="mato_8h.html#ac8c86d7dbb7acd09f1884c2e80ec698c" title="Retrieve the list of currently running modules of the specified type.">mato_get_list_of_modules()</a> or <a class="el" href="mato_8h.html#ac8c86d7dbb7acd09f1884c2e80ec698c" title="Retrieve the list of currently running modules of the specified type.">mato_get_list_of_modules()</a>. </p>
+
+</div>
+</div>
 <a id="af356c7284b6f1d6be285de40d9e23b77"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af356c7284b6f1d6be285de40d9e23b77">&#9670;&nbsp;</a></span>mato_get_data()</h2>
 
@@ -479,6 +567,26 @@ Variables</h2></td></tr>
 
 <p>Retrieve the most recently posted data of some channel of some module instance. </p>
 <p>Data is copied into new buffer allocated and its pointer is returned in data variable, and the length of the data is set to data_length. The calling module should release the memory by calling free() when it is not needed anymore. </p>
+
+</div>
+</div>
+<a id="a7c5249cc4fbb65587357c130ab618427"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7c5249cc4fbb65587357c130ab618427">&#9670;&nbsp;</a></span>mato_get_data_buffer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void* mato_get_data_buffer </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>size</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Allocate a memory for a new message to be posted with post_data. </p>
 
 </div>
 </div>
@@ -523,6 +631,85 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="aa753d75335e7a6ae0e00a6dcdbdb1412"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa753d75335e7a6ae0e00a6dcdbdb1412">&#9670;&nbsp;</a></span>mato_get_module_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int mato_get_module_id </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>module_name</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Translate a module name of some existing module instance to its module id. Returns -1, if module name is not known. </p>
+
+</div>
+</div>
+<a id="a2e839c2dcf0c134166ceca799e7987fd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2e839c2dcf0c134166ceca799e7987fd">&#9670;&nbsp;</a></span>mato_get_module_name()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">char* mato_get_module_name </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>module_id</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Determine the name of a module with the specified module_id. </p>
+
+</div>
+</div>
+<a id="a28a6ba77196f8504bab5f3da059c5d5b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a28a6ba77196f8504bab5f3da059c5d5b">&#9670;&nbsp;</a></span>mato_get_module_type()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">char* mato_get_module_type </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>module_id</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Determine the type of a module with the specified module_id. </p>
+
+</div>
+</div>
+<a id="a89c5f00aa3a55188b8a2364314a0b644"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a89c5f00aa3a55188b8a2364314a0b644">&#9670;&nbsp;</a></span>mato_get_number_of_modules()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int mato_get_number_of_modules </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Retrieve the number of currently running modules. </p>
+
+</div>
+</div>
 <a id="a6b31044a7afec17426ec4d4e3354aa9f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6b31044a7afec17426ec4d4e3354aa9f">&#9670;&nbsp;</a></span>mato_inc_thread_count()</h2>
 
@@ -540,6 +727,68 @@ Variables</h2></td></tr>
 
 <p>Each module instance (or other part of the program) that creates a new thread should call this funciton for each newly created thread. </p>
 <p>Increments the number of threads running. This should be called from each thread that has been started. </p>
+
+</div>
+</div>
+<a id="a31f3887a8e72dc1323b6bfbcfbf9d038"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a31f3887a8e72dc1323b6bfbcfbf9d038">&#9670;&nbsp;</a></span>mato_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void mato_init </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>this_node_identifier</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initializes the framework. It must be the first function of the framework to be called. It should be called only once. </p>
+
+</div>
+</div>
+<a id="aebd06bdcd1d952465c8c222c663d76fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aebd06bdcd1d952465c8c222c663d76fb">&#9670;&nbsp;</a></span>mato_post_data()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void mato_post_data </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>id_of_posting_module</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>channel</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>data_length</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>data</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A module instance posts a new message to its own output data channel by calling this function. </p>
 
 </div>
 </div>
@@ -611,6 +860,86 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="ae76f55dbca38f9a69095cda5f089a80b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae76f55dbca38f9a69095cda5f089a80b">&#9670;&nbsp;</a></span>mato_send_global_message()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int mato_send_global_message </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>module_id_sender</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>message_id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>msg_length</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>message_data</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The main program or any module instance can post a global message to be posted to all modules immediatelly in the same thread by calling this function. </p>
+
+</div>
+</div>
+<a id="ae1a30212d4d2d4f1121684dbd1bb854a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae1a30212d4d2d4f1121684dbd1bb854a">&#9670;&nbsp;</a></span>mato_shutdown()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void mato_shutdown </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Releases all resources used by the framework, recommended to be called before the main program terminates. </p>
+
+</div>
+</div>
+<a id="a02ef7e731c9c9eaa342352a7e802c183"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a02ef7e731c9c9eaa342352a7e802c183">&#9670;&nbsp;</a></span>mato_start()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void mato_start </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Start the framework and all modules. This is typically called after all module instances have been created. </p>
+
+</div>
+</div>
 <a id="a62a0865fa5114c0a254435a1369531cf"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a62a0865fa5114c0a254435a1369531cf">&#9670;&nbsp;</a></span>mato_start_module()</h2>
 
@@ -629,6 +958,109 @@ Variables</h2></td></tr>
 
 <p>Start a newly created instance of a particular module. </p>
 <p>This is typically used when the module instance is created later than when the framework has already been started. </p>
+
+</div>
+</div>
+<a id="af07c3febed32408feb8a11c4d66c2251"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af07c3febed32408feb8a11c4d66c2251">&#9670;&nbsp;</a></span>mato_subscribe()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int mato_subscribe </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>subscriber_module_id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>subscribed_module_id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>channel</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="mato_8h.html#a9345221b935d9505595c583b54d31e86">subscriber_callback</a>&#160;</td>
+          <td class="paramname"><em>callback</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>subscription_type</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Subscribe on a channel of some module instance. Returns a number that represents this subscription (a subscription_id). </p>
+
+</div>
+</div>
+<a id="a314629d6f743c699b26a534175986865"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a314629d6f743c699b26a534175986865">&#9670;&nbsp;</a></span>mato_threads_running()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int mato_threads_running </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The number of threads currently running in the system. </p>
+
+</div>
+</div>
+<a id="a14f9462b777a24c86af37b64d84142d0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a14f9462b777a24c86af37b64d84142d0">&#9670;&nbsp;</a></span>mato_unsubscribe()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void mato_unsubscribe </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>module_id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>channel</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>subscription_id</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Given a subscription_id, cancel the ongoing subscription to a channel of some module instance. </p>
 
 </div>
 </div>

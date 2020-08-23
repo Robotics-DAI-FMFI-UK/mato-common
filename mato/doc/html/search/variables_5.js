@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['subscriptions_151',['subscriptions',['../mato__core_8c.html#a08a6dc7b239323f6dbb221f209b6f518',1,'subscriptions():&#160;mato_core.c'],['../mato__core_8h.html#a08a6dc7b239323f6dbb221f209b6f518',1,'subscriptions():&#160;mato_core.c']]],
-  ['system_5fthreads_5fstarted_152',['system_threads_started',['../mato__core_8c.html#acc307467ee069828e40a521f193e8b80',1,'system_threads_started():&#160;mato_core.c'],['../mato__core_8h.html#acc307467ee069828e40a521f193e8b80',1,'system_threads_started():&#160;mato_core.c']]]
+  ['instance_5fdata_262',['instance_data',['../mato__core_8c.html#a0e0d7e8d878428833528a1123d6558c5',1,'instance_data():&#160;mato_core.c'],['../mato__core_8h.html#a0e0d7e8d878428833528a1123d6558c5',1,'instance_data():&#160;mato_core.c']]],
+  ['ip_263',['IP',['../structnode__info.html#af4d54806dfffddb2eaf78eeef4161e56',1,'node_info']]],
+  ['is_5fonline_264',['is_online',['../structnode__info.html#ab8cbafa14e303979efbb080eb24a8d51',1,'node_info']]]
 ];

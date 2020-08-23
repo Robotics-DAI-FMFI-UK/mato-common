@@ -12,23 +12,17 @@ The structure holds one message that was posted by a module to one of its output
 \doxysubsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{structchannel__data_a26a57ec5d500291a4f3643b3ed07eb9c}\label{structchannel__data_a26a57ec5d500291a4f3643b3ed07eb9c}} 
-int {\bfseries module\+\_\+id}
+int \mbox{\hyperlink{structchannel__data_a26a57ec5d500291a4f3643b3ed07eb9c}{module\+\_\+id}}
 \item 
-\mbox{\Hypertarget{structchannel__data_ae9388d7569b3238a6e45b8998b6e3a72}\label{structchannel__data_ae9388d7569b3238a6e45b8998b6e3a72}} 
-int {\bfseries channel\+\_\+id}
+int \mbox{\hyperlink{structchannel__data_ae9388d7569b3238a6e45b8998b6e3a72}{channel\+\_\+id}}
 \item 
-\mbox{\Hypertarget{structchannel__data_a349379b38254399a55b56f23f33ce56e}\label{structchannel__data_a349379b38254399a55b56f23f33ce56e}} 
-int {\bfseries length}
+int \mbox{\hyperlink{structchannel__data_a349379b38254399a55b56f23f33ce56e}{length}}
 \item 
-\mbox{\Hypertarget{structchannel__data_a7d19899d7f1b7c41d5ad06f5d18f7291}\label{structchannel__data_a7d19899d7f1b7c41d5ad06f5d18f7291}} 
-void $\ast$ {\bfseries data}
+void $\ast$ \mbox{\hyperlink{structchannel__data_a7d19899d7f1b7c41d5ad06f5d18f7291}{data}}
 \item 
-\mbox{\Hypertarget{structchannel__data_ac8a042c5a12b0245f0c4b0444b898d1e}\label{structchannel__data_ac8a042c5a12b0245f0c4b0444b898d1e}} 
-int {\bfseries references}
+int \mbox{\hyperlink{structchannel__data_ac8a042c5a12b0245f0c4b0444b898d1e}{references}}
 \item 
-\mbox{\Hypertarget{structchannel__data_a91a979400329eb59fdc27db67281497a}\label{structchannel__data_a91a979400329eb59fdc27db67281497a}} 
-int {\bfseries node\+\_\+id}
+int \mbox{\hyperlink{structchannel__data_a91a979400329eb59fdc27db67281497a}{node\+\_\+id}}
 \end{DoxyCompactItemize}
 
 
@@ -36,6 +30,45 @@ int {\bfseries node\+\_\+id}
 The structure holds one message that was posted by a module to one of its output channels. 
 
 It contains the module\+\_\+id of the posting module, the channel number where the message was posted, the length of the data and pointer to malloc-\/ed data buffer that holds the actual data, and the number of references, i.\+e. how many users (typically modules) have received the data pointer and must return it back. 
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{structchannel__data_ae9388d7569b3238a6e45b8998b6e3a72}\label{structchannel__data_ae9388d7569b3238a6e45b8998b6e3a72}} 
+\index{channel\_data@{channel\_data}!channel\_id@{channel\_id}}
+\index{channel\_id@{channel\_id}!channel\_data@{channel\_data}}
+\doxysubsubsection{\texorpdfstring{channel\_id}{channel\_id}}
+{\footnotesize\ttfamily int channel\+\_\+data\+::channel\+\_\+id}
+
+\mbox{\Hypertarget{structchannel__data_a7d19899d7f1b7c41d5ad06f5d18f7291}\label{structchannel__data_a7d19899d7f1b7c41d5ad06f5d18f7291}} 
+\index{channel\_data@{channel\_data}!data@{data}}
+\index{data@{data}!channel\_data@{channel\_data}}
+\doxysubsubsection{\texorpdfstring{data}{data}}
+{\footnotesize\ttfamily void$\ast$ channel\+\_\+data\+::data}
+
+\mbox{\Hypertarget{structchannel__data_a349379b38254399a55b56f23f33ce56e}\label{structchannel__data_a349379b38254399a55b56f23f33ce56e}} 
+\index{channel\_data@{channel\_data}!length@{length}}
+\index{length@{length}!channel\_data@{channel\_data}}
+\doxysubsubsection{\texorpdfstring{length}{length}}
+{\footnotesize\ttfamily int channel\+\_\+data\+::length}
+
+\mbox{\Hypertarget{structchannel__data_a26a57ec5d500291a4f3643b3ed07eb9c}\label{structchannel__data_a26a57ec5d500291a4f3643b3ed07eb9c}} 
+\index{channel\_data@{channel\_data}!module\_id@{module\_id}}
+\index{module\_id@{module\_id}!channel\_data@{channel\_data}}
+\doxysubsubsection{\texorpdfstring{module\_id}{module\_id}}
+{\footnotesize\ttfamily int channel\+\_\+data\+::module\+\_\+id}
+
+\mbox{\Hypertarget{structchannel__data_a91a979400329eb59fdc27db67281497a}\label{structchannel__data_a91a979400329eb59fdc27db67281497a}} 
+\index{channel\_data@{channel\_data}!node\_id@{node\_id}}
+\index{node\_id@{node\_id}!channel\_data@{channel\_data}}
+\doxysubsubsection{\texorpdfstring{node\_id}{node\_id}}
+{\footnotesize\ttfamily int channel\+\_\+data\+::node\+\_\+id}
+
+\mbox{\Hypertarget{structchannel__data_ac8a042c5a12b0245f0c4b0444b898d1e}\label{structchannel__data_ac8a042c5a12b0245f0c4b0444b898d1e}} 
+\index{channel\_data@{channel\_data}!references@{references}}
+\index{references@{references}!channel\_data@{channel\_data}}
+\doxysubsubsection{\texorpdfstring{references}{references}}
+{\footnotesize\ttfamily int channel\+\_\+data\+::references}
+
+
 
 The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 
