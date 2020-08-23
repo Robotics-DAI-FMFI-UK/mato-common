@@ -1,13 +1,11 @@
 var searchData=
 [
-  ['net_5fannounce_5fnew_5fmodule_104',['net_announce_new_module',['../mato_8c.html#a89b6e0a431131bbd10afb037237fc9d5',1,'mato.c']]],
-  ['net_5fprocess_5fnew_5fmodule_105',['net_process_new_module',['../mato_8c.html#a15df867f48476c72375a26833b714ab5',1,'mato.c']]],
-  ['net_5frecv_5fbytes_106',['net_recv_bytes',['../mato_8c.html#abb1137f693af96fb5f7f0683f2ff05e8',1,'mato.c']]],
-  ['net_5frecv_5fint32t_107',['net_recv_int32t',['../mato_8c.html#aa1844778cc9151adbd0e1fb0f523d10b',1,'mato.c']]],
-  ['net_5fsend_5fdata_108',['net_send_data',['../mato_8c.html#aebf46bc443f3890c19b7118e593c937e',1,'mato.c']]],
-  ['net_5fsend_5fint32t_109',['net_send_int32t',['../mato_8c.html#aa83f4b409149e4bd89f0079c264b3b87',1,'mato.c']]],
-  ['net_5fsend_5fstring_110',['net_send_string',['../mato_8c.html#a633902e591cb9df5808095212718d9ea',1,'mato.c']]],
-  ['net_5fsend_5fsubscribed_5fdata_111',['net_send_subscribed_data',['../mato_8c.html#a6f5e0a1a54d499b01ed57c8d0ffddeb0',1,'mato.c']]],
-  ['new_5fchannel_5fdata_112',['new_channel_data',['../mato_8c.html#a2da0b2b93801c2136969b06d8045ac69',1,'mato.c']]],
-  ['new_5fmodule_5finfo_113',['new_module_info',['../mato_8c.html#a041903e9b52f56435f88cff5f41aff3e',1,'mato.c']]]
+  ['net_5fannounce_5fnew_5fmodule_124',['net_announce_new_module',['../mato__net_8c.html#a89b6e0a431131bbd10afb037237fc9d5',1,'net_announce_new_module(int module_id):&#160;mato_net.c'],['../mato__net_8h.html#a89b6e0a431131bbd10afb037237fc9d5',1,'net_announce_new_module(int module_id):&#160;mato_net.c']]],
+  ['net_5fdelete_5fmodule_5finstance_125',['net_delete_module_instance',['../mato__net_8c.html#affc613d7e6afcf44c6f079084a991b33',1,'net_delete_module_instance(int node_id, int module_id):&#160;mato_net.c'],['../mato__net_8h.html#affc613d7e6afcf44c6f079084a991b33',1,'net_delete_module_instance(int node_id, int module_id):&#160;mato_net.c']]],
+  ['net_5fmato_5finit_126',['net_mato_init',['../mato__net_8h.html#ab35f20c061ec4486e782b89c3c1a4884',1,'mato_net.h']]],
+  ['net_5fmato_5fshutdown_127',['net_mato_shutdown',['../mato__net_8c.html#aef72140c8f7454f33e028ea9e8e50ce8',1,'net_mato_shutdown():&#160;mato_net.c'],['../mato__net_8h.html#aef72140c8f7454f33e028ea9e8e50ce8',1,'net_mato_shutdown():&#160;mato_net.c']]],
+  ['net_5fsend_5fdata_128',['net_send_data',['../mato__net_8c.html#ad33f0d39a802c383a33e794724495b81',1,'net_send_data(int node_id, int get_data_id, uint8_t *data, int32_t data_length):&#160;mato_net.c'],['../mato__net_8h.html#ad33f0d39a802c383a33e794724495b81',1,'net_send_data(int node_id, int get_data_id, uint8_t *data, int32_t data_length):&#160;mato_net.c']]],
+  ['net_5fsend_5fsubscribed_5fdata_129',['net_send_subscribed_data',['../mato__net_8c.html#a6f5e0a1a54d499b01ed57c8d0ffddeb0',1,'net_send_subscribed_data(int subscribed_node_id, channel_data *cd):&#160;mato_net.c'],['../mato__net_8h.html#a6f5e0a1a54d499b01ed57c8d0ffddeb0',1,'net_send_subscribed_data(int subscribed_node_id, channel_data *cd):&#160;mato_net.c']]],
+  ['new_5fchannel_5fdata_130',['new_channel_data',['../mato__core_8c.html#a2da0b2b93801c2136969b06d8045ac69',1,'new_channel_data(int node_id, int module_id, int channel_id, int length, void *data):&#160;mato_core.c'],['../mato__core_8h.html#a2da0b2b93801c2136969b06d8045ac69',1,'new_channel_data(int node_id, int module_id, int channel_id, int length, void *data):&#160;mato_core.c']]],
+  ['new_5fmodule_5finfo_131',['new_module_info',['../mato__core_8c.html#a041903e9b52f56435f88cff5f41aff3e',1,'new_module_info(int node_id, int module_id, char *module_name, char *module_type):&#160;mato_core.c'],['../mato__core_8h.html#a041903e9b52f56435f88cff5f41aff3e',1,'new_module_info(int node_id, int module_id, char *module_name, char *module_type):&#160;mato_core.c']]]
 ];

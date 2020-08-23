@@ -1,0 +1,85 @@
+\hypertarget{mato__net_8c}{}\doxysection{mato\+\_\+net.\+c File Reference}
+\label{mato__net_8c}\index{mato\_net.c@{mato\_net.c}}
+{\ttfamily \#include \char`\"{}mato.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}mato\+\_\+net.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}mato\+\_\+core.\+h\char`\"{}}\newline
+Include dependency graph for mato\+\_\+net.\+c\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{mato__net_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{mato__net_8c_ab4af7bdf1f7414a15270c1162eb25bea}\label{mato__net_8c_ab4af7bdf1f7414a15270c1162eb25bea}} 
+void {\bfseries net\+\_\+mato\+\_\+init} (int this\+\_\+node\+\_\+identifier)
+\item 
+\mbox{\Hypertarget{mato__net_8c_aef72140c8f7454f33e028ea9e8e50ce8}\label{mato__net_8c_aef72140c8f7454f33e028ea9e8e50ce8}} 
+void \mbox{\hyperlink{mato__net_8c_aef72140c8f7454f33e028ea9e8e50ce8}{net\+\_\+mato\+\_\+shutdown}} ()
+\begin{DoxyCompactList}\small\item\em Close and release resources used by the networking. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{mato__net_8c_affc613d7e6afcf44c6f079084a991b33}\label{mato__net_8c_affc613d7e6afcf44c6f079084a991b33}} 
+void \mbox{\hyperlink{mato__net_8c_affc613d7e6afcf44c6f079084a991b33}{net\+\_\+delete\+\_\+module\+\_\+instance}} (int node\+\_\+id, int module\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Soon to be updated... \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{mato__net_8c_a073d05e5bf9e0ffebb49c0251d250c0f}\label{mato__net_8c_a073d05e5bf9e0ffebb49c0251d250c0f}} 
+void \mbox{\hyperlink{mato__net_8c_a073d05e5bf9e0ffebb49c0251d250c0f}{start\+\_\+networking}} ()
+\begin{DoxyCompactList}\small\item\em Create listening socket for other nodes, start reconnecting and communication threads. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{mato__net_8c_ad33f0d39a802c383a33e794724495b81}{net\+\_\+send\+\_\+data}} (int node\+\_\+id, int get\+\_\+data\+\_\+id, uint8\+\_\+t $\ast$data, int32\+\_\+t data\+\_\+length)
+\begin{DoxyCompactList}\small\item\em Broadcast information about new local module instance to all other nodes. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{mato__net_8c_a6f5e0a1a54d499b01ed57c8d0ffddeb0}{net\+\_\+send\+\_\+subscribed\+\_\+data}} (int subscribed\+\_\+node\+\_\+id, \mbox{\hyperlink{structchannel__data}{channel\+\_\+data}} $\ast$cd)
+\begin{DoxyCompactList}\small\item\em Broadcast information about new local module instance to all other nodes. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{mato__net_8c_a89b6e0a431131bbd10afb037237fc9d5}{net\+\_\+announce\+\_\+new\+\_\+module}} (int module\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Broadcast information about new local module instance to all other nodes. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{mato__net_8c_aeed909953e337ee4b9dc137a8263685f}\label{mato__net_8c_aeed909953e337ee4b9dc137a8263685f}} 
+int32\+\_\+t \mbox{\hyperlink{mato__net_8c_aeed909953e337ee4b9dc137a8263685f}{this\+\_\+node\+\_\+id}}
+\begin{DoxyCompactList}\small\item\em Id of this computational node. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{mato__net_8c_aeda73a8fe41e64b74dd570e4ff50963f}\label{mato__net_8c_aeda73a8fe41e64b74dd570e4ff50963f}} 
+G\+Array $\ast$ \mbox{\hyperlink{mato__net_8c_aeda73a8fe41e64b74dd570e4ff50963f}{nodes}}
+\begin{DoxyCompactList}\small\item\em Contains node info for all computational nodes filled from config file in mato\+\_\+init. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Implementation of the Mato control framework -\/ networking with other nodes. 
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{mato__net_8c_a89b6e0a431131bbd10afb037237fc9d5}\label{mato__net_8c_a89b6e0a431131bbd10afb037237fc9d5}} 
+\index{mato\_net.c@{mato\_net.c}!net\_announce\_new\_module@{net\_announce\_new\_module}}
+\index{net\_announce\_new\_module@{net\_announce\_new\_module}!mato\_net.c@{mato\_net.c}}
+\doxysubsubsection{\texorpdfstring{net\_announce\_new\_module()}{net\_announce\_new\_module()}}
+{\footnotesize\ttfamily void net\+\_\+announce\+\_\+new\+\_\+module (\begin{DoxyParamCaption}\item[{int}]{module\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+Broadcast information about new local module instance to all other nodes. 
+
+\hypertarget{mato__net_8h_autotoc_md0}{}\doxysubsubsection{Packet format\+:}\label{mato__net_8h_autotoc_md0}
+M\+S\+G\+\_\+\+N\+E\+W\+\_\+\+M\+O\+D\+U\+L\+E\+\_\+\+I\+N\+S\+T\+A\+N\+CE int32 this\+\_\+node\+\_\+id int32 \mbox{[}local\mbox{]}module\+\_\+id int32 len(module\+\_\+name)+1 int32 module\+\_\+name variable len(module\+\_\+type)+1 int32 module\+\_\+type variable \hypertarget{mato__net_8h_autotoc_md1}{}\doxysubsubsection{number\+\_\+of\+\_\+channels        int32}\label{mato__net_8h_autotoc_md1}
+\mbox{\Hypertarget{mato__net_8c_ad33f0d39a802c383a33e794724495b81}\label{mato__net_8c_ad33f0d39a802c383a33e794724495b81}} 
+\index{mato\_net.c@{mato\_net.c}!net\_send\_data@{net\_send\_data}}
+\index{net\_send\_data@{net\_send\_data}!mato\_net.c@{mato\_net.c}}
+\doxysubsubsection{\texorpdfstring{net\_send\_data()}{net\_send\_data()}}
+{\footnotesize\ttfamily void net\+\_\+send\+\_\+data (\begin{DoxyParamCaption}\item[{int}]{node\+\_\+id,  }\item[{int}]{get\+\_\+data\+\_\+id,  }\item[{uint8\+\_\+t $\ast$}]{data,  }\item[{int32\+\_\+t}]{data\+\_\+length }\end{DoxyParamCaption})}
+
+
+
+Broadcast information about new local module instance to all other nodes. 
+
+\hypertarget{mato__net_8h_autotoc_md4}{}\doxysubsubsection{Packet format\+:}\label{mato__net_8h_autotoc_md4}
+M\+S\+G\+\_\+\+D\+A\+TA int32 this\+\_\+node\+\_\+id int32 get\+\_\+data\+\_\+id int32 len(data) int32 \hypertarget{mato__net_8h_autotoc_md5}{}\doxysubsubsection{data                      variable}\label{mato__net_8h_autotoc_md5}
+\mbox{\Hypertarget{mato__net_8c_a6f5e0a1a54d499b01ed57c8d0ffddeb0}\label{mato__net_8c_a6f5e0a1a54d499b01ed57c8d0ffddeb0}} 
+\index{mato\_net.c@{mato\_net.c}!net\_send\_subscribed\_data@{net\_send\_subscribed\_data}}
+\index{net\_send\_subscribed\_data@{net\_send\_subscribed\_data}!mato\_net.c@{mato\_net.c}}
+\doxysubsubsection{\texorpdfstring{net\_send\_subscribed\_data()}{net\_send\_subscribed\_data()}}
+{\footnotesize\ttfamily void net\+\_\+send\+\_\+subscribed\+\_\+data (\begin{DoxyParamCaption}\item[{int}]{subscribed\+\_\+node\+\_\+id,  }\item[{\mbox{\hyperlink{structchannel__data}{channel\+\_\+data}} $\ast$}]{cd }\end{DoxyParamCaption})}
+
+
+
+Broadcast information about new local module instance to all other nodes. 
+
+\hypertarget{mato__net_8h_autotoc_md2}{}\doxysubsubsection{Packet format\+:}\label{mato__net_8h_autotoc_md2}
+M\+S\+G\+\_\+\+S\+U\+B\+S\+C\+R\+I\+B\+E\+D\+\_\+\+D\+A\+TA int32 sending\+\_\+node\+\_\+id int32 module\+\_\+id int32 channel int32 length int32 \hypertarget{mato__net_8h_autotoc_md3}{}\doxysubsubsection{data                      variable}\label{mato__net_8h_autotoc_md3}

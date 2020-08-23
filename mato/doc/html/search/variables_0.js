@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['program_5fruns_118',['program_runs',['../mato_8c.html#a0f80851fe27966d69a2a0dfbafdb7160',1,'program_runs():&#160;mato.c'],['../mato_8h.html#a0f80851fe27966d69a2a0dfbafdb7160',1,'program_runs():&#160;mato.c']]]
+  ['buffers_137',['buffers',['../mato__core_8c.html#a2822a291e85d87882c86a179b50c99f6',1,'buffers():&#160;mato_core.c'],['../mato__core_8h.html#a2822a291e85d87882c86a179b50c99f6',1,'buffers():&#160;mato_core.c']]]
 ];

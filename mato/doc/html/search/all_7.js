@@ -1,5 +1,13 @@
 var searchData=
 [
-  ['process_5fnode_5fmessage_53',['process_node_message',['../mato_8c.html#ae73315ced9ecf6ff3375c0c2430216d3',1,'mato.c']]],
-  ['program_5fruns_54',['program_runs',['../mato_8c.html#a0f80851fe27966d69a2a0dfbafdb7160',1,'program_runs():&#160;mato.c'],['../mato_8h.html#a0f80851fe27966d69a2a0dfbafdb7160',1,'program_runs():&#160;mato.c']]]
+  ['net_5fannounce_5fnew_5fmodule_53',['net_announce_new_module',['../mato__net_8c.html#a89b6e0a431131bbd10afb037237fc9d5',1,'net_announce_new_module(int module_id):&#160;mato_net.c'],['../mato__net_8h.html#a89b6e0a431131bbd10afb037237fc9d5',1,'net_announce_new_module(int module_id):&#160;mato_net.c']]],
+  ['net_5fdelete_5fmodule_5finstance_54',['net_delete_module_instance',['../mato__net_8c.html#affc613d7e6afcf44c6f079084a991b33',1,'net_delete_module_instance(int node_id, int module_id):&#160;mato_net.c'],['../mato__net_8h.html#affc613d7e6afcf44c6f079084a991b33',1,'net_delete_module_instance(int node_id, int module_id):&#160;mato_net.c']]],
+  ['net_5fmato_5finit_55',['net_mato_init',['../mato__net_8h.html#ab35f20c061ec4486e782b89c3c1a4884',1,'mato_net.h']]],
+  ['net_5fmato_5fshutdown_56',['net_mato_shutdown',['../mato__net_8c.html#aef72140c8f7454f33e028ea9e8e50ce8',1,'net_mato_shutdown():&#160;mato_net.c'],['../mato__net_8h.html#aef72140c8f7454f33e028ea9e8e50ce8',1,'net_mato_shutdown():&#160;mato_net.c']]],
+  ['net_5fsend_5fdata_57',['net_send_data',['../mato__net_8c.html#ad33f0d39a802c383a33e794724495b81',1,'net_send_data(int node_id, int get_data_id, uint8_t *data, int32_t data_length):&#160;mato_net.c'],['../mato__net_8h.html#ad33f0d39a802c383a33e794724495b81',1,'net_send_data(int node_id, int get_data_id, uint8_t *data, int32_t data_length):&#160;mato_net.c']]],
+  ['net_5fsend_5fsubscribed_5fdata_58',['net_send_subscribed_data',['../mato__net_8c.html#a6f5e0a1a54d499b01ed57c8d0ffddeb0',1,'net_send_subscribed_data(int subscribed_node_id, channel_data *cd):&#160;mato_net.c'],['../mato__net_8h.html#a6f5e0a1a54d499b01ed57c8d0ffddeb0',1,'net_send_subscribed_data(int subscribed_node_id, channel_data *cd):&#160;mato_net.c']]],
+  ['new_5fchannel_5fdata_59',['new_channel_data',['../mato__core_8c.html#a2da0b2b93801c2136969b06d8045ac69',1,'new_channel_data(int node_id, int module_id, int channel_id, int length, void *data):&#160;mato_core.c'],['../mato__core_8h.html#a2da0b2b93801c2136969b06d8045ac69',1,'new_channel_data(int node_id, int module_id, int channel_id, int length, void *data):&#160;mato_core.c']]],
+  ['new_5fmodule_5finfo_60',['new_module_info',['../mato__core_8c.html#a041903e9b52f56435f88cff5f41aff3e',1,'new_module_info(int node_id, int module_id, char *module_name, char *module_type):&#160;mato_core.c'],['../mato__core_8h.html#a041903e9b52f56435f88cff5f41aff3e',1,'new_module_info(int node_id, int module_id, char *module_name, char *module_type):&#160;mato_core.c']]],
+  ['node_5finfo_61',['node_info',['../structnode__info.html',1,'']]],
+  ['nodes_62',['nodes',['../mato__net_8c.html#aeda73a8fe41e64b74dd570e4ff50963f',1,'nodes():&#160;mato_net.c'],['../mato__net_8h.html#aeda73a8fe41e64b74dd570e4ff50963f',1,'nodes():&#160;mato_net.c']]]
 ];

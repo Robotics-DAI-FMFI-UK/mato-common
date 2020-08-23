@@ -87,8 +87,12 @@ This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="mato_8h__dep__incl.png" border="0" usemap="#mato_8hdep" alt=""/></div>
 <map name="mato_8hdep" id="mato_8hdep">
-<area shape="rect" title=" " alt="" coords="5,5,73,32"/>
-<area shape="rect" href="mato_8c.html" title=" " alt="" coords="6,80,73,107"/>
+<area shape="rect" title=" " alt="" coords="53,5,121,32"/>
+<area shape="rect" href="mato_8c.html" title=" " alt="" coords="19,229,85,256"/>
+<area shape="rect" href="mato__core_8h.html" title=" " alt="" coords="86,80,189,107"/>
+<area shape="rect" href="mato__core_8c.html" title=" " alt="" coords="110,229,213,256"/>
+<area shape="rect" href="mato__net_8c.html" title=" " alt="" coords="261,229,355,256"/>
+<area shape="rect" href="mato__net_8h.html" title=" " alt="" coords="175,155,271,181"/>
 </map>
 </div>
 </div>
@@ -113,18 +117,18 @@ typedef enum subscription_type_enum&#160;</td><td class="memItemRight" valign="b
 <tr class="memitem:ad20873465b8c85f182244c5a553f2837"><td class="memItemLeft" align="right" valign="top">typedef void *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#ad20873465b8c85f182244c5a553f2837">create_instance_callback</a>) (int module_id)</td></tr>
 <tr class="memdesc:ad20873465b8c85f182244c5a553f2837"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create instance data of a module and initialize it.  <a href="mato_8h.html#ad20873465b8c85f182244c5a553f2837">More...</a><br /></td></tr>
 <tr class="separator:ad20873465b8c85f182244c5a553f2837"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5cdf8c706be95dbe5dc32dda2d0aacdf"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a5cdf8c706be95dbe5dc32dda2d0aacdf">start_instance_callback</a>) (void *instance_data)</td></tr>
+<tr class="memitem:a5cdf8c706be95dbe5dc32dda2d0aacdf"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a5cdf8c706be95dbe5dc32dda2d0aacdf">start_instance_callback</a>) (void *<a class="el" href="mato__core_8h.html#a0e0d7e8d878428833528a1123d6558c5">instance_data</a>)</td></tr>
 <tr class="memdesc:a5cdf8c706be95dbe5dc32dda2d0aacdf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the module instance.  <a href="mato_8h.html#a5cdf8c706be95dbe5dc32dda2d0aacdf">More...</a><br /></td></tr>
 <tr class="separator:a5cdf8c706be95dbe5dc32dda2d0aacdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a19ec8ae2c73a767ac23bcc3c861e8b53"><td class="memItemLeft" align="right" valign="top"><a id="a19ec8ae2c73a767ac23bcc3c861e8b53"></a>
-typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a19ec8ae2c73a767ac23bcc3c861e8b53">delete_instance_callback</a>) (void *instance_data)</td></tr>
+typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a19ec8ae2c73a767ac23bcc3c861e8b53">delete_instance_callback</a>) (void *<a class="el" href="mato__core_8h.html#a0e0d7e8d878428833528a1123d6558c5">instance_data</a>)</td></tr>
 <tr class="memdesc:a19ec8ae2c73a767ac23bcc3c861e8b53"><td class="mdescLeft">&#160;</td><td class="mdescRight">A request to delete the module instance has been made. This callback should deallocate the instance data. <br /></td></tr>
 <tr class="separator:a19ec8ae2c73a767ac23bcc3c861e8b53"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a984f52f0434bb9e42814bf9c74f4791d"><td class="memItemLeft" align="right" valign="top"><a id="a984f52f0434bb9e42814bf9c74f4791d"></a>
-typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a984f52f0434bb9e42814bf9c74f4791d">global_message_callback</a>) (void *instance_data, int module_id_sender, int message_id, int msg_length, void *message_data)</td></tr>
+typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a984f52f0434bb9e42814bf9c74f4791d">global_message_callback</a>) (void *<a class="el" href="mato__core_8h.html#a0e0d7e8d878428833528a1123d6558c5">instance_data</a>, int module_id_sender, int message_id, int msg_length, void *message_data)</td></tr>
 <tr class="memdesc:a984f52f0434bb9e42814bf9c74f4791d"><td class="mdescLeft">&#160;</td><td class="mdescRight">When some other module or the main program has sent a global message, this callback of each module is called immediatelly - from the thread of the sender. <br /></td></tr>
 <tr class="separator:a984f52f0434bb9e42814bf9c74f4791d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9345221b935d9505595c583b54d31e86"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a9345221b935d9505595c583b54d31e86">subscriber_callback</a>) (void *instance_data, int sender_module_id, int data_length, void *new_data_ptr)</td></tr>
+<tr class="memitem:a9345221b935d9505595c583b54d31e86"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a9345221b935d9505595c583b54d31e86">subscriber_callback</a>) (void *<a class="el" href="mato__core_8h.html#a0e0d7e8d878428833528a1123d6558c5">instance_data</a>, int sender_module_id, int data_length, void *new_data_ptr)</td></tr>
 <tr class="memdesc:a9345221b935d9505595c583b54d31e86"><td class="mdescLeft">&#160;</td><td class="mdescRight">Modules that subscribe to the data on channels of other module instances provide this callback.  <a href="mato_8h.html#a9345221b935d9505595c583b54d31e86">More...</a><br /></td></tr>
 <tr class="separator:a9345221b935d9505595c583b54d31e86"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -138,8 +142,9 @@ Enumerations</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a31f3887a8e72dc1323b6bfbcfbf9d038"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a31f3887a8e72dc1323b6bfbcfbf9d038">mato_init</a> (int this_node_identifier)</td></tr>
-<tr class="memdesc:a31f3887a8e72dc1323b6bfbcfbf9d038"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the whole framework. Should be called first from the main program.  <a href="mato_8h.html#a31f3887a8e72dc1323b6bfbcfbf9d038">More...</a><br /></td></tr>
+<tr class="memitem:a31f3887a8e72dc1323b6bfbcfbf9d038"><td class="memItemLeft" align="right" valign="top"><a id="a31f3887a8e72dc1323b6bfbcfbf9d038"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a31f3887a8e72dc1323b6bfbcfbf9d038">mato_init</a> (int this_node_identifier)</td></tr>
+<tr class="memdesc:a31f3887a8e72dc1323b6bfbcfbf9d038"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the framework. It must be the first function of the framework to be called. It should be called only once. <br /></td></tr>
 <tr class="separator:a31f3887a8e72dc1323b6bfbcfbf9d038"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a43f0570e3ab59d7a021e93113437dcaf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mato_8h.html#a43f0570e3ab59d7a021e93113437dcaf">mato_register_new_type_of_module</a> (char *type, <a class="el" href="structmodule__specification.html">module_specification</a> *specification)</td></tr>
 <tr class="memdesc:a43f0570e3ab59d7a021e93113437dcaf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a new module type.  <a href="mato_8h.html#a43f0570e3ab59d7a021e93113437dcaf">More...</a><br /></td></tr>
@@ -269,7 +274,7 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef void(* start_instance_callback) (void *instance_data)</td>
+          <td class="memname">typedef void(* start_instance_callback) (void *<a class="el" href="mato__core_8h.html#a0e0d7e8d878428833528a1123d6558c5">instance_data</a>)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -286,7 +291,7 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef void(* subscriber_callback) (void *instance_data, int sender_module_id, int data_length, void *new_data_ptr)</td>
+          <td class="memname">typedef void(* subscriber_callback) (void *<a class="el" href="mato__core_8h.html#a0e0d7e8d878428833528a1123d6558c5">instance_data</a>, int sender_module_id, int data_length, void *new_data_ptr)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -430,7 +435,7 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Each thread that terminates should call this function just before it quits. </p>
-<p>Each thread that terminates should call this function just before it quits. </p>
+<p>Decrement the number of threads running. It should be called by each thread that terminates. </p>
 
 </div>
 </div>
@@ -534,28 +539,7 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Each module instance (or other part of the program) that creates a new thread should call this funciton for each newly created thread. </p>
-<p>Each module instance (or other part of the program) that creates a new thread should call this funciton for each newly created thread. </p>
-
-</div>
-</div>
-<a id="a31f3887a8e72dc1323b6bfbcfbf9d038"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a31f3887a8e72dc1323b6bfbcfbf9d038">&#9670;&nbsp;</a></span>mato_init()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void mato_init </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>this_node_identifier</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Initialize the whole framework. Should be called first from the main program. </p>
-<p>Initialize the whole framework. Should be called first from the main program. </p>
+<p>Increments the number of threads running. This should be called from each thread that has been started. </p>
 
 </div>
 </div>
@@ -662,9 +646,7 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>This variable is set to non-zero when the program is about to terminate. </p>
-<p>All threads should terminate at the earliest possbility</p>
-<p>This variable is set to non-zero when the program is about to terminate.</p>
-<p>After it is set to zero, all threads are expected to terminated soon. When all threads terminate, the application terminates. </p>
+<p>All threads should terminate at the earliest possbility </p>
 
 </div>
 </div>

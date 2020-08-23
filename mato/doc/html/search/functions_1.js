@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['get_5ffree_5fmodule_5fid_71',['get_free_module_id',['../mato_8c.html#ae97dbf0eeadf4345327dcf392d02c30c',1,'mato.c']]],
-  ['get_5ffree_5fsubscription_5fid_72',['get_free_subscription_id',['../mato_8c.html#aa96455f34de227205787b911dbe51847',1,'mato.c']]]
+  ['decrement_5freferences_90',['decrement_references',['../mato__core_8c.html#a948891305b2d86ead8d8b9e98ee992ea',1,'decrement_references(GList *data_buffers, channel_data *to_be_decremented):&#160;mato_core.c'],['../mato__core_8h.html#a948891305b2d86ead8d8b9e98ee992ea',1,'decrement_references(GList *data_buffers, channel_data *to_be_decremented):&#160;mato_core.c']]]
 ];

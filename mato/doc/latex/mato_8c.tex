@@ -1,21 +1,8 @@
 \hypertarget{mato_8c}{}\doxysection{mato.\+c File Reference}
 \label{mato_8c}\index{mato.c@{mato.c}}
-{\ttfamily \#include $<$stdio.\+h$>$}\newline
-{\ttfamily \#include $<$string.\+h$>$}\newline
-{\ttfamily \#include $<$unistd.\+h$>$}\newline
-{\ttfamily \#include $<$glib.\+h$>$}\newline
-{\ttfamily \#include $<$stdlib.\+h$>$}\newline
-{\ttfamily \#include $<$pthread.\+h$>$}\newline
-{\ttfamily \#include $<$fcntl.\+h$>$}\newline
-{\ttfamily \#include $<$errno.\+h$>$}\newline
-{\ttfamily \#include $<$inttypes.\+h$>$}\newline
-{\ttfamily \#include $<$sys/types.\+h$>$}\newline
-{\ttfamily \#include $<$sys/socket.\+h$>$}\newline
-{\ttfamily \#include $<$sys/select.\+h$>$}\newline
-{\ttfamily \#include $<$netinet/in.\+h$>$}\newline
-{\ttfamily \#include $<$arpa/inet.\+h$>$}\newline
-{\ttfamily \#include $<$sys/stat.\+h$>$}\newline
 {\ttfamily \#include \char`\"{}mato.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}mato\+\_\+core.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}mato\+\_\+net.\+h\char`\"{}}\newline
 Include dependency graph for mato.\+c\+:
 \nopagebreak
 \begin{figure}[H]
@@ -24,182 +11,14 @@ Include dependency graph for mato.\+c\+:
 \includegraphics[width=350pt]{mato_8c__incl}
 \end{center}
 \end{figure}
-\doxysubsection*{Classes}
-\begin{DoxyCompactItemize}
-\item 
-struct \mbox{\hyperlink{structsubscription}{subscription}}
-\begin{DoxyCompactList}\small\item\em The structure describes a single individual subscription to some channel of some module. \end{DoxyCompactList}\item 
-struct \mbox{\hyperlink{structchannel__data}{channel\+\_\+data}}
-\begin{DoxyCompactList}\small\item\em The structure holds one message that was posted by a module to one of its output channels. \end{DoxyCompactList}\end{DoxyCompactItemize}
-\doxysubsection*{Macros}
-\begin{DoxyCompactItemize}
-\item 
-\mbox{\Hypertarget{mato_8c_a369266c24eacffb87046522897a570d5}\label{mato_8c_a369266c24eacffb87046522897a570d5}} 
-\#define {\bfseries \+\_\+\+G\+N\+U\+\_\+\+S\+O\+U\+R\+CE}
-\item 
-\mbox{\Hypertarget{mato_8c_a5c48bcef78712c109e5a5cba7fdbd9bf}\label{mato_8c_a5c48bcef78712c109e5a5cba7fdbd9bf}} 
-\#define {\bfseries M\+A\+X\+\_\+\+P\+E\+N\+D\+I\+N\+G\+S\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+NS}~10
-\item 
-\mbox{\Hypertarget{mato_8c_ae6d453b3e091eec09ca47ece12bb3adf}\label{mato_8c_ae6d453b3e091eec09ca47ece12bb3adf}} 
-\#define {\bfseries N\+O\+D\+E\+\_\+\+M\+U\+L\+T\+I\+P\+L\+I\+ER}~100000L
-\item 
-\mbox{\Hypertarget{mato_8c_a0e3a7df94130de2dacc9b60df772627c}\label{mato_8c_a0e3a7df94130de2dacc9b60df772627c}} 
-\#define {\bfseries M\+S\+G\+\_\+\+N\+E\+W\+\_\+\+M\+O\+D\+U\+L\+E\+\_\+\+I\+N\+S\+T\+A\+N\+CE}~1
-\item 
-\mbox{\Hypertarget{mato_8c_a177f9c05035981b72ff09e2310b1388d}\label{mato_8c_a177f9c05035981b72ff09e2310b1388d}} 
-\#define {\bfseries M\+S\+G\+\_\+\+D\+E\+L\+E\+T\+E\+D\+\_\+\+M\+O\+D\+U\+L\+E\+\_\+\+I\+N\+S\+T\+A\+N\+CE}~2
-\item 
-\mbox{\Hypertarget{mato_8c_af2027af6d3e42f33980d6db493fbb3a4}\label{mato_8c_af2027af6d3e42f33980d6db493fbb3a4}} 
-\#define {\bfseries M\+S\+G\+\_\+\+S\+U\+B\+S\+C\+R\+I\+BE}~3
-\item 
-\mbox{\Hypertarget{mato_8c_a3ff1a26d41593641354b921302350d68}\label{mato_8c_a3ff1a26d41593641354b921302350d68}} 
-\#define {\bfseries M\+S\+G\+\_\+\+U\+N\+S\+U\+B\+S\+C\+R\+I\+BE}~4
-\item 
-\mbox{\Hypertarget{mato_8c_a57594e74f6296fcda847e25fc7810603}\label{mato_8c_a57594e74f6296fcda847e25fc7810603}} 
-\#define {\bfseries M\+S\+G\+\_\+\+G\+E\+T\+\_\+\+D\+A\+TA}~5
-\item 
-\mbox{\Hypertarget{mato_8c_ac319d4cc777b829878d4012f076ad5fa}\label{mato_8c_ac319d4cc777b829878d4012f076ad5fa}} 
-\#define {\bfseries M\+S\+G\+\_\+\+D\+A\+TA}~6
-\item 
-\mbox{\Hypertarget{mato_8c_ac0f7dba19b63a99a5a7391ba234ccc7f}\label{mato_8c_ac0f7dba19b63a99a5a7391ba234ccc7f}} 
-\#define {\bfseries M\+S\+G\+\_\+\+S\+U\+B\+S\+C\+R\+I\+B\+E\+D\+\_\+\+D\+A\+TA}~7
-\item 
-\mbox{\Hypertarget{mato_8c_aacd704c39679de7ea563044ffed64794}\label{mato_8c_aacd704c39679de7ea563044ffed64794}} 
-\#define {\bfseries M\+S\+G\+\_\+\+G\+L\+O\+B\+A\+L\+\_\+\+M\+E\+S\+S\+A\+GE}~8
-\item 
-\mbox{\Hypertarget{mato_8c_a848750161824c5aa011ed0442ec0863c}\label{mato_8c_a848750161824c5aa011ed0442ec0863c}} 
-\#define {\bfseries L\+I\+S\+T\+E\+N\+\_\+\+B\+A\+C\+K\+L\+OG}~10
-\item 
-\mbox{\Hypertarget{mato_8c_af3a37ddad69a98c185798e80a58dcbdb}\label{mato_8c_af3a37ddad69a98c185798e80a58dcbdb}} 
-\#define {\bfseries C\+O\+N\+F\+I\+G\+\_\+\+F\+I\+L\+E\+N\+A\+ME}~\char`\"{}mato\+\_\+nodes.\+conf\char`\"{}
-\end{DoxyCompactItemize}
 \doxysubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{mato_8c_a2da0b2b93801c2136969b06d8045ac69}\label{mato_8c_a2da0b2b93801c2136969b06d8045ac69}} 
-\mbox{\hyperlink{structchannel__data}{channel\+\_\+data}} $\ast$ \mbox{\hyperlink{mato_8c_a2da0b2b93801c2136969b06d8045ac69}{new\+\_\+channel\+\_\+data}} (int node\+\_\+id, int module\+\_\+id, int channel\+\_\+id, int length, void $\ast$data)
-\begin{DoxyCompactList}\small\item\em A constructor for the \mbox{\hyperlink{structchannel__data}{channel\+\_\+data}} structure. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato_8c_a438cf6032d01d451d50cf8cd7b14d8f0}\label{mato_8c_a438cf6032d01d451d50cf8cd7b14d8f0}} 
-void \mbox{\hyperlink{mato_8c_a438cf6032d01d451d50cf8cd7b14d8f0}{lock\+\_\+framework}} ()
-\begin{DoxyCompactList}\small\item\em Enter mutually-\/exclusive area accessing internal framework data structures. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato_8c_a39c60cf29218c107f4115b73270a5114}\label{mato_8c_a39c60cf29218c107f4115b73270a5114}} 
-void \mbox{\hyperlink{mato_8c_a39c60cf29218c107f4115b73270a5114}{unlock\+\_\+framework}} ()
-\begin{DoxyCompactList}\small\item\em Leave mutually-\/exclusive area with a protected acces to internal framework data structures. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato_8c_a94a6b505bcf5e3cca4665cba3bbab3cd}\label{mato_8c_a94a6b505bcf5e3cca4665cba3bbab3cd}} 
-void \mbox{\hyperlink{mato_8c_a94a6b505bcf5e3cca4665cba3bbab3cd}{mato\+\_\+inc\+\_\+system\+\_\+thread\+\_\+count}} ()
-\begin{DoxyCompactList}\small\item\em Increment the number of internal framework threads running. This should be called by each framework thread that has been started. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato_8c_a87731b4b9da695d14f237dc6825c9186}\label{mato_8c_a87731b4b9da695d14f237dc6825c9186}} 
-void \mbox{\hyperlink{mato_8c_a87731b4b9da695d14f237dc6825c9186}{mato\+\_\+dec\+\_\+system\+\_\+thread\+\_\+count}} ()
-\begin{DoxyCompactList}\small\item\em Decrement the number of internal framework threads running. It should be called by each framework thread that terminates. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato_8c_a9dfe1d249e65f9c9277279f03c54c90f}\label{mato_8c_a9dfe1d249e65f9c9277279f03c54c90f}} 
-int {\bfseries mato\+\_\+system\+\_\+threads\+\_\+running} ()
-\item 
-G\+List $\ast$ \mbox{\hyperlink{mato_8c_a948891305b2d86ead8d8b9e98ee992ea}{decrement\+\_\+references}} (G\+List $\ast$data\+\_\+buffers, \mbox{\hyperlink{structchannel__data}{channel\+\_\+data}} $\ast$to\+\_\+be\+\_\+decremented)
-\begin{DoxyCompactList}\small\item\em Decrements the number of references to a particular buffer and deallocates the buffer itself as well as the structure describing the buffer. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato_8c_a9608b6c522f70f11ad48fe9cde8d97a6}\label{mato_8c_a9608b6c522f70f11ad48fe9cde8d97a6}} 
-void $\ast$ \mbox{\hyperlink{mato_8c_a9608b6c522f70f11ad48fe9cde8d97a6}{mato\+\_\+thread}} (void $\ast$arg)
-\begin{DoxyCompactList}\small\item\em The main loop of the framework thread that takes care of redistributing all the messages posted by the modules. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato_8c_a7800709ec7535d9abc6454e510212d6c}\label{mato_8c_a7800709ec7535d9abc6454e510212d6c}} 
-void {\bfseries remove\+\_\+names\+\_\+types} (int node\+\_\+id)
-\item 
-\mbox{\Hypertarget{mato_8c_afa70da14f7f5a7b5f8d9acf3b70eabdb}\label{mato_8c_afa70da14f7f5a7b5f8d9acf3b70eabdb}} 
-void {\bfseries remove\+\_\+remote\+\_\+module\+\_\+from\+\_\+subscriptions} (int node, int node\+\_\+id\+\_\+of\+\_\+module, int module)
-\item 
-\mbox{\Hypertarget{mato_8c_a4bee50d9bc9c78f39d7f7cf6354a540d}\label{mato_8c_a4bee50d9bc9c78f39d7f7cf6354a540d}} 
-void {\bfseries remove\+\_\+node\+\_\+from\+\_\+subscriptions} (int node\+\_\+id)
-\item 
-\mbox{\Hypertarget{mato_8c_afdc3809f243d54fc76dd0539fbd847f0}\label{mato_8c_afdc3809f243d54fc76dd0539fbd847f0}} 
-void {\bfseries remove\+\_\+node\+\_\+buffers} (int node\+\_\+id)
-\item 
-\mbox{\Hypertarget{mato_8c_a7e2bb4ed57c0dfc69c0339129a19523d}\label{mato_8c_a7e2bb4ed57c0dfc69c0339129a19523d}} 
-void {\bfseries node\+\_\+disconnected} (int s, int node\+\_\+id)
-\item 
-int \mbox{\hyperlink{mato_8c_aa1844778cc9151adbd0e1fb0f523d10b}{net\+\_\+recv\+\_\+int32t}} (int s, int32\+\_\+t $\ast$num, int sending\+\_\+node\+\_\+id)
-\begin{DoxyCompactList}\small\item\em Receive one 32-\/bit integer from a socket. \end{DoxyCompactList}\item 
-int \mbox{\hyperlink{mato_8c_abb1137f693af96fb5f7f0683f2ff05e8}{net\+\_\+recv\+\_\+bytes}} (int s, uint8\+\_\+t $\ast$$\ast$str, int32\+\_\+t $\ast$str\+\_\+len, int sending\+\_\+node\+\_\+id)
-\begin{DoxyCompactList}\small\item\em Receive string of bytes from a socket. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato_8c_af4e477c79e3ad08d61c3d4473baea950}\label{mato_8c_af4e477c79e3ad08d61c3d4473baea950}} 
-void \mbox{\hyperlink{mato_8c_af4e477c79e3ad08d61c3d4473baea950}{store\+\_\+new\+\_\+remote\+\_\+module}} (int node\+\_\+id, int module\+\_\+id, char $\ast$module\+\_\+name, char $\ast$module\+\_\+type, int number\+\_\+of\+\_\+channels)
-\begin{DoxyCompactList}\small\item\em Update internal data structures as necessary when a new module announcement arrives from another node. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato_8c_a15df867f48476c72375a26833b714ab5}\label{mato_8c_a15df867f48476c72375a26833b714ab5}} 
-void \mbox{\hyperlink{mato_8c_a15df867f48476c72375a26833b714ab5}{net\+\_\+process\+\_\+new\+\_\+module}} (int s, int sending\+\_\+node\+\_\+id)
-\begin{DoxyCompactList}\small\item\em Receive and process new module instance message from another node. For the packet format, see \mbox{\hyperlink{mato_8c_a89b6e0a431131bbd10afb037237fc9d5}{net\+\_\+announce\+\_\+new\+\_\+module()}} function. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato_8c_a029268714e433e2f72193f8a7577501e}\label{mato_8c_a029268714e433e2f72193f8a7577501e}} 
-void {\bfseries net\+\_\+process\+\_\+delete\+\_\+module} (int s, int sending\+\_\+node\+\_\+id)
-\item 
-\mbox{\Hypertarget{mato_8c_a7b0684b2601804f2991871762747cf59}\label{mato_8c_a7b0684b2601804f2991871762747cf59}} 
-void {\bfseries net\+\_\+delete\+\_\+module\+\_\+buffers} (int node\+\_\+id, int module\+\_\+id)
-\item 
-\mbox{\Hypertarget{mato_8c_a739a4b4526f5a0a2add73ecdb4dbc31c}\label{mato_8c_a739a4b4526f5a0a2add73ecdb4dbc31c}} 
-void {\bfseries net\+\_\+process\+\_\+subscribe\+\_\+module} (int s, int sending\+\_\+node\+\_\+id)
-\item 
-\mbox{\Hypertarget{mato_8c_ac37251f81f469a933e64925c32594aa6}\label{mato_8c_ac37251f81f469a933e64925c32594aa6}} 
-void {\bfseries net\+\_\+subscribe} (int sending\+\_\+node\+\_\+id, int subscribed\+\_\+module\+\_\+id, int channel)
-\item 
-\mbox{\Hypertarget{mato_8c_a687d217548e2b2b21454c039158fafa1}\label{mato_8c_a687d217548e2b2b21454c039158fafa1}} 
-void {\bfseries net\+\_\+process\+\_\+unsubscribe\+\_\+module} (int s, int sending\+\_\+node\+\_\+id)
-\item 
-\mbox{\Hypertarget{mato_8c_ae9c7ec8e6ae570c2126c22e92a076ed4}\label{mato_8c_ae9c7ec8e6ae570c2126c22e92a076ed4}} 
-void {\bfseries net\+\_\+unsubscribe} (int sending\+\_\+node\+\_\+id, int subscribed\+\_\+module\+\_\+id, int channel)
-\item 
-\mbox{\Hypertarget{mato_8c_ae5ce584438be486dd2191ef26405c7b7}\label{mato_8c_ae5ce584438be486dd2191ef26405c7b7}} 
-void {\bfseries net\+\_\+process\+\_\+get\+\_\+data} (int s, int sending\+\_\+node\+\_\+id)
-\item 
-\mbox{\Hypertarget{mato_8c_a1cd18e5d867199448cccfd504b4daa62}\label{mato_8c_a1cd18e5d867199448cccfd504b4daa62}} 
-void {\bfseries net\+\_\+get\+\_\+data} (int sending\+\_\+node\+\_\+id, int module\+\_\+id, int channel, int get\+\_\+data\+\_\+id)
-\item 
-void \mbox{\hyperlink{mato_8c_aebf46bc443f3890c19b7118e593c937e}{net\+\_\+send\+\_\+data}} (int get\+\_\+data\+\_\+id, uint8\+\_\+t $\ast$data, int32\+\_\+t data\+\_\+length)
-\begin{DoxyCompactList}\small\item\em Broadcast information about new local module instance to all other nodes. \end{DoxyCompactList}\item 
-void \mbox{\hyperlink{mato_8c_a6f5e0a1a54d499b01ed57c8d0ffddeb0}{net\+\_\+send\+\_\+subscribed\+\_\+data}} (int subscribed\+\_\+node\+\_\+id, \mbox{\hyperlink{structchannel__data}{channel\+\_\+data}} $\ast$cd)
-\begin{DoxyCompactList}\small\item\em Broadcast information about new local module instance to all other nodes. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato_8c_a965d9369319f2270e8a3d08b384a4542}\label{mato_8c_a965d9369319f2270e8a3d08b384a4542}} 
-void {\bfseries net\+\_\+process\+\_\+subscribed\+\_\+data} (int s, int sending\+\_\+node\+\_\+id)
-\item 
-\mbox{\Hypertarget{mato_8c_a168c6a55a31a841da07f06c8fa1b4d52}\label{mato_8c_a168c6a55a31a841da07f06c8fa1b4d52}} 
-void {\bfseries net\+\_\+process\+\_\+global\+\_\+message} (int s, int sending\+\_\+node\+\_\+id)
-\item 
-\mbox{\Hypertarget{mato_8c_ae73315ced9ecf6ff3375c0c2430216d3}\label{mato_8c_ae73315ced9ecf6ff3375c0c2430216d3}} 
-void \mbox{\hyperlink{mato_8c_ae73315ced9ecf6ff3375c0c2430216d3}{process\+\_\+node\+\_\+message}} (int s, int sending\+\_\+node\+\_\+id)
-\begin{DoxyCompactList}\small\item\em Receive, unpack, and process a new message arriving from another node from socket s. \end{DoxyCompactList}\item 
-void $\ast$ \mbox{\hyperlink{mato_8c_af5f7ff58c24433040e4085234c567725}{reconnecting\+\_\+thread}} (void $\ast$arg)
-\begin{DoxyCompactList}\small\item\em This thread monitors connections to all nodes according to config file and tries to connect/reconnect those that are not currently connected. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato_8c_a874b690f44decd3fcf6f914f51b55e1d}\label{mato_8c_a874b690f44decd3fcf6f914f51b55e1d}} 
-void $\ast$ {\bfseries communication\+\_\+thread} (void $\ast$arg)
-\item 
-\mbox{\Hypertarget{mato_8c_a073d05e5bf9e0ffebb49c0251d250c0f}\label{mato_8c_a073d05e5bf9e0ffebb49c0251d250c0f}} 
-void {\bfseries start\+\_\+networking} ()
-\item 
-\mbox{\Hypertarget{mato_8c_abe470fc37512e60d44467e23d6e123e7}\label{mato_8c_abe470fc37512e60d44467e23d6e123e7}} 
-\mbox{\hyperlink{structnode__info}{node\+\_\+info}} $\ast$ {\bfseries new\+\_\+node\+\_\+info} (int node\+\_\+id, char $\ast$ip, int port, char $\ast$name, int is\+\_\+online)
-\item 
-\mbox{\Hypertarget{mato_8c_a4189aae14c30ba4efe0b232acf806236}\label{mato_8c_a4189aae14c30ba4efe0b232acf806236}} 
-int {\bfseries config\+\_\+error} (int ln)
-\item 
-\mbox{\Hypertarget{mato_8c_ad1162ecd45ac6f052f48461961acfb3f}\label{mato_8c_ad1162ecd45ac6f052f48461961acfb3f}} 
-int {\bfseries read\+\_\+config} ()
-\item 
-\mbox{\Hypertarget{mato_8c_a43c571790d54633ddc58a251337c4e3d}\label{mato_8c_a43c571790d54633ddc58a251337c4e3d}} 
-void \mbox{\hyperlink{mato_8c_a43c571790d54633ddc58a251337c4e3d}{int\+Handler}} (int signum)
-\begin{DoxyCompactList}\small\item\em signal handler, intercept C\+T\+R\+L-\/C \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{mato_8c_a31f3887a8e72dc1323b6bfbcfbf9d038}\label{mato_8c_a31f3887a8e72dc1323b6bfbcfbf9d038}} 
 void \mbox{\hyperlink{mato_8c_a31f3887a8e72dc1323b6bfbcfbf9d038}{mato\+\_\+init}} (int this\+\_\+node\+\_\+identifier)
 \begin{DoxyCompactList}\small\item\em Initializes the framework. It must be the first function of the framework to be called. It should be called only once. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{mato_8c_a43f0570e3ab59d7a021e93113437dcaf}{mato\+\_\+register\+\_\+new\+\_\+type\+\_\+of\+\_\+module}} (char $\ast$type, \mbox{\hyperlink{structmodule__specification}{module\+\_\+specification}} $\ast$specification)
 \begin{DoxyCompactList}\small\item\em Register a new module type. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato_8c_ae97dbf0eeadf4345327dcf392d02c30c}\label{mato_8c_ae97dbf0eeadf4345327dcf392d02c30c}} 
-int \mbox{\hyperlink{mato_8c_ae97dbf0eeadf4345327dcf392d02c30c}{get\+\_\+free\+\_\+module\+\_\+id}} ()
-\begin{DoxyCompactList}\small\item\em Returns the next available module\+\_\+id. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato_8c_aa96455f34de227205787b911dbe51847}\label{mato_8c_aa96455f34de227205787b911dbe51847}} 
-int \mbox{\hyperlink{mato_8c_aa96455f34de227205787b911dbe51847}{get\+\_\+free\+\_\+subscription\+\_\+id}} ()
-\begin{DoxyCompactList}\small\item\em Returns the next available subscription\+\_\+id. \end{DoxyCompactList}\item 
-int \mbox{\hyperlink{mato_8c_a633902e591cb9df5808095212718d9ea}{net\+\_\+send\+\_\+string}} (int socket, char $\ast$str)
-\begin{DoxyCompactList}\small\item\em Send a zero-\/terminated character string to socket. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato_8c_a2f87ae31ccd51e00b3ec6090c81d51ba}\label{mato_8c_a2f87ae31ccd51e00b3ec6090c81d51ba}} 
-int {\bfseries net\+\_\+send\+\_\+bytes} (int socket, uint8\+\_\+t $\ast$data, int32\+\_\+t length)
-\item 
-int \mbox{\hyperlink{mato_8c_aa83f4b409149e4bd89f0079c264b3b87}{net\+\_\+send\+\_\+int32t}} (int socket, int32\+\_\+t num)
-\begin{DoxyCompactList}\small\item\em Send 32-\/bit signed integer to a socket. \end{DoxyCompactList}\item 
-void \mbox{\hyperlink{mato_8c_a89b6e0a431131bbd10afb037237fc9d5}{net\+\_\+announce\+\_\+new\+\_\+module}} (int module\+\_\+id)
-\begin{DoxyCompactList}\small\item\em Broadcast information about new local module instance to all other nodes. \end{DoxyCompactList}\item 
 int \mbox{\hyperlink{mato_8c_a411a20bcfa908edbebe617fe5cc54667}{mato\+\_\+create\+\_\+new\+\_\+module\+\_\+instance}} (const char $\ast$module\+\_\+type, const char $\ast$module\+\_\+name)
 \begin{DoxyCompactList}\small\item\em The main program (or other module) can call this function to request creation of a module instance. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{mato_8c_a62a0865fa5114c0a254435a1369531cf}{mato\+\_\+start\+\_\+module}} (int module\+\_\+id)
@@ -222,9 +41,6 @@ char $\ast$ \mbox{\hyperlink{mato_8c_a28a6ba77196f8504bab5f3da059c5d5b}{mato\+\_
 \mbox{\Hypertarget{mato_8c_af07c3febed32408feb8a11c4d66c2251}\label{mato_8c_af07c3febed32408feb8a11c4d66c2251}} 
 int \mbox{\hyperlink{mato_8c_af07c3febed32408feb8a11c4d66c2251}{mato\+\_\+subscribe}} (int subscriber\+\_\+module\+\_\+id, int subscribed\+\_\+module\+\_\+id, int channel, \mbox{\hyperlink{mato_8h_a9345221b935d9505595c583b54d31e86}{subscriber\+\_\+callback}} callback, int subscription\+\_\+type)
 \begin{DoxyCompactList}\small\item\em Subscribe on a channel of some module instance. Returns a number that represents this subscription (a subscription\+\_\+id). \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato_8c_a979625f0ce491a3abd1eb68ca93d803b}\label{mato_8c_a979625f0ce491a3abd1eb68ca93d803b}} 
-void {\bfseries remove\+\_\+subscription} (int subscribed\+\_\+node\+\_\+id, int subscribed\+\_\+module\+\_\+id, int channel, int subscription\+\_\+id)
-\item 
 \mbox{\Hypertarget{mato_8c_a14f9462b777a24c86af37b64d84142d0}\label{mato_8c_a14f9462b777a24c86af37b64d84142d0}} 
 void \mbox{\hyperlink{mato_8c_a14f9462b777a24c86af37b64d84142d0}{mato\+\_\+unsubscribe}} (int module\+\_\+id, int channel, int subscription\+\_\+id)
 \begin{DoxyCompactList}\small\item\em Given a subscription\+\_\+id, cancel the ongoing subscription to a channel of some module instance. \end{DoxyCompactList}\item 
@@ -243,9 +59,6 @@ void \mbox{\hyperlink{mato_8c_af3c84af45ac99910057189ede367d72d}{mato\+\_\+borro
 \begin{DoxyCompactList}\small\item\em Retrieve the most recently posted data of some channel of some module instance. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{mato_8c_aedcb803fd4a991e805e6c3813c829a35}{mato\+\_\+release\+\_\+data}} (int id\+\_\+module, int channel, void $\ast$data)
 \begin{DoxyCompactList}\small\item\em Return a borrowed pointer that was obtained either by \mbox{\hyperlink{mato_8h_af3c84af45ac99910057189ede367d72d}{mato\+\_\+borrow\+\_\+data()}} or by a callback in the borrowed\+\_\+pointer mode. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato_8c_a041903e9b52f56435f88cff5f41aff3e}\label{mato_8c_a041903e9b52f56435f88cff5f41aff3e}} 
-\mbox{\hyperlink{structmodule__info}{module\+\_\+info}} $\ast$ \mbox{\hyperlink{mato_8c_a041903e9b52f56435f88cff5f41aff3e}{new\+\_\+module\+\_\+info}} (int node\+\_\+id, int module\+\_\+id, char $\ast$module\+\_\+name, char $\ast$module\+\_\+type)
-\begin{DoxyCompactList}\small\item\em A constructor for the \mbox{\hyperlink{structmodule__info}{module\+\_\+info}} structure. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{mato_8c_a89c5f00aa3a55188b8a2364314a0b644}\label{mato_8c_a89c5f00aa3a55188b8a2364314a0b644}} 
 int \mbox{\hyperlink{mato_8c_a89c5f00aa3a55188b8a2364314a0b644}{mato\+\_\+get\+\_\+number\+\_\+of\+\_\+modules}} ()
 \begin{DoxyCompactList}\small\item\em Retrieve the number of currently running modules. \end{DoxyCompactList}\item 
@@ -259,43 +72,22 @@ void \mbox{\hyperlink{mato_8c_aeafc9d85e29a73b9b5423cd661bd54c2}{mato\+\_\+free\
 void \mbox{\hyperlink{mato_8c_ab49165685fd95d2e9f70f484e367c6f2}{mato\+\_\+data\+\_\+buffer\+\_\+usage}} (int module\+\_\+id, int channel, int $\ast$number\+\_\+of\+\_\+allocated\+\_\+buffers, int $\ast$total\+\_\+sum\+\_\+of\+\_\+ref\+\_\+count)
 \begin{DoxyCompactList}\small\item\em Provide a diagnostic information on use of the buffers by a particular channel of a particular module. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{mato_8c_a6b31044a7afec17426ec4d4e3354aa9f}{mato\+\_\+inc\+\_\+thread\+\_\+count}} ()
-\begin{DoxyCompactList}\small\item\em Increment the number of threads running. This should be called by each thread that has been started. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Each module instance (or other part of the program) that creates a new thread should call this funciton for each newly created thread. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{mato_8c_a480acc181ff3a7d7c925d64e3d4a7442}{mato\+\_\+dec\+\_\+thread\+\_\+count}} ()
-\begin{DoxyCompactList}\small\item\em Decrement the number of threads running. It should be called by each thread that terminates. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Each thread that terminates should call this function just before it quits. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{mato_8c_a314629d6f743c699b26a534175986865}\label{mato_8c_a314629d6f743c699b26a534175986865}} 
 int \mbox{\hyperlink{mato_8c_a314629d6f743c699b26a534175986865}{mato\+\_\+threads\+\_\+running}} ()
 \begin{DoxyCompactList}\small\item\em The number of threads currently running in the system. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{mato_8c_ae1a30212d4d2d4f1121684dbd1bb854a}\label{mato_8c_ae1a30212d4d2d4f1121684dbd1bb854a}} 
 void \mbox{\hyperlink{mato_8c_ae1a30212d4d2d4f1121684dbd1bb854a}{mato\+\_\+shutdown}} ()
 \begin{DoxyCompactList}\small\item\em Releases all resources used by the framework, recommended to be called before the main program terminates. \end{DoxyCompactList}\end{DoxyCompactItemize}
-\doxysubsection*{Variables}
-\begin{DoxyCompactItemize}
-\item 
-volatile int \mbox{\hyperlink{mato_8c_a0f80851fe27966d69a2a0dfbafdb7160}{program\+\_\+runs}}
-\begin{DoxyCompactList}\small\item\em Set to one when the framework is initialized and cleared when any part of the program wants to terminate the whole program. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato_8c_a23868df494ffd83e64765b50b2f59de0}\label{mato_8c_a23868df494ffd83e64765b50b2f59de0}} 
-volatile int \mbox{\hyperlink{mato_8c_a23868df494ffd83e64765b50b2f59de0}{threads\+\_\+started}}
-\begin{DoxyCompactList}\small\item\em Contains the number of threads that are running. Use the functions \mbox{\hyperlink{mato_8c_a6b31044a7afec17426ec4d4e3354aa9f}{mato\+\_\+inc\+\_\+thread\+\_\+count()}} and \mbox{\hyperlink{mato_8c_a480acc181ff3a7d7c925d64e3d4a7442}{mato\+\_\+dec\+\_\+thread\+\_\+count()}}. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{mato_8c_acc307467ee069828e40a521f193e8b80}\label{mato_8c_acc307467ee069828e40a521f193e8b80}} 
-volatile int \mbox{\hyperlink{mato_8c_acc307467ee069828e40a521f193e8b80}{system\+\_\+threads\+\_\+started}}
-\begin{DoxyCompactList}\small\item\em Contains the number of internal framework threads that are running. Use the functions \mbox{\hyperlink{mato_8c_a94a6b505bcf5e3cca4665cba3bbab3cd}{mato\+\_\+inc\+\_\+system\+\_\+thread\+\_\+count()}} and \mbox{\hyperlink{mato_8c_a87731b4b9da695d14f237dc6825c9186}{mato\+\_\+dec\+\_\+system\+\_\+thread\+\_\+count()}}. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
-Implementation of the Mato control framework. 
+Implementation of the Mato control framework\+: public functions. 
 
 \doxysubsection{Function Documentation}
-\mbox{\Hypertarget{mato_8c_a948891305b2d86ead8d8b9e98ee992ea}\label{mato_8c_a948891305b2d86ead8d8b9e98ee992ea}} 
-\index{mato.c@{mato.c}!decrement\_references@{decrement\_references}}
-\index{decrement\_references@{decrement\_references}!mato.c@{mato.c}}
-\doxysubsubsection{\texorpdfstring{decrement\_references()}{decrement\_references()}}
-{\footnotesize\ttfamily G\+List$\ast$ decrement\+\_\+references (\begin{DoxyParamCaption}\item[{G\+List $\ast$}]{data\+\_\+buffers,  }\item[{\mbox{\hyperlink{structchannel__data}{channel\+\_\+data}} $\ast$}]{to\+\_\+be\+\_\+decremented }\end{DoxyParamCaption})}
-
-
-
-Decrements the number of references to a particular buffer and deallocates the buffer itself as well as the structure describing the buffer. 
-
-It also removes it from the list of the framework-\/maintained messages. \mbox{\Hypertarget{mato_8c_af3c84af45ac99910057189ede367d72d}\label{mato_8c_af3c84af45ac99910057189ede367d72d}} 
+\mbox{\Hypertarget{mato_8c_af3c84af45ac99910057189ede367d72d}\label{mato_8c_af3c84af45ac99910057189ede367d72d}} 
 \index{mato.c@{mato.c}!mato\_borrow\_data@{mato\_borrow\_data}}
 \index{mato\_borrow\_data@{mato\_borrow\_data}!mato.c@{mato.c}}
 \doxysubsubsection{\texorpdfstring{mato\_borrow\_data()}{mato\_borrow\_data()}}
@@ -333,9 +125,9 @@ If this starts growing, the callbacks take too much time to process data and sho
 
 
 
-Decrement the number of threads running. It should be called by each thread that terminates. 
+Each thread that terminates should call this function just before it quits. 
 
-Each thread that terminates should call this function just before it quits. \mbox{\Hypertarget{mato_8c_af356c7284b6f1d6be285de40d9e23b77}\label{mato_8c_af356c7284b6f1d6be285de40d9e23b77}} 
+Decrement the number of threads running. It should be called by each thread that terminates. \mbox{\Hypertarget{mato_8c_af356c7284b6f1d6be285de40d9e23b77}\label{mato_8c_af356c7284b6f1d6be285de40d9e23b77}} 
 \index{mato.c@{mato.c}!mato\_get\_data@{mato\_get\_data}}
 \index{mato\_get\_data@{mato\_get\_data}!mato.c@{mato.c}}
 \doxysubsubsection{\texorpdfstring{mato\_get\_data()}{mato\_get\_data()}}
@@ -373,19 +165,9 @@ The list should be freed by calling \mbox{\hyperlink{mato_8h_aeafc9d85e29a73b9b5
 
 
 
-Increment the number of threads running. This should be called by each thread that has been started. 
+Each module instance (or other part of the program) that creates a new thread should call this funciton for each newly created thread. 
 
-Each module instance (or other part of the program) that creates a new thread should call this funciton for each newly created thread. \mbox{\Hypertarget{mato_8c_a31f3887a8e72dc1323b6bfbcfbf9d038}\label{mato_8c_a31f3887a8e72dc1323b6bfbcfbf9d038}} 
-\index{mato.c@{mato.c}!mato\_init@{mato\_init}}
-\index{mato\_init@{mato\_init}!mato.c@{mato.c}}
-\doxysubsubsection{\texorpdfstring{mato\_init()}{mato\_init()}}
-{\footnotesize\ttfamily void mato\+\_\+init (\begin{DoxyParamCaption}\item[{int}]{this\+\_\+node\+\_\+identifier }\end{DoxyParamCaption})}
-
-
-
-Initializes the framework. It must be the first function of the framework to be called. It should be called only once. 
-
-Initialize the whole framework. Should be called first from the main program. \mbox{\Hypertarget{mato_8c_a43f0570e3ab59d7a021e93113437dcaf}\label{mato_8c_a43f0570e3ab59d7a021e93113437dcaf}} 
+Increments the number of threads running. This should be called from each thread that has been started. \mbox{\Hypertarget{mato_8c_a43f0570e3ab59d7a021e93113437dcaf}\label{mato_8c_a43f0570e3ab59d7a021e93113437dcaf}} 
 \index{mato.c@{mato.c}!mato\_register\_new\_type\_of\_module@{mato\_register\_new\_type\_of\_module}}
 \index{mato\_register\_new\_type\_of\_module@{mato\_register\_new\_type\_of\_module}!mato.c@{mato.c}}
 \doxysubsubsection{\texorpdfstring{mato\_register\_new\_type\_of\_module()}{mato\_register\_new\_type\_of\_module()}}
@@ -415,105 +197,4 @@ The id\+\_\+module and channel specify the origin of the message. \mbox{\Hyperta
 
 Start a newly created instance of a particular module. 
 
-This is typically used when the module instance is created later than when the framework has already been started. \mbox{\Hypertarget{mato_8c_a89b6e0a431131bbd10afb037237fc9d5}\label{mato_8c_a89b6e0a431131bbd10afb037237fc9d5}} 
-\index{mato.c@{mato.c}!net\_announce\_new\_module@{net\_announce\_new\_module}}
-\index{net\_announce\_new\_module@{net\_announce\_new\_module}!mato.c@{mato.c}}
-\doxysubsubsection{\texorpdfstring{net\_announce\_new\_module()}{net\_announce\_new\_module()}}
-{\footnotesize\ttfamily void net\+\_\+announce\+\_\+new\+\_\+module (\begin{DoxyParamCaption}\item[{int}]{module\+\_\+id }\end{DoxyParamCaption})}
-
-
-
-Broadcast information about new local module instance to all other nodes. 
-
-\hypertarget{mato_8c_autotoc_md4}{}\doxysubsubsection{Packet format\+:}\label{mato_8c_autotoc_md4}
-M\+S\+G\+\_\+\+N\+E\+W\+\_\+\+M\+O\+D\+U\+L\+E\+\_\+\+I\+N\+S\+T\+A\+N\+CE int32 this\+\_\+node\+\_\+id int32 \mbox{[}local\mbox{]}module\+\_\+id int32 len(module\+\_\+name)+1 int32 module\+\_\+name variable len(module\+\_\+type)+1 int32 module\+\_\+type variable \hypertarget{mato_8c_autotoc_md5}{}\doxysubsubsection{number\+\_\+of\+\_\+channels        int32}\label{mato_8c_autotoc_md5}
-\mbox{\Hypertarget{mato_8c_abb1137f693af96fb5f7f0683f2ff05e8}\label{mato_8c_abb1137f693af96fb5f7f0683f2ff05e8}} 
-\index{mato.c@{mato.c}!net\_recv\_bytes@{net\_recv\_bytes}}
-\index{net\_recv\_bytes@{net\_recv\_bytes}!mato.c@{mato.c}}
-\doxysubsubsection{\texorpdfstring{net\_recv\_bytes()}{net\_recv\_bytes()}}
-{\footnotesize\ttfamily int net\+\_\+recv\+\_\+bytes (\begin{DoxyParamCaption}\item[{int}]{s,  }\item[{uint8\+\_\+t $\ast$$\ast$}]{str,  }\item[{int32\+\_\+t $\ast$}]{str\+\_\+len,  }\item[{int}]{sending\+\_\+node\+\_\+id }\end{DoxyParamCaption})}
-
-
-
-Receive string of bytes from a socket. 
-
-This could be a zero-\/terminated string, or any other bunch of bytes. String is sent as int32\+\_\+t (length+1) and then data. Returns 0 on failure (and the sending node is updated to be off-\/line), otherwise returns 1. See \mbox{\hyperlink{mato_8c_a633902e591cb9df5808095212718d9ea}{net\+\_\+send\+\_\+string()}} function. \mbox{\Hypertarget{mato_8c_aa1844778cc9151adbd0e1fb0f523d10b}\label{mato_8c_aa1844778cc9151adbd0e1fb0f523d10b}} 
-\index{mato.c@{mato.c}!net\_recv\_int32t@{net\_recv\_int32t}}
-\index{net\_recv\_int32t@{net\_recv\_int32t}!mato.c@{mato.c}}
-\doxysubsubsection{\texorpdfstring{net\_recv\_int32t()}{net\_recv\_int32t()}}
-{\footnotesize\ttfamily int net\+\_\+recv\+\_\+int32t (\begin{DoxyParamCaption}\item[{int}]{s,  }\item[{int32\+\_\+t $\ast$}]{num,  }\item[{int}]{sending\+\_\+node\+\_\+id }\end{DoxyParamCaption})}
-
-
-
-Receive one 32-\/bit integer from a socket. 
-
-Returns 0 on failure (and the sending node is updated to be off-\/line), otherwise returns 1. See net\+\_\+send\+\_\+int32\+\_\+t() function. \mbox{\Hypertarget{mato_8c_aebf46bc443f3890c19b7118e593c937e}\label{mato_8c_aebf46bc443f3890c19b7118e593c937e}} 
-\index{mato.c@{mato.c}!net\_send\_data@{net\_send\_data}}
-\index{net\_send\_data@{net\_send\_data}!mato.c@{mato.c}}
-\doxysubsubsection{\texorpdfstring{net\_send\_data()}{net\_send\_data()}}
-{\footnotesize\ttfamily void net\+\_\+send\+\_\+data (\begin{DoxyParamCaption}\item[{int}]{get\+\_\+data\+\_\+id,  }\item[{uint8\+\_\+t $\ast$}]{data,  }\item[{int32\+\_\+t}]{data\+\_\+length }\end{DoxyParamCaption})}
-
-
-
-Broadcast information about new local module instance to all other nodes. 
-
-\hypertarget{mato_8c_autotoc_md0}{}\doxysubsubsection{Packet format\+:}\label{mato_8c_autotoc_md0}
-M\+S\+G\+\_\+\+D\+A\+TA int32 this\+\_\+node\+\_\+id int32 get\+\_\+data\+\_\+id int32 len(data) int32 \hypertarget{mato_8c_autotoc_md1}{}\doxysubsubsection{data                      variable}\label{mato_8c_autotoc_md1}
-\mbox{\Hypertarget{mato_8c_aa83f4b409149e4bd89f0079c264b3b87}\label{mato_8c_aa83f4b409149e4bd89f0079c264b3b87}} 
-\index{mato.c@{mato.c}!net\_send\_int32t@{net\_send\_int32t}}
-\index{net\_send\_int32t@{net\_send\_int32t}!mato.c@{mato.c}}
-\doxysubsubsection{\texorpdfstring{net\_send\_int32t()}{net\_send\_int32t()}}
-{\footnotesize\ttfamily int net\+\_\+send\+\_\+int32t (\begin{DoxyParamCaption}\item[{int}]{socket,  }\item[{int32\+\_\+t}]{num }\end{DoxyParamCaption})}
-
-
-
-Send 32-\/bit signed integer to a socket. 
-
-See net\+\_\+recv\+\_\+int32\+\_\+t() function. \mbox{\Hypertarget{mato_8c_a633902e591cb9df5808095212718d9ea}\label{mato_8c_a633902e591cb9df5808095212718d9ea}} 
-\index{mato.c@{mato.c}!net\_send\_string@{net\_send\_string}}
-\index{net\_send\_string@{net\_send\_string}!mato.c@{mato.c}}
-\doxysubsubsection{\texorpdfstring{net\_send\_string()}{net\_send\_string()}}
-{\footnotesize\ttfamily int net\+\_\+send\+\_\+string (\begin{DoxyParamCaption}\item[{int}]{socket,  }\item[{char $\ast$}]{str }\end{DoxyParamCaption})}
-
-
-
-Send a zero-\/terminated character string to socket. 
-
-First send its length+1 as int32\+\_\+t and then data. See \mbox{\hyperlink{mato_8c_abb1137f693af96fb5f7f0683f2ff05e8}{net\+\_\+recv\+\_\+bytes()}} function. \mbox{\Hypertarget{mato_8c_a6f5e0a1a54d499b01ed57c8d0ffddeb0}\label{mato_8c_a6f5e0a1a54d499b01ed57c8d0ffddeb0}} 
-\index{mato.c@{mato.c}!net\_send\_subscribed\_data@{net\_send\_subscribed\_data}}
-\index{net\_send\_subscribed\_data@{net\_send\_subscribed\_data}!mato.c@{mato.c}}
-\doxysubsubsection{\texorpdfstring{net\_send\_subscribed\_data()}{net\_send\_subscribed\_data()}}
-{\footnotesize\ttfamily void net\+\_\+send\+\_\+subscribed\+\_\+data (\begin{DoxyParamCaption}\item[{int}]{subscribed\+\_\+node\+\_\+id,  }\item[{\mbox{\hyperlink{structchannel__data}{channel\+\_\+data}} $\ast$}]{cd }\end{DoxyParamCaption})}
-
-
-
-Broadcast information about new local module instance to all other nodes. 
-
-\hypertarget{mato_8c_autotoc_md2}{}\doxysubsubsection{Packet format\+:}\label{mato_8c_autotoc_md2}
-M\+S\+G\+\_\+\+S\+U\+B\+S\+C\+R\+I\+B\+E\+D\+\_\+\+D\+A\+TA int32 sending\+\_\+node\+\_\+id int32 module\+\_\+id int32 channel int32 length int32 \hypertarget{mato_8c_autotoc_md3}{}\doxysubsubsection{data                      variable}\label{mato_8c_autotoc_md3}
-\mbox{\Hypertarget{mato_8c_af5f7ff58c24433040e4085234c567725}\label{mato_8c_af5f7ff58c24433040e4085234c567725}} 
-\index{mato.c@{mato.c}!reconnecting\_thread@{reconnecting\_thread}}
-\index{reconnecting\_thread@{reconnecting\_thread}!mato.c@{mato.c}}
-\doxysubsubsection{\texorpdfstring{reconnecting\_thread()}{reconnecting\_thread()}}
-{\footnotesize\ttfamily void$\ast$ reconnecting\+\_\+thread (\begin{DoxyParamCaption}\item[{void $\ast$}]{arg }\end{DoxyParamCaption})}
-
-
-
-This thread monitors connections to all nodes according to config file and tries to connect/reconnect those that are not currently connected. 
-
-It runs in the background from the start till the framework shutdown. 
-
-\doxysubsection{Variable Documentation}
-\mbox{\Hypertarget{mato_8c_a0f80851fe27966d69a2a0dfbafdb7160}\label{mato_8c_a0f80851fe27966d69a2a0dfbafdb7160}} 
-\index{mato.c@{mato.c}!program\_runs@{program\_runs}}
-\index{program\_runs@{program\_runs}!mato.c@{mato.c}}
-\doxysubsubsection{\texorpdfstring{program\_runs}{program\_runs}}
-{\footnotesize\ttfamily volatile int program\+\_\+runs}
-
-
-
-Set to one when the framework is initialized and cleared when any part of the program wants to terminate the whole program. 
-
-This variable is set to non-\/zero when the program is about to terminate.
-
-After it is set to zero, all threads are expected to terminated soon. When all threads terminate, the application terminates. 
+This is typically used when the module instance is created later than when the framework has already been started. 
