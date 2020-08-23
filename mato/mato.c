@@ -7,7 +7,6 @@
 /// \file mato.c
 /// Implementation of the Mato control framework: public functions.
 
-/// Initializes the framework. It must be the first function of the framework to be called. It should be called only once.
 void mato_init(int this_node_identifier)
 {
     net_mato_init(this_node_identifier);
@@ -404,7 +403,6 @@ void mato_data_buffer_usage(int module_id, int channel, int *number_of_allocated
     unlock_framework();
 }
 
-/// Increment the number of threads running. This should be called by each thread that has been started.
 void mato_inc_thread_count()
 {
     lock_framework();
@@ -412,7 +410,6 @@ void mato_inc_thread_count()
     unlock_framework();
 }
 
-/// Decrement the number of threads running. It should be called by each thread that terminates.
 void mato_dec_thread_count()
 {
     lock_framework();

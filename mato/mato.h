@@ -85,7 +85,7 @@ typedef struct {
     int is_online;
 } node_info;
 
-/// Initialize the whole framework. Should be called first from the main program.
+/// Initializes the framework. It must be the first function of the framework to be called. It should be called only once.
 void mato_init(int this_node_identifier);
 
 /// Register a new module type. This is typically called from the init() function of each module type, which
@@ -166,10 +166,11 @@ void mato_free_list_of_modules(GArray* a);
 void mato_data_buffer_usage(int module_id, int channel, int *number_of_allocated_buffers, int *total_sum_of_ref_count);
 
 /// Each module instance (or other part of the program) that creates a new thread should call this funciton for each newly
-/// created thread.
+/// created thread. Increments the number of threads running. This should be called from each thread that has been started.
 void mato_inc_thread_count();
 
 /// Each thread that terminates should call this function just before it quits.
+/// Decrement the number of threads running. It should be called by each thread that terminates.
 void mato_dec_thread_count();
 
 /// The number of threads currently running in the system

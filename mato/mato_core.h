@@ -149,4 +149,13 @@ void mato_inc_system_thread_count();
 /// Decrement the number of internal framework threads running. It should be called by each framework thread that terminates.
 void mato_dec_system_thread_count();
 
+/// Update internal subscriptions: a remote node subscribing to our module's channel
+void subscribe_channel_from_remote_node(int remote_node_id, int subscribed_module_id, int channel);
+
+/// Update internal subscriptions: a remote node unsubscribing to our module's channel
+void unsubscribe_channel_from_remote_node(int remote_node_id, int subscribed_module_id, int channel);
+
+/// Remote module is requesting data from our channel, retrieve them and send back
+void get_data_from_remote(int remote_node_id, int module_id, int channel, int get_data_id);
+
 #endif

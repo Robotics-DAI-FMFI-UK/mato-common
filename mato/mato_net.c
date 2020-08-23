@@ -22,12 +22,16 @@ static GArray *sockets;   // [node_id]
 /// connects (or similar events occur)
 static int select_wakeup_pipe[2];
 
+//-------------- reading network config file ----------------------
+
+/// Print error about reading config at the specified line
 static int config_error(int ln)
 {
     printf("Could not parse nodes config file, error at line %d\n", ln);
     return 0;
 }
 
+/// Node_info structure constructor, just fills newly allocated copies of data.
 static node_info *new_node_info(int node_id, char *ip, int port, char *name, int is_online)
 {
     node_info *n = (node_info *) malloc(sizeof(node_info));
@@ -41,6 +45,7 @@ static node_info *new_node_info(int node_id, char *ip, int port, char *name, int
     return n;
 }
 
+/// Reads mato networking config file.
 static int read_mato_config()
 {
     char config_line[256];
@@ -87,6 +92,8 @@ static int read_mato_config()
     return 1;
 }
 
+//-------------- init and shutdown ----------------------
+
 void net_mato_init(int this_node_identifier)
 {
     nodes = g_array_new(0, 0, sizeof(node_info *));
@@ -114,7 +121,8 @@ void net_mato_shutdown()
     close(listening_socket);
 }
 
-void node_disconnected(int s, int node_id)
+/// Clean up all traces of a node (and its modules) after it got disconnected.
+static void node_disconnected(int s, int node_id)
 {
     g_array_index(nodes,node_info*,node_id)->is_online = 0;
     close(s);
@@ -126,9 +134,11 @@ void node_disconnected(int s, int node_id)
     unlock_framework();
 }
 
+//-------------- low-level incoming data receiving ---------------------
+
 /// Receive one 32-bit integer from a socket. Returns 0 on failure (and the sending node is updated to be off-line), otherwise returns 1.
 /// See net_send_int32_t() function.
-int net_recv_int32t(int s, int32_t *num, int sending_node_id)
+static int net_recv_int32t(int s, int32_t *num, int sending_node_id)
 {
     int retval = recv(s, num, sizeof(int32_t), MSG_WAITALL);
     if(retval<0)
@@ -148,7 +158,7 @@ int net_recv_int32t(int s, int32_t *num, int sending_node_id)
 /// or any other bunch of bytes. String is sent as int32_t (length+1) and then data.
 /// Returns 0 on failure (and the sending node is updated to be off-line), otherwise returns 1.
 /// See net_send_string() function.
-int net_recv_bytes(int s, uint8_t **str, int32_t *str_len, int sending_node_id)
+static int net_recv_bytes(int s, uint8_t **str, int32_t *str_len, int sending_node_id)
 {
 
     if (!net_recv_int32t(s, str_len, sending_node_id))
@@ -168,8 +178,38 @@ int net_recv_bytes(int s, uint8_t **str, int32_t *str_len, int sending_node_id)
     return 1;
 }
 
+//-------------- to be fixed ----------------------
+
+/// Gently delete buffers of the module: that is only decrement the reference of the "last valid" packet if we have one.
+/// But this is not a good idea, it will go away soon.
+static void net_delete_module_buffers(int node_id, int module_id)
+{
+    GArray *module_buffers = g_array_index(g_array_index(buffers,GArray *,node_id), GArray *, module_id);
+    int number_of_channels = module_buffers -> len;
+    for (int i = 0; i < number_of_channels; i++)
+    {
+        GList *channel_list = g_array_index(module_buffers, GList *, i);
+        if (channel_list)
+        {
+            channel_list = decrement_references(channel_list, (channel_data *)(channel_list->data));
+            if (channel_list == 0)
+                g_array_index(module_buffers, GList *, i) = 0;
+        }
+    }
+}
+
+/// Soon to be updated...
+void net_delete_module_instance(int node_id, int module_id)
+{
+    // refactorization lossess...
+    g_array_index(g_array_index(module_names, GArray *, node_id), char *, module_id) = 0;
+    g_array_index(g_array_index(module_types, GArray *, node_id), char *, module_id) = 0;
+}
+
+//-------------- handling incoming messages ----------------------
+
 /// Receive and process new module instance message from another node. For the packet format, see net_announce_new_module() function.
-void net_process_new_module(int s, int sending_node_id)
+static void net_process_new_module(int s, int sending_node_id)
 {
     int32_t node_id, module_id, number_of_channels, ignore;
     char *module_name, *module_type;
@@ -183,7 +223,8 @@ void net_process_new_module(int s, int sending_node_id)
     store_new_remote_module(sending_node_id, module_id, module_name, module_type, number_of_channels);
 }
 
-void net_process_delete_module(int s, int sending_node_id)
+/// Receive and process a delete module message from another node. For the packet format see net_send_delete_module() function.
+static void net_process_delete_module(int s, int sending_node_id)
 {
     int32_t node_id, module_id;
     if (
@@ -195,45 +236,8 @@ void net_process_delete_module(int s, int sending_node_id)
     unlock_framework();
 }
 
-void net_delete_module_buffers(int node_id, int module_id)
-{
-    GArray *module_buffers = g_array_index(g_array_index(buffers,GArray *,node_id), GArray *, module_id);
-    int number_of_channels = module_buffers -> len;
-    for (int i = 0; i < number_of_channels; i++)
-    {
-        GList *channel_list = g_array_index(module_buffers, GList *, i);
-        if (channel_list)
-        {
-            channel_list = decrement_references(channel_list, (channel_data *)(channel_list->data));
-            if (channel_list==0)
-            g_array_index(module_buffers, GList *, i) = 0;
-        }
-    }
-
-    g_array_index(g_array_index(module_names, GArray *, node_id), char *, module_id) = 0;
-    g_array_index(g_array_index(module_types, GArray *, node_id), char *, module_id) = 0;
-}
-
-void net_delete_module_instance(int node_id, int module_id)
-{
-    // refactorization lossess...
-}
-
-void net_subscribe(int sending_node_id, int subscribed_module_id, int channel)
-{
-    subscription *new_subscription = (subscription *)malloc(sizeof(subscription));
-    new_subscription->type = data_copy;
-    new_subscription->callback = 0;
-    new_subscription->subscriber_module_id = 0;
-    new_subscription->subscriber_node_id = sending_node_id;
-    lock_framework();
-        new_subscription->subscription_id = get_free_subscription_id();
-        GArray *channel_subscriptions = g_array_index(g_array_index(g_array_index(subscriptions, GArray *, this_node_id), GArray *, subscribed_module_id), GArray *, channel);
-        g_array_append_val(channel_subscriptions, new_subscription);
-    unlock_framework();
-}
-
-void net_process_subscribe_module(int s, int sending_node_id)
+/// Receive and process a subscribe channel message from another node. For the packet format see net_send_subscribe() function.
+static void net_process_subscribe_module(int s, int sending_node_id)
 {
     int32_t subscribed_module_id, channel;
     char *module_name, *module_type;
@@ -243,28 +247,11 @@ void net_process_subscribe_module(int s, int sending_node_id)
       !net_recv_int32t(s, &channel, sending_node_id)
     )
         return;
-    net_subscribe(sending_node_id, subscribed_module_id, channel);
+    subscribe_channel_from_remote_node(sending_node_id, subscribed_module_id, channel);
 }
 
-void net_unsubscribe(int sending_node_id, int subscribed_module_id, int channel)
-{
-    lock_framework();
-        GArray *subscriptions_for_channel = g_array_index(g_array_index(g_array_index(subscriptions, GArray *,this_node_id), GArray *, subscribed_module_id), GArray *, channel);
-        int number_of_channel_subscriptions = subscriptions_for_channel->len;
-        for (int i = 0; i < number_of_channel_subscriptions; i++)
-        {
-            subscription *s = (subscription *)g_array_index(subscriptions_for_channel, GArray *, i);
-            if (s->subscriber_node_id == sending_node_id)
-            {
-                free(s);
-                g_array_remove_index_fast(subscriptions_for_channel, i);
-                break;
-            }
-        }
-    unlock_framework();
-}
-
-void net_process_unsubscribe_module(int s, int sending_node_id)
+/// Receive and process a unsubscribe channel message from another node. For the packet format see net_send_subscribe() function.
+static void net_process_unsubscribe_module(int s, int sending_node_id)
 {
     int32_t subscribed_module_id, channel;
     if (
@@ -272,32 +259,11 @@ void net_process_unsubscribe_module(int s, int sending_node_id)
       !net_recv_int32t(s, &channel, sending_node_id)
     )
         return;
-    net_unsubscribe(sending_node_id, subscribed_module_id, channel);
+    unsubscribe_channel_from_remote_node(sending_node_id, subscribed_module_id, channel);
 }
 
-void net_get_data(int sending_node_id, int module_id, int channel, int get_data_id)
-{
-    lock_framework();
-        GList *waiting_buffers = g_array_index(g_array_index(g_array_index(buffers, GArray *,this_node_id), GArray *, module_id), GList *, channel);
-        if (waiting_buffers == 0)
-        {
-    unlock_framework();
-          //  TODO
-          //  *data_length = 0;
-          //  *data = 0;
-            return;
-        }
-        channel_data *cd = (channel_data *)(waiting_buffers->data);
-
-        // TODO
-        //*data_length = cd->length;
-        //*data = malloc(cd->length);
-        //memcpy(*data, cd->data, cd->length);
-    unlock_framework();
-    return;
-}
-
-void net_process_get_data(int s, int sending_node_id)
+/// Receive and process a get_data message from another node. For the packet format see net_send_get_data() function.
+static void net_process_get_data(int s, int sending_node_id)
 {
     int32_t module_id, channel, get_data_id;
 
@@ -307,10 +273,11 @@ void net_process_get_data(int s, int sending_node_id)
       !net_recv_int32t(s, &get_data_id, sending_node_id)
     )
         return;
-    net_get_data(sending_node_id, module_id, channel, get_data_id);
+    get_data_from_remote(sending_node_id, module_id, channel, get_data_id);
 }
 
-void net_process_subscribed_data(int s, int sending_node_id)
+/// Receive and process a subscribed data message from another node. For the packet format see net_send_subscribed_data() function.
+static void net_process_subscribed_data(int s, int sending_node_id)
 {
     int32_t sending_module_id, channel, data_length;
     uint8_t *data;
@@ -324,7 +291,8 @@ void net_process_subscribed_data(int s, int sending_node_id)
     mato_post_data(sending_module_id + sending_node_id * NODE_MULTIPLIER, channel, data_length, data);
 }
 
-void net_process_global_message(int s, int sending_node_id)
+/// Receive and process a global message from another node. For the packet format see net_send_global_message() function.
+static void net_process_global_message(int s, int sending_node_id)
 {
     int32_t sending_module_id, message_id, msg_length;
     uint8_t *message_data;
@@ -338,7 +306,7 @@ void net_process_global_message(int s, int sending_node_id)
 }
 
 /// Receive, unpack, and process a new message arriving from another node from socket s.
-void process_node_message(int s, int sending_node_id)
+static void process_node_message(int s, int sending_node_id)
 {
     int32_t message_type;
     if (!net_recv_int32t(s, &message_type, sending_node_id))
@@ -369,9 +337,11 @@ void process_node_message(int s, int sending_node_id)
     }
 }
 
+//-------------- the core of the networking ----------------------
+
 /// This thread monitors connections to all nodes according to config file and tries to connect/reconnect
 /// those that are not currently connected. It runs in the background from the start till the framework shutdown.
-void *reconnecting_thread(void *arg)
+static void *reconnecting_thread(void *arg)
 {
     struct sockaddr_in my_addr;
 
@@ -424,72 +394,105 @@ void *reconnecting_thread(void *arg)
     mato_dec_system_thread_count();
 }
 
-void *communication_thread(void *arg)
+/// Fills the set of "read" file descriptor sets for the communication_thread() function.
+/// Includes the listening_socket, read end of the select_wakeup_pipe, and all open sockets with the other connected nodes.
+static void fill_select_fd_set(fd_set *rfds, int *nfd)
+{
+    FD_ZERO(rfds);
+    for(int i = 0; i < nodes->len; i++)
+    {
+        if (i == this_node_id) continue;
+        if (g_array_index(nodes,node_info*, i)->is_online == 1)
+        {
+            int s = g_array_index(sockets, int, i);
+            FD_SET(s, rfds);
+            if (s > *nfd) *nfd = s;
+            printf("selected fd(%d) of node %d\n", s, i);
+        }
+    }
+    FD_SET(listening_socket, rfds);
+    if (listening_socket > *nfd) *nfd = listening_socket;
+    FD_SET(select_wakeup_pipe[0], rfds);
+    if (select_wakeup_pipe[0] > *nfd) *nfd = select_wakeup_pipe[0];
+    printf("calling select...\n");
+    (*nfd)++;
+}
+
+/// In case the listening socket is selected in rfds, accept the new connection,
+/// retrieve the login packet from the other node, store its socket, and mark it online.
+static void handle_incomming_connections(fd_set *rfds)
+{
+    if (FD_ISSET(listening_socket, rfds))
+    {
+        printf("Connection ...\n");
+        struct sockaddr_in incomming;
+        socklen_t size = sizeof(struct sockaddr_in);
+        int s = accept(listening_socket, (struct sockaddr *)&incomming, &size);
+        int32_t new_node_id;
+        int retval = recv(s, &new_node_id, sizeof(int32_t), MSG_WAITALL);
+        if(retval < 0)
+        {
+            perror("reading from socket");
+            return;
+        }
+        printf("...from node %d\n", new_node_id);
+        g_array_index(sockets, int, new_node_id) = s;
+        g_array_index(nodes, node_info*, new_node_id)->is_online = 1;
+    }
+}
+
+/// In case a notifications from other threads through wakeup pipe arrives, pick it up.
+static void handle_wakeup_signal(fd_set *rfds)
+{
+    if (FD_ISSET(select_wakeup_pipe[0], rfds))
+    {
+        uint8_t b;
+        read(select_wakeup_pipe[0], &b, 1);
+    }
+}
+
+/// For the messages received from other nodes: process them.
+static void handle_messages_from_other_nodes(fd_set *rfds)
+{
+    for(int i = 0; i < nodes->len; i++)
+        if (g_array_index(nodes,node_info*,i)->is_online == 1)
+        {
+            int s = g_array_index(sockets, int, i);
+            if (FD_ISSET(s, rfds))
+                process_node_message(s, i);
+        }
+}
+
+/// Call the select() OS system call to wait for any communication arriving.
+static int wait_on_select(fd_set *rfds, int nfd)
+{
+    int retval = select(nfd, rfds, 0, 0, 0);
+    printf("select() returns %d\n", retval);
+    if (retval < 0)
+    {
+        perror("Select error");
+        return 0;
+    }
+    return 1;
+}
+
+/// The network receiving thread: uses select() to wait for data arriving from all nodes including new nodes connecting.
+/// Dispatches the arriving messages to the process_node_message() function.
+static void *communication_thread(void *arg)
 {
     mato_inc_system_thread_count();
     fd_set rfds;
     int nfd = 0;
     while (program_runs){
-        FD_ZERO(&rfds);
-        for(int i = 0; i < nodes->len; i++)
-        {
-            if (i == this_node_id) continue;
-            if (g_array_index(nodes,node_info*,i)->is_online == 1)
-            {
-                int s = g_array_index(sockets, int, i);
-                FD_SET(s, &rfds);
-                if (s > nfd) nfd = s;
-                printf("selected fd(%d) of node %d\n", s, i);
-            }
-        }
-        FD_SET(listening_socket, &rfds);
-        if (listening_socket > nfd) nfd = listening_socket;
-        FD_SET(select_wakeup_pipe[0], &rfds);
-        if (select_wakeup_pipe[0] > nfd) nfd = select_wakeup_pipe[0];
-        printf("calling select...\n");
-        nfd++;
-        int retval = select(nfd, &rfds, 0, 0, 0);
-        printf("select() returns %d\n", retval);
-        if (retval < 0)
-        {
-            perror("Select error");
-            break;
-        }
-        if (FD_ISSET(select_wakeup_pipe[0], &rfds))
-        {
-            uint8_t b;
-            read(select_wakeup_pipe[0], &b, 1);
-            continue;
-        }
 
-        if (FD_ISSET(listening_socket,&rfds))
-        {
-            printf("Connection ...\n");
-            struct sockaddr_in incomming;
-            socklen_t size = sizeof(struct sockaddr_in);
-            int s = accept(listening_socket, (struct sockaddr *)&incomming, &size);
-            int32_t new_node_id;
-            retval = recv(s, &new_node_id, sizeof(int32_t), MSG_WAITALL);
-            if(retval<0)
-            {
-                perror("reading from socket");
-                continue;
-            }
-            printf("...from node %d\n", new_node_id);
-            g_array_index(sockets, int, new_node_id) = s;
-            g_array_index(nodes, node_info*, new_node_id)->is_online = 1;
-        }
-        for(int i = 0; i < nodes->len; i++)
-        {
-            if (g_array_index(nodes,node_info*,i)->is_online == 1)
-            {
-                int s = g_array_index(sockets, int, i);
-                if (FD_ISSET(s, &rfds))
-                {
-                    process_node_message(s, i);
-                }
-            }
-        }
+        fill_select_fd_set(&rfds, &nfd);
+        if (
+            !wait_on_select(&rfds, nfd)
+        ) break;
+        handle_wakeup_signal(&rfds);
+        if (!program_runs) break;
+        handle_incomming_connections(&rfds);
+        handle_messages_from_other_nodes(&rfds);
     }
     mato_dec_system_thread_count();
 }
@@ -537,10 +540,12 @@ void start_networking()
           perror("could not create communication thread for framework");
 }
 
+//-------------- low-level outgoing data sending ----------------------
+
 /// Send a zero-terminated character string to socket.
 /// First send its length+1 as int32_t and then data.
-/// See net_recv_bytes() function.
-int net_send_string(int socket, char *str)
+/// See net_send_bytes() and net_recv_bytes() functions.
+static int net_send_string(int socket, char *str)
 {
     int32_t len = strlen(str) + 1;
     if (write(socket, &len, sizeof(int32_t)) < 0)
@@ -550,7 +555,10 @@ int net_send_string(int socket, char *str)
     return 1;
 }
 
-int net_send_bytes(int socket, uint8_t *data, int32_t length)
+/// Send an array of bytes to socket.
+/// First send its length as int32_t and then data.
+/// See net_send_string() and net_recv_bytes() functions.
+static int net_send_bytes(int socket, uint8_t *data, int32_t length)
 {
     if (write(socket, &length, sizeof(int32_t)) < 0)
         return 0;
@@ -561,12 +569,14 @@ int net_send_bytes(int socket, uint8_t *data, int32_t length)
 
 /// Send 32-bit signed integer to a socket.
 /// See net_recv_int32_t() function.
-int net_send_int32t(int socket, int32_t num)
+static int net_send_int32t(int socket, int32_t num)
 {
     if (write(socket, &num, sizeof(int32_t)) < 0)
         return 0;
     else return 1;
 }
+
+//-------------- outgoing messages -------------------------
 
 void net_send_data(int node_id, int get_data_id, uint8_t *data, int32_t data_length)
 {

@@ -80,7 +80,7 @@ GList *decrement_references(GList *data_buffers, channel_data *to_be_decremented
 }
 
 /// The main loop of the framework thread that takes care of redistributing all the messages posted by the modules.
-void *mato_thread(void *arg)
+static void *mato_thread(void *arg)
 {
     channel_data *cd;
     mato_inc_system_thread_count();
@@ -223,7 +223,8 @@ void remove_names_types(int node_id)
     }
 }
 
-void remove_remote_module_from_subscriptions(GArray *node_subscriptions, int node, int node_id_of_module, int module)
+/// A remote module has been deleted, we have to make sure it will not appear in the subscriptions anymore.
+static void remove_remote_module_from_subscriptions(GArray *node_subscriptions, int node, int node_id_of_module, int module)
 {
     GArray* module_subscriptions = g_array_index(node_subscriptions, GArray*, module);
     int channel_number = module_subscriptions->len;
@@ -324,7 +325,6 @@ void remove_subscription(int subscribed_node_id, int subscribed_module_id, int c
     }
 }
 
-/// A constructor for the module_info structure.
 module_info *new_module_info(int node_id, int module_id, char *module_name, char *module_type)
 {
     module_info *info = (module_info *)malloc(sizeof(module_info));
@@ -337,7 +337,7 @@ module_info *new_module_info(int node_id, int module_id, char *module_name, char
 }
 
 /// signal handler, intercept CTRL-C
-void intHandler(int signum)
+static void intHandler(int signum)
 {
     program_runs = 0;
     printf("...CTRL-C hit, terminating\n");
@@ -395,4 +395,58 @@ channel_data *new_channel_data(int node_id, int module_id, int channel_id, int l
     cd->data = data;
     cd->references = 0;
     return cd;
+}
+
+void subscribe_channel_from_remote_node(int remote_node_id, int subscribed_module_id, int channel)
+{
+    subscription *new_subscription = (subscription *)malloc(sizeof(subscription));
+    new_subscription->type = data_copy;
+    new_subscription->callback = 0;
+    new_subscription->subscriber_module_id = 0;
+    new_subscription->subscriber_node_id = remote_node_id;
+    lock_framework();
+        new_subscription->subscription_id = get_free_subscription_id();
+        GArray *channel_subscriptions = g_array_index(g_array_index(g_array_index(subscriptions, GArray *, this_node_id), GArray *, subscribed_module_id), GArray *, channel);
+        g_array_append_val(channel_subscriptions, new_subscription);
+    unlock_framework();
+}
+
+void unsubscribe_channel_from_remote_node(int remote_node_id, int subscribed_module_id, int channel)
+{
+    lock_framework();
+        GArray *subscriptions_for_channel = g_array_index(g_array_index(g_array_index(subscriptions, GArray *,this_node_id), GArray *, subscribed_module_id), GArray *, channel);
+        int number_of_channel_subscriptions = subscriptions_for_channel->len;
+        for (int i = 0; i < number_of_channel_subscriptions; i++)
+        {
+            subscription *s = (subscription *)g_array_index(subscriptions_for_channel, GArray *, i);
+            if (s->subscriber_node_id == remote_node_id)
+            {
+                free(s);
+                g_array_remove_index_fast(subscriptions_for_channel, i);
+                break;
+            }
+        }
+    unlock_framework();
+}
+
+void get_data_from_remote(int remote_node_id, int module_id, int channel, int get_data_id)
+{
+    lock_framework();
+        GList *waiting_buffers = g_array_index(g_array_index(g_array_index(buffers, GArray *,this_node_id), GArray *, module_id), GList *, channel);
+        if (waiting_buffers == 0)
+        {
+    unlock_framework();
+          //  TODO
+          //  *data_length = 0;
+          //  *data = 0;
+            return;
+        }
+        channel_data *cd = (channel_data *)(waiting_buffers->data);
+
+        // TODO
+        //*data_length = cd->length;
+        //*data = malloc(cd->length);
+        //memcpy(*data, cd->data, cd->length);
+    unlock_framework();
+    return;
 }
