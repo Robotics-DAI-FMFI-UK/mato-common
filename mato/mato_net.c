@@ -108,7 +108,7 @@ void net_mato_init(int this_node_identifier)
 
 void net_mato_shutdown()
 {
-    uint8_t wakeup_byte;
+    uint8_t wakeup_byte = 123;
     program_runs = 0;
 
     if (write(select_wakeup_pipe[1], &wakeup_byte, 1) < 0)
@@ -129,7 +129,8 @@ static void node_disconnected(int s, int node_id)
     printf("node %d has disconnected\n", node_id);
     lock_framework();
         remove_node_buffers(node_id);
-        remove_node_from_subscriptions(node_id);
+        //TODO
+        //remove_node_from_subscriptions(node_id);
         remove_names_types(node_id);
     unlock_framework();
 }
@@ -160,12 +161,13 @@ static int net_recv_int32t(int s, int32_t *num, int sending_node_id)
 /// See net_send_string() function.
 static int net_recv_bytes(int s, uint8_t **str, int32_t *str_len, int sending_node_id)
 {
-
     if (!net_recv_int32t(s, str_len, sending_node_id))
         return 0;
+//    printf("----strlen=%d\n", *str_len);
     *str = (uint8_t *)malloc(*str_len);
     int retval = recv(s, *str, *str_len, MSG_WAITALL);
-    if(retval<0)
+//    printf("----retval=%d\n", retval);
+    if (retval < 0)
     {
         perror("reading from socket");
         return 0;
@@ -175,6 +177,7 @@ static int net_recv_bytes(int s, uint8_t **str, int32_t *str_len, int sending_no
         node_disconnected(s, sending_node_id);
         return 0;
     }
+//    printf("---str=%s\n", *str);
     return 1;
 }
 
@@ -208,7 +211,7 @@ void net_delete_module_instance(int node_id, int module_id)
 
 //-------------- handling incoming messages ----------------------
 
-/// Receive and process new module instance message from another node. For the packet format, see net_announce_new_module() function.
+/// Receive and process new module instance message from another node. For the packet format, see net_broadcast_new_module() function.
 static void net_process_new_module(int s, int sending_node_id)
 {
     int32_t node_id, module_id, number_of_channels, ignore;
@@ -247,6 +250,7 @@ static void net_process_subscribe_module(int s, int sending_node_id)
         !net_recv_int32t(s, &channel, sending_node_id)
     )
         return;
+    //printf("%d received subscribe(%d,%d) from %d\n", this_node_id, subscribed_module_id, channel, sending_node_id);
     subscribe_channel_from_remote_node(sending_node_id, subscribed_module_id, channel);
 }
 
@@ -300,7 +304,6 @@ static void net_process_subscribed_data(int s, int sending_node_id)
     if (
         !net_recv_int32t(s, &sending_module_id, sending_node_id) ||
         !net_recv_int32t(s, &channel, sending_node_id) ||
-        !net_recv_int32t(s, &data_length, sending_node_id) ||
         !net_recv_bytes(s, &data, &data_length, sending_node_id)
     )
         return;
@@ -318,15 +321,17 @@ static void net_process_global_message(int s, int sending_node_id)
         !net_recv_bytes(s, &message_data, &msg_length, sending_node_id)
     )
         return;
-    mato_send_global_message(sending_module_id+sending_node_id*NODE_MULTIPLIER, message_id, msg_length, message_data);
+    mato_send_global_message(sending_module_id, message_id, msg_length, message_data);
 }
 
 /// Receive, unpack, and process a new message arriving from another node from socket s.
 static void process_node_message(int s, int sending_node_id)
 {
+    //printf("message from node %d\n", sending_node_id);
     int32_t message_type;
     if (!net_recv_int32t(s, &message_type, sending_node_id))
         return;
+    //printf("message_type=%d\n", message_type);
 
     switch(message_type){
         case MSG_NEW_MODULE_INSTANCE:
@@ -363,6 +368,7 @@ static void inform_about_our_modules(int node_id)
         int module_count = g_array_index(module_names, GArray *, this_node_id)->len;
         for (int module_id = 0; module_id < module_count; module_id++)
         {
+            // TODO: this sometimes probably gets announced "double", if the node connects in a wrong sync
             net_send_new_module(node_id, module_id);
         }
     unlock_framework();
@@ -415,6 +421,11 @@ static void *reconnecting_thread(void *arg)
                 g_array_index(sockets, int, node_id) = s;
                 g_array_index(nodes, node_info*, node_id)->is_online = 1;
                 printf("connected to %d\n", node_id);
+
+                uint8_t wakeup_byte = 123;
+                if (write(select_wakeup_pipe[1], &wakeup_byte, 1) < 0)
+                    perror("could not wakeup networking thread");
+
                 inform_about_our_modules(node_id);
                 continue;
             }
@@ -581,8 +592,10 @@ void start_networking()
 static int net_send_string(int socket, char *str)
 {
     int32_t len = strlen(str) + 1;
+    //printf("sending %d...\n", len);
     if (write(socket, &len, sizeof(int32_t)) < 0)
         return 0;
+    //printf("sending %s...\n", str);
     if (write(socket, str, len) < 0)
         return 0;
     return 1;
@@ -618,7 +631,6 @@ void net_send_data(int node_id, int get_data_id, uint8_t *data, int32_t data_len
 
     if (
       !net_send_int32t(socket, MSG_DATA)  ||
-      !net_send_int32t(socket, this_node_id) ||
       !net_send_int32t(socket, get_data_id) ||
       !net_send_bytes(socket, data, data_length)
     )
@@ -633,7 +645,6 @@ void net_send_subscribed_data(int subscribed_node_id, channel_data *cd)
 
     if (
         !net_send_int32t(socket, MSG_SUBSCRIBED_DATA)  ||
-        !net_send_int32t(socket, this_node_id) ||
         !net_send_int32t(socket, cd->module_id) ||
         !net_send_int32t(socket, cd->channel_id) ||
         !net_send_bytes(socket, cd->data, cd->length)
@@ -665,7 +676,6 @@ void net_send_new_module(int node_id, int module_id)
 
     if (
         !net_send_int32t(s, MSG_NEW_MODULE_INSTANCE)  ||
-        !net_send_int32t(s, this_node_id) ||
         !net_send_int32t(s, module_id) ||
         !net_send_string(s, module_name) ||
         !net_send_string(s, module_type) ||
@@ -681,7 +691,6 @@ void net_send_get_data(int node_id, int module_id, int channel, int get_data_id)
     int s = g_array_index(sockets, int, node_id);
     if (
       !net_send_int32t(s, MSG_GET_DATA)  ||
-      !net_send_int32t(s, this_node_id) ||
       !net_send_int32t(s, module_id) ||
       !net_send_int32t(s, channel) ||
       !net_send_int32t(s, get_data_id)
@@ -703,7 +712,6 @@ void net_send_delete_module(int module_id)
 
         if (
             !net_send_int32t(s, MSG_DELETED_MODULE_INSTANCE)  ||
-            !net_send_int32t(s, this_node_id) ||
             !net_send_int32t(s, module_id)
         )
         {
@@ -715,10 +723,11 @@ void net_send_delete_module(int module_id)
 
 void net_send_subscribe(int node_id, int module_id, int channel)
 {
+    //printf("%d sending subscribe(%d,%d) to %d\n", this_node_id, module_id, channel, node_id);
+
     int s = g_array_index(sockets, int, node_id);
     if (
       !net_send_int32t(s, MSG_SUBSCRIBE)  ||
-      !net_send_int32t(s, this_node_id) ||
       !net_send_int32t(s, module_id) ||
       !net_send_int32t(s, channel)
     )
@@ -732,7 +741,6 @@ void net_send_unsubscribe(int node_id, int module_id, int channel)
     int s = g_array_index(sockets, int, node_id);
     if (
       !net_send_int32t(s, MSG_UNSUBSCRIBE)  ||
-      !net_send_int32t(s, this_node_id) ||
       !net_send_int32t(s, module_id) ||
       !net_send_int32t(s, channel)
     )
@@ -753,7 +761,6 @@ void net_send_global_message(int sending_module_id, int message_id, uint8_t *mes
 
         if (
             !net_send_int32t(s, MSG_GLOBAL_MESSAGE) ||
-            !net_send_int32t(s, this_node_id) ||
             !net_send_int32t(s, sending_module_id) ||
             !net_send_int32t(s, message_id) ||
             !net_send_bytes(s, message_data, message_length)
@@ -762,5 +769,5 @@ void net_send_global_message(int sending_module_id, int message_id, uint8_t *mes
             node_disconnected(s, node_id);
         }
     }
-    printf("forwarded message %d to other nodes\n", message_id);
+    //printf("forwarded message %d to other nodes\n", message_id);
 }
