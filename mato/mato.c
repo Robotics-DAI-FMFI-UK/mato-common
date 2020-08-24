@@ -27,8 +27,12 @@ int mato_create_new_module_instance(const char *module_type, const char *module_
     lock_framework();
 
         int module_id = get_free_module_id();
-        g_array_append_val(g_array_index(module_names, GArray *, this_node_id), module_name);
-        g_array_append_val(g_array_index(module_types, GArray *, this_node_id), module_type);
+        char *name = malloc(strlen(module_name + 1));
+        strcpy(name, module_name);
+        g_array_append_val(g_array_index(module_names, GArray *, this_node_id), name);
+        char *type = malloc(strlen(module_name + 1));
+        strcpy(type, module_type);
+        g_array_append_val(g_array_index(module_types, GArray *, this_node_id), type);
 
         GArray *channels_subscriptions = g_array_new(0, 0, sizeof(GArray *));
         g_array_append_val(g_array_index(subscriptions,GArray *,this_node_id), channels_subscriptions);
@@ -97,6 +101,7 @@ void mato_delete_module_instance(int module_id)
 
 //    printf("%d: instance_data->len=%d\n", module_id, instance_data->len);
         char *module_type = g_array_index(g_array_index(module_types, GArray *, this_node_id), char *, module_id);
+        char *module_name = g_array_index(g_array_index(module_names, GArray *, this_node_id), char *, module_id);
         void *data = g_array_index(instance_data, void *, module_id);
 
         module_specification *spec = (module_specification *)g_hash_table_lookup(module_specifications, module_type);
@@ -124,7 +129,9 @@ void mato_delete_module_instance(int module_id)
         void *zero = 0;
         g_array_index(g_array_index(subscriptions, GArray *, this_node_id), subscription *, module_id) = 0;
         g_array_index(g_array_index(module_names, GArray *, this_node_id), char *, module_id) = 0;
+        free(module_name);
         g_array_index(g_array_index(module_types, GArray *, this_node_id), char *, module_id) = 0;
+        free(module_type);
         g_array_index(instance_data, void *, module_id) = 0;
 
         net_send_delete_module(module_id);
@@ -194,7 +201,6 @@ void mato_unsubscribe(int module_id, int channel, int subscription_id)
     unlock_framework();
 }
 
-
 void *mato_get_data_buffer(int size)
 {
     return malloc(size);
@@ -217,19 +223,18 @@ int mato_send_global_message(int module_id_sender, int message_id, int msg_lengt
     int local_module_id_sender = module_id_sender % NODE_MULTIPLIER;
     int sending_node_id = module_id_sender / NODE_MULTIPLIER;
 
-    if (sending_node_id != this_node_id)
-        for (int node_id = 0; node_id < nodes->len; node_id++)
-        {
-            if (this_node_id == node_id) continue;
-            net_send_global_message(module_id_sender, message_id, (uint8_t *)message_data, msg_length);
-        }
+    // a message from this node is broadcasted to other nodes
+    if (sending_node_id == this_node_id)
+        net_send_global_message(module_id_sender, message_id, (uint8_t *)message_data, msg_length);
+
+    // all messages are delivered to all our modules
     int our_modules_count = g_array_index(module_names, GArray *, this_node_id)->len;
     for (int module_id = 0; module_id < our_modules_count; module_id++)
     {
         char *module_type = g_array_index(g_array_index(module_types, GArray *, this_node_id), char *, module_id);
         if (module_type != 0)
         {
-            if (module_id != local_module_id_sender)  // not delivering to the msg. originator
+            if (module_id + this_node_id * NODE_MULTIPLIER != module_id_sender)  // not delivering to the msg. originator
             {
                 module_specification *spec = (module_specification *)g_hash_table_lookup(module_specifications, module_type);
                 if (spec != 0)

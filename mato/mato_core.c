@@ -227,17 +227,19 @@ void remove_names_types(int node_id)
 static void remove_remote_module_from_subscriptions(GArray *node_subscriptions, int node, int node_id_of_module, int module)
 {
     GArray* module_subscriptions = g_array_index(node_subscriptions, GArray*, module);
+    if (module_subscriptions == 0) return;
     int channel_number = module_subscriptions->len;
     for(int channel=0; channel < channel_number; channel++)
     {
         GArray* channel_subscriptions = g_array_index(module_subscriptions, GArray*, module);
+        if (channel_subscriptions == 0) continue;
         int subscription_number = channel_subscriptions->len;
         for(int sub=0; sub < subscription_number; sub++)
         {
             subscription* subsc = g_array_index(channel_subscriptions, subscription*,sub);
-            if (node == node_id_of_module || subsc -> subscriber_node_id == node_id_of_module)
+            if (node == node_id_of_module || subsc->subscriber_node_id == node_id_of_module)
             {
-                remove_subscription(node,module,channel,subsc->subscription_id);
+                remove_subscription(node, module, channel, subsc->subscription_id);
             }
         }
     }
@@ -250,12 +252,13 @@ void remove_node_from_subscriptions(int node_id)
     int number_nodes = nodes->len;
     for(int node=0; node < number_nodes; node++)
     {
-        // OUCH
-        GArray* node_subscriptions = 0; //g_array_index(subscripions, GArray*, node);
+        if (g_array_index(nodes, node_info *, node)->is_online == 0) continue;
+        GArray* node_subscriptions = g_array_index(subscriptions, GArray*, node);
         int module_number = node_subscriptions->len;
         for(int module=0; module < module_number; module++)
         {
-            remove_remote_module_from_subscriptions(node_subscriptions, node, node_id, module);
+            if (g_array_index(g_array_index(module_names, GArray *, node), char *, module) != 0)
+                remove_remote_module_from_subscriptions(node_subscriptions, node, node_id, module);
         }
     }
 }
@@ -289,7 +292,7 @@ void store_new_remote_module(int node_id, int module_id, char *module_name, char
         }
     unlock_framework();
 
-    printf("got info about new module %d from node %d (%s|%s) with %d channels\n", node_id, module_id, module_name, module_type, number_of_channels);
+    //printf("got info about new module %d from node %d (%s|%s) with %d channels\n", node_id, module_id, module_name, module_type, number_of_channels);
 }
 
 int get_free_module_id() // is not thread-safe

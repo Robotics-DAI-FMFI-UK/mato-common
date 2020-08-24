@@ -46,7 +46,6 @@ void net_broadcast_new_module(int module_id);
 /// Packet format:
 /// -------------------------------------
 /// MSG_NEW_MODULE_INSTANCE   int32
-/// sending_node_id           int32
 /// [local]module_id          int32
 /// len(module_name)+1        int32
 /// module_name               variable
@@ -62,7 +61,6 @@ void net_send_new_module(int node_id, int module_id);
 /// Packet format:
 /// -------------------------------------
 /// MSG_SUBSCRIBED_DATA       int32
-/// sending_node_id           int32
 /// module_id                 int32
 /// channel                   int32
 /// length                    int32
@@ -76,7 +74,6 @@ void net_send_subscribed_data(int subscribed_node_id, channel_data *cd);
 /// Packet format:
 /// -------------------------------------
 /// MSG_DATA                  int32
-/// sending_node_id           int32
 /// get_data_id               int32
 /// len(data)                 int32
 /// data                      variable
@@ -89,7 +86,6 @@ void net_send_data(int node_id, int get_data_id, uint8_t *data, int32_t data_len
 /// Packet format:
 /// -------------------------------------
 /// MSG_GET_DATA              int32
-/// sending_node_id           int32
 /// module_id                 int32
 /// channel                   int32
 /// get_data_id               int32
@@ -102,7 +98,6 @@ void net_send_get_data(int node_id, int module_id, int channel, int get_data_id)
 /// Packet format:
 /// -------------------------------------
 /// MSG_DELETED_MODULE_INSTANCE  int32
-/// sending_node_id              int32
 /// module_id                    int32
 /// -------------------------------------
 /// ~~~~
@@ -113,7 +108,6 @@ void net_send_delete_module(int module_id);
 /// Packet format:
 /// -------------------------------------
 /// MSG_SUBSCRIBE             int32
-/// sending_node_id           int32
 /// module_id                 int32
 /// channel                   int32
 /// -------------------------------------
@@ -125,7 +119,6 @@ void net_send_subscribe(int node_id, int module_id, int channel);
 /// Packet format:
 /// -------------------------------------
 /// MSG_SUBSCRIBE             int32
-/// sending_node_id           int32
 /// module_id                 int32
 /// channel                   int32
 /// -------------------------------------
@@ -137,7 +130,6 @@ void net_send_unsubscribe(int node_id, int module_id, int channel);
 /// Packet format:
 /// -------------------------------------
 /// MSG_GLOBAL_MESSAGE        int32
-/// sending_node_id           int32
 /// sending_module_id         int32
 /// message_id                int32
 /// len(message_data)         int32

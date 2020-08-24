@@ -78,12 +78,14 @@ static void notify_about_hello_messages(module_AB_instance_data *data)
 void *module_AB_thread(void *arg)
 {
     time_t tm;
+    time(&tm);
     mato_inc_thread_count();
     module_AB_instance_data *data = (module_AB_instance_data *)arg;
 
     printf("%u module_%c_thread (%d) enters barrier...\n", (unsigned int)(tm - tm0), data->type, data->module_id);
 
     // all modules barrier
+    printf("module %d sends HELLO message\n", data->module_id);
     mato_send_global_message(data->module_id, MESSAGE_HELLO, 3, "hi");
     wait_for_hello_messages(data);
 
@@ -169,12 +171,13 @@ void AB_start(void *instance_data)
             {
                sprintf(module_name, "n%d_%c%d", node_id, type, ord);
                module_ids[node_id][type - 'A'][ord] = mato_get_module_id(module_name);
+               printf("# %s is %d\n", module_name, module_ids[node_id][type - 'A'][ord]);
             }
-    char my_node = my_name[1];
+    int my_node = my_name[1] - '0';
     char my_type = my_name[3];
-    char my_ord = my_name[4];
+    int my_ord = my_name[4] - '0';
 
-    data->subscribed_to_module_id = module_ids[(my_node + 1) % 3]['A' + 'B' - my_type][1 - my_ord];
+    data->subscribed_to_module_id = module_ids[(my_node + 1) % 3][('A' + 'B' - my_type) - 'A'][1 - my_ord];
 
     // n2_B{01} is not forwarding received messages further
     if ((my_node == 2) && (my_type == 'B')) data->forwarder = 0;
@@ -185,6 +188,7 @@ void AB_start(void *instance_data)
         return;
     }
 
+    printf("module %s(%d) subscribing to module (%d)...\n", my_name, module_id, data->subscribed_to_module_id);
     data->my_subscription_id = mato_subscribe(module_id, data->subscribed_to_module_id, 0, message_from_other, borrowed_pointer);
 
     pthread_t t;
@@ -216,7 +220,7 @@ void AB_global_message(void *instance_data, int module_id_sender, int message_id
     time(&tm);
     if (message_id == MESSAGE_HELLO)
     {
-        printf("%u module %c(%d) received global HELLO messsage: '%s'\n", (unsigned int)(tm - tm0), my_data->type, my_data->module_id, data);
+        printf("%u module %c(%d) received global HELLO messsage: '%s' from %d\n", (unsigned int)(tm - tm0), my_data->type, my_data->module_id, data, module_id_sender);
         AB_lock(my_data);
             my_data->hello_count++;
             if (my_data->hello_count == NUMBER_OF_HELLOs_TO_WAIT_FOR)
