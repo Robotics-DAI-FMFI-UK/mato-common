@@ -275,13 +275,24 @@ void remove_node_buffers(int node_id)
 void store_new_remote_module(int node_id, int module_id, char *module_name, char *module_type, int number_of_channels)
 {
     lock_framework();
-        g_array_append_val(g_array_index(module_names, GArray *, node_id), module_name);
-        g_array_append_val(g_array_index(module_types, GArray *, node_id), module_type);
+        GArray *node_modules_names = g_array_index(module_names, GArray *, node_id);
+        while (module_id >= node_modules_names->len)
+        {
+			GArray *zero = 0;
+            g_array_append_val(node_modules_names, zero);
+            g_array_append_val(g_array_index(module_types, GArray *, node_id), zero);
+            g_array_append_val(g_array_index(subscriptions, GArray *, node_id), zero);
+            g_array_append_val(g_array_index(buffers, GArray *, node_id), zero);
+		}
+        g_array_index(g_array_index(module_names, GArray *, node_id), char *, module_id) = module_name;
+        g_array_index(g_array_index(module_types, GArray *, node_id), char *, module_id) = module_type;
+        
         GArray *channels_subscriptions = g_array_new(0, 0, sizeof(GArray *));
-        g_array_append_val(g_array_index(subscriptions, GArray *,node_id), channels_subscriptions);
+        g_array_index(g_array_index(subscriptions, GArray *, node_id), GArray *, module_id) = channels_subscriptions;
+        
         GArray *module_buffers = g_array_new(0, 0, sizeof(GList *));
-        g_array_append_val(g_array_index(buffers,GArray *, node_id), module_buffers);
-
+        g_array_index(g_array_index(buffers, GArray *, node_id), GArray *, module_id) = module_buffers;
+        
         for (int channel_id = 0; channel_id < number_of_channels; channel_id++)
         {
            GArray *subs_for_channel = g_array_new(0, 0, sizeof(GArray *));
@@ -292,7 +303,7 @@ void store_new_remote_module(int node_id, int module_id, char *module_name, char
         }
     unlock_framework();
 
-    //printf("got info about new module %d from node %d (%s|%s) with %d channels\n", node_id, module_id, module_name, module_type, number_of_channels);
+    printf("got info about new module %d from node %d (%s|%s) with %d channels\n", module_id, node_id, module_name, module_type, number_of_channels);
 }
 
 int get_free_module_id() // is not thread-safe
