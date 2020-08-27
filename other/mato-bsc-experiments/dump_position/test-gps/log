@@ -1,0 +1,3 @@
+#!/bin/bash
+TIMESTAMP=`date +%s`
+nohup ./gps-test & > gps_$TIMESTAMP.log

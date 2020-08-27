@@ -1,0 +1,9 @@
+#!/bin/bash
+
+cd dump_position/cpp/build
+./ZED_Positional_Tracking &
+cd ~/dump_position/test-gps
+./log
+cd ~/dump_position/arduino
+./mato
+
