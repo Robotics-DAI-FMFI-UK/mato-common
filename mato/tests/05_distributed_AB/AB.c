@@ -9,7 +9,7 @@
 #include "../../mato.h"
 #include "AB.h"
 
-#define NUMBER_OF_HELLOs_TO_WAIT_FOR (12 - 1)
+#define NUMBER_OF_HELLOs_TO_WAIT_FOR 3
 
 typedef struct {
             char type;
@@ -85,8 +85,6 @@ void *module_AB_thread(void *arg)
     printf("%u module_%c_thread (%d) enters barrier...\n", (unsigned int)(tm - tm0), data->type, data->module_id);
 
     // all modules barrier
-    printf("module %d sends HELLO message\n", data->module_id);
-    mato_send_global_message(data->module_id, MESSAGE_HELLO, 3, "hi");
     wait_for_hello_messages(data);
 
     printf("%u module_%c_thread (%d) leaves barrier...\n", (unsigned int)(tm - tm0), data->type, data->module_id);

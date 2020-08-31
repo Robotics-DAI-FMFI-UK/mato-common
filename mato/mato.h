@@ -30,7 +30,6 @@
 ///  the data of the message the module is sending. The framework deallocates the data buffers when they are
 ///  not needed anymore automatically, unless the copy_mode is specified.
 
-
 typedef enum subscription_type_enum {direct_data_ptr = 1, data_copy = 2, borrowed_pointer = 3} subscription_type;
 
 /// Create instance data of a module and initialize it. Each module should define this callback.
@@ -128,7 +127,7 @@ void *mato_get_data_buffer(int size);
 void mato_post_data(int id_of_posting_module, int channel, int data_length, void *data);
 
 /// The main program or any module instance can post a global message to be posted to all modules immediatelly in the same
-/// thread by calling this function.
+/// thread by calling this function. To send a global message from the main program, use mato_main_program_module_id().
 int mato_send_global_message(int module_id_sender, int message_id, int msg_length, void *message_data);
 
 /// Retrieve the most recently posted data of some channel of some module instance. Data is copied into new buffer allocated and its pointer is returned in data variable,
@@ -178,6 +177,9 @@ int mato_threads_running();
 
 /// Releases all resources used by the framework, recommended to be called before the main program terminates
 void mato_shutdown();
+
+/// Returns a module id for the "main program module", which can be used in mato_send_global_message() function.
+int mato_main_program_module_id();
 
 /// This variable is set to non-zero when the program is about to terminate.
 /// All threads should terminate at the earliest possbility

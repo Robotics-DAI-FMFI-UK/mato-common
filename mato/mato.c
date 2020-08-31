@@ -446,3 +446,9 @@ void mato_shutdown()
 {
     net_mato_shutdown();
 }
+
+int mato_main_program_module_id()
+{
+    return this_node_id * NODE_MULTIPLIER + MATO_MAIN_PROGRAM_MODULE;
+}
+

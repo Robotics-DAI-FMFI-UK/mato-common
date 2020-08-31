@@ -769,5 +769,5 @@ void net_send_global_message(int sending_module_id, int message_id, uint8_t *mes
             node_disconnected(s, node_id);
         }
     }
-    //printf("forwarded message %d to other nodes\n", message_id);
+    printf("forwarded message %d to other nodes\n", message_id);
 }

@@ -37,6 +37,9 @@ int main(int argc, char **argv)
         while (program_runs && (mato_get_number_of_modules() < 12)) usleep(100000);
         if (!program_runs) break;
 
+        printf("framework %d sends HELLO message\n", this_node_id);
+        mato_send_global_message(mato_main_program_module_id(), MESSAGE_HELLO, 3, "hi");
+
         printf("List of all modules:\n");
         GArray *modules_list = mato_get_list_of_all_modules();
         for(int i = 0; i < modules_list->len; i++)
