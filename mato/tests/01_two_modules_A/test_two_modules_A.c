@@ -45,7 +45,7 @@ int main(int argc, char **argv)
     mato_start();
 
     printf("sending hello message...\n");
-    mato_send_global_message(-1, MESSAGE_HELLO, 9, "greeting");
+    mato_send_global_message(mato_main_program_module_id(), MESSAGE_HELLO, 9, "greeting");
 
     printf("main loop...\n");
 
