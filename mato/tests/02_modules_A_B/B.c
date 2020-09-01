@@ -49,7 +49,7 @@ void *module_B_thread(void *arg)
     for (int i = 0; program_runs && (i < 5); i++)
     {
         int *val = mato_get_data_buffer(sizeof(int));
-	*val = data->module_id * 10 + i;
+        *val = data->module_id * 10 + i;
         mato_post_data(data->module_id, 0, sizeof(int), val);
         sleep(2);
     }
@@ -70,7 +70,7 @@ void message_from_A(void *instance_data, int sender_module_id, int data_length, 
     if (data->module_id == b1)
     {
         int *fwd_val = mato_get_data_buffer(sizeof(int));
-	*fwd_val = val + 1000;
+        *fwd_val = val + 1000;
         mato_post_data(data->module_id, 0, sizeof(int), fwd_val);
     }
 }
@@ -79,8 +79,8 @@ void B_start(void *instance_data)
 {
     module_B_instance_data *data = (module_B_instance_data *)instance_data;
 
-    //b1 wants to subscribe to a2
-    //b2 wants to subscribe to a1
+    //b1 wants to subscribe to a1
+    //b2 wants to subscribe to a2
     
     int module_id = data->module_id;
     char *my_name = mato_get_module_name(module_id);

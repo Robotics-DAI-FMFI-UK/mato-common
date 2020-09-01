@@ -89,7 +89,7 @@ void *module_AB_thread(void *arg)
 
     printf("%u module_%c_thread (%d) leaves barrier...\n", (unsigned int)(tm - tm0), data->type, data->module_id);
 
-    sleep(2 * (data->module_id % 5));
+    sleep(1 + 2 * (data->module_id % 5));
     for (int i = 0; program_runs && (i < 5); i++)
     {
         int *val = mato_get_data_buffer(sizeof(int));

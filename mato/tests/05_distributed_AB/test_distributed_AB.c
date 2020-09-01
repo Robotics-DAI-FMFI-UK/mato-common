@@ -5,6 +5,27 @@
 #include "../../mato.h"
 #include "AB.h"
 
+void print_list_of_modules()
+{
+        printf("List of all modules:\n");
+        GArray *modules_list = mato_get_list_of_all_modules();
+        for(int i = 0; i < modules_list->len; i++)
+        {
+            module_info *info = g_array_index(modules_list, module_info *, i);
+            printf("%d: module_id=%d, type=%s, name=%s\n", i, info->module_id, info->type, info->name);
+        }
+        mato_free_list_of_modules(modules_list);
+
+        printf("List of all modules of type B:\n");
+        modules_list = mato_get_list_of_modules("B");
+        for(int i = 0; i < modules_list->len; i++)
+        {
+            module_info *info = g_array_index(modules_list, module_info *, i);
+            printf("%d: module_id=%d, type=%s, name=%s\n", i, info->module_id, info->type, info->name);
+        }
+        mato_free_list_of_modules(modules_list);
+}
+
 int main(int argc, char **argv)
 {
     int this_node_id = 0;
@@ -40,23 +61,7 @@ int main(int argc, char **argv)
         printf("framework %d sends HELLO message\n", this_node_id);
         mato_send_global_message(mato_main_program_module_id(), MESSAGE_HELLO, 3, "hi");
 
-        printf("List of all modules:\n");
-        GArray *modules_list = mato_get_list_of_all_modules();
-        for(int i = 0; i < modules_list->len; i++)
-        {
-            module_info *info = g_array_index(modules_list, module_info *, i);
-            printf("%d: module_id=%d, type=%s, name=%s\n", i, info->module_id, info->type, info->name);
-        }
-        mato_free_list_of_modules(modules_list);
-
-        printf("List of all modules of type B:\n");
-        modules_list = mato_get_list_of_modules("B");
-        for(int i = 0; i < modules_list->len; i++)
-        {
-            module_info *info = g_array_index(modules_list, module_info *, i);
-            printf("%d: module_id=%d, type=%s, name=%s\n", i, info->module_id, info->type, info->name);
-        }
-        mato_free_list_of_modules(modules_list);
+        print_list_of_modules();
 
         printf("starting...\n");
         mato_start();
