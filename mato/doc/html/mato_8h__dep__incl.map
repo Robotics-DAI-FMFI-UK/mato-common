@@ -1,8 +1,0 @@
-<map id="mato.h" name="mato.h">
-<area shape="rect" id="node1" title=" " alt="" coords="53,5,121,32"/>
-<area shape="rect" id="node2" href="$mato_8c.html" title=" " alt="" coords="19,229,85,256"/>
-<area shape="rect" id="node3" href="$mato__core_8h.html" title=" " alt="" coords="86,80,189,107"/>
-<area shape="rect" id="node5" href="$mato__core_8c.html" title=" " alt="" coords="110,229,213,256"/>
-<area shape="rect" id="node6" href="$mato__net_8c.html" title=" " alt="" coords="261,229,355,256"/>
-<area shape="rect" id="node4" href="$mato__net_8h.html" title=" " alt="" coords="175,155,271,181"/>
-</map>
