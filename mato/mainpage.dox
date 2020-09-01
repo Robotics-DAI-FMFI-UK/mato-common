@@ -1,0 +1,71 @@
+/// \mainpage API documentation
+///
+/// This is an automatically generated documentation for the distributed modular control architecture mato-framework. 
+/// We use it to write controllers for mobile robots. It was designed in a robotics group at the Department of Applied Informatics
+/// at Faculty of Mathematics, Physics and Informatics at Comenius University in Bratislava.
+///
+/// \section intro Introduction
+///
+/// This framework assumes the controller to consist of several [somewhat independent] modules. Modules have names and types.
+/// Modules produce data packets through their output channels. Other modules can ask the framework for the most recent message
+/// posted in any of the output channels, or subscribe to any of the output channels to receive all packets.
+/// 
+/// One of the aims of the framework is to maximize the efficiency by minimizing the number of times the data should be copied.
+/// In an ideal situation, they are never copied - the same data as produced by the modules in their output channels can be
+/// read by all the modules that consume the data. Modules can even borrow read-only access to those data for longer time when
+/// needed. Alternately, they may ask for a separate copy, if they need that.
+///
+/// In addition to data travelling through output channels, any module can send a global immediate message.
+///
+/// As contrasted to ROS, modules run in separate threads, not in separate processes.
+///
+/// The framework can run either locally at a single machine, or distributed at several machines interconnected by TCP/IP connections.
+/// When run distributed, it is transparent for the modules on which computational nodes they run, they only have globally available
+/// names (a character string) and ids (integer).
+///
+/// \section howto How to build/use
+/// 
+/// Mato-framework is provided as a collection of .c and .h files that you can include in your projects, so just add them to your
+/// sources and include files. To see an example of use, study the tests/ directory, which contains a readme.txt - description 
+/// of the tests that serves also as a tutorial for the user. See:
+///  https://github.com/Robotics-DAI-FMFI-UK/mato-common/tree/master/mato/tests
+///
+/// \section details Detailed documentation
+///
+/// The API for the framework user is described in mato.h file. 
+/// The internal implementation - for framework developers or people interested in modifying it - is in mato_core.h, mato_core.c, 
+/// mato_net.h, and mato_net.c files.
+///
+/// \section scenario Basic scenario - for the framework user / module designer:
+///
+/// The module designer does the following:
+///  -# define the module_specification structure for the new module type, this structure defines the callback functions for 4 interactions 
+///     in the direction framework to module: creating a new instance, deleting existing instance, starting an instance, and sending a global message.
+///     The structure also specifies the number of output channels of the module instances.
+///  -# provide all those callback functions: the create instance should allocate the so-called "instance_data" - this is a structure where module
+///     instances save ALL their local data, and this structure is kept (maintained) by the framework, 
+///     the delete callback should deallocate this structure. 
+///  -# the start_instance callback typically starts the module-local computational thread, make sure you call 
+///     the mato_inc_thread_count() and mato_dec_thread_count() functions properly.
+///  -# whenever the module wants to produce data in one of its output channels, it does so by calling mato_post_data()
+///  -# to get the most recent copy of data from an output channel of another module, call mato_get_data()
+///  -# to subscribe to all messages at some output channel, call mato_subscribe
+///  -# see more in the mato.h, which is the public interface of the framework for the module designer.
+///
+/// \section whyc Why C?
+///
+/// Mato is written in plain C. We believe C++ is a mistake in the history of computer languages, for a simple reason: the complexity
+/// and reuse (overloading) of elementary language elements is so huge that even an experienced C++ programmer has often a hard time
+/// figuring out the functionality of a legacy code. Even worse, the design principles of C++ clearly go against the very basic principles
+/// of clean code (see the Martin's book on Clean code). Finally, C++ assumes that objects are passed by value (for instance when
+/// saved to STL collections), which means they are always copied, which is against the main advantage/goal of low-level language: efficiency.
+/// Of course, you can go around using pointers, but take an average C++ code and look at it. You do not even know what the code does
+/// unless you study 10 other files around it in detail. Recent updates to standard try to deal with the issues, but as a result, 
+/// the language becomes too complex and still does not provide any guarantees for proper use of the new features. As such, C++ should 
+/// pass to history as a wrong branch in the family of computer languages and be replaced by alternatives. C is not ideal, but it is simple
+/// elegant and easy to read and write. For the efficient data collections, we use the GNU Glib 2.0 library, which currently is the only
+/// dependence.
+/// 
+/// \section lic Licencing and contact
+///
+/// Mato-framework comes with no guarantees and in a form of a public-domain software. See the Mato robot homepage: https://kempelen.dai.fmph.uniba.sk/mato/
