@@ -80,7 +80,7 @@ GList *decrement_references(GList *data_buffers, channel_data *to_be_decremented
 }
 
 /// The main loop of the framework thread that takes care of redistributing all the messages posted by the modules.
-static void *mato_thread(void *arg)
+static void *mato_core_thread(void *arg)
 {
     channel_data *cd;
     mato_inc_system_thread_count();
@@ -207,19 +207,21 @@ static void *mato_thread(void *arg)
     mato_dec_system_thread_count();
 }
 
+/// Essentially removes traces about names and types of all modules of a particular node that has just disconnected.
+/// The outcome is that the names[] and types[] arrays of that node will be empty, and the names and types strings are deallocated.
 void remove_names_types(int node_id)
 {
     GArray* names = g_array_index(module_names, GArray*, node_id);
     GArray* types = g_array_index(module_types, GArray*, node_id);
     int module_number = names->len;
-    for(int module=0; module < module_number; module++)
+    for(int module = 0; module < module_number; module++)
     {
-        char* name = g_array_index(names,char*,0);
-        char* type = g_array_index(types,char*,0);
-        g_array_remove_index_fast(names,0);
-        g_array_remove_index_fast(types,0);
-        free(name);
-        free(type);
+        char* name = g_array_index(names, char*, 0);
+        char* type = g_array_index(types, char*, 0);
+        g_array_remove_index_fast(names, 0);
+        g_array_remove_index_fast(types, 0);
+        if (name) free(name);
+        if (type) free(type);
     }
 }
 
@@ -263,12 +265,14 @@ void remove_node_from_subscriptions(int node_id)
     }
 }
 
+/// Soon to be updated...
 void remove_node_buffers(int node_id)
 {
-    int length = g_array_index(buffers,GArray*,node_id)->len;
+    int length = g_array_index(buffers, GArray*, node_id)->len;
     for(int module_id = 0; module_id < length; module_id++)
     {
-        net_delete_module_instance(node_id, module_id);
+        g_array_index(g_array_index(module_names, GArray *, node_id), char *, module_id) = 0;
+        g_array_index(g_array_index(module_types, GArray *, node_id), char *, module_id) = 0;
     }
 }
 
@@ -278,21 +282,21 @@ void store_new_remote_module(int node_id, int module_id, char *module_name, char
         GArray *node_modules_names = g_array_index(module_names, GArray *, node_id);
         while (module_id >= node_modules_names->len)
         {
-			GArray *zero = 0;
+            GArray *zero = 0;
             g_array_append_val(node_modules_names, zero);
             g_array_append_val(g_array_index(module_types, GArray *, node_id), zero);
             g_array_append_val(g_array_index(subscriptions, GArray *, node_id), zero);
             g_array_append_val(g_array_index(buffers, GArray *, node_id), zero);
-		}
+        }
         g_array_index(g_array_index(module_names, GArray *, node_id), char *, module_id) = module_name;
         g_array_index(g_array_index(module_types, GArray *, node_id), char *, module_id) = module_type;
-        
+
         GArray *channels_subscriptions = g_array_new(0, 0, sizeof(GArray *));
         g_array_index(g_array_index(subscriptions, GArray *, node_id), GArray *, module_id) = channels_subscriptions;
-        
+
         GArray *module_buffers = g_array_new(0, 0, sizeof(GList *));
         g_array_index(g_array_index(buffers, GArray *, node_id), GArray *, module_id) = module_buffers;
-        
+
         for (int channel_id = 0; channel_id < number_of_channels; channel_id++)
         {
            GArray *subs_for_channel = g_array_new(0, 0, sizeof(GArray *));
@@ -391,7 +395,7 @@ void core_mato_init()
     }
 
     pthread_t t;
-    if (pthread_create(&t, 0, mato_thread, 0) != 0)
+    if (pthread_create(&t, 0, mato_core_thread, 0) != 0)
         perror("could not create thread for framework");
 }
 

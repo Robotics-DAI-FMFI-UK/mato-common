@@ -1,0 +1,28 @@
+/// \page data_structures Internal data structures used by mato-framework
+/// Module types are defined by structures stored in module_specifications GArray, indexed by module_id. 
+/// The instance data are kept in instance_data GArray. Both only contain local modules, we do not have this information 
+/// about modules running on other nodes.
+///
+/// \image html specifications_and_instance_data.png
+///
+/// Names and types of the modules are stored in 2D GArray indexed by node_id and module_id:
+///
+/// \image html names_and_types.png
+///
+/// All channel_data structures containing messages received by the message processing thread are kept in the buffers 3D GArray
+/// indexed by node_id, module_id, and channel finally there is a GList where the most recent message is at the top.
+///
+/// \image html buffers.png
+///
+/// Subscriptions bookkeeping structures are kept in subscriptions 4D GArray indexed through node_id, module_id, channel, and subscription 
+/// number (which is nothing than an index). We keep here all local subscriptions, all subscriptions of our modules to external modules
+/// and subscriptions of other nodes to our modules. As long as there is at least one module subscribing to our particular channel,
+/// his node keeps a single remote subscription to us.
+///
+/// \image html subscriptions.png
+///
+/// This simple drawing shows how the data travels from the source =  output channel of some module - i.e. calling mato_post_data(),
+/// through the pipe to the message processing thread - mato_core_thread() that stores the message to buffers and distributes to the subscribers.
+///
+/// \image html sequential_processing_of_incoming_msgs.png 
+

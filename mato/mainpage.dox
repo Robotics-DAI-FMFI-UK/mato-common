@@ -34,7 +34,7 @@
 ///
 /// The API for the framework user is described in mato.h file. 
 /// The internal implementation - for framework developers or people interested in modifying it - is in mato_core.h, mato_core.c, 
-/// mato_net.h, and mato_net.c files.
+/// mato_net.h, and mato_net.c files. See also: \ref data_structures "data structures used by the framework core".
 ///
 /// \section scenario Basic scenario - for the framework user / module designer:
 ///
