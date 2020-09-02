@@ -110,30 +110,8 @@ void mato_delete_module_instance(int module_id)
     spec->delete_instance(data);
     lock_framework();
 
-        GArray *channels_subscriptions = g_array_index(g_array_index(subscriptions, GArray *, this_node_id), GArray *, module_id);
-        int number_of_channels = channels_subscriptions->len;
-
-        for (int i = 0; i < number_of_channels; i++)
-        {
-            GArray *subscriptions_in_channel = g_array_index(channels_subscriptions, GArray *, i);
-            int number_of_subscriptions_in_this_channel = subscriptions_in_channel->len;
-            for (int j = 0; j < number_of_subscriptions_in_this_channel; j++)
-            {
-                subscription *s = g_array_index(subscriptions_in_channel, subscription *, j);
-                free(s);
-            }
-            g_array_free(g_array_index(channels_subscriptions, GArray *, i), 1);
-        }
-
-        g_array_free(g_array_index(g_array_index(subscriptions, GArray *, this_node_id), GArray *, module_id), 1);
-        void *zero = 0;
-        g_array_index(g_array_index(subscriptions, GArray *, this_node_id), subscription *, module_id) = 0;
-        g_array_index(g_array_index(module_names, GArray *, this_node_id), char *, module_id) = 0;
-        free(module_name);
-        g_array_index(g_array_index(module_types, GArray *, this_node_id), char *, module_id) = 0;
-        free(module_type);
+        delete_module_instance(this_node_id, module_id);
         g_array_index(instance_data, void *, module_id) = 0;
-
         net_send_delete_module(module_id);
 
     unlock_framework();
@@ -330,26 +308,40 @@ void mato_release_data(int id_module, int channel, void *data)
     lock_framework();
         int node_id = id_module / NODE_MULTIPLIER;
         id_module %= NODE_MULTIPLIER;
+        int removed = 0;
 
-        GArray *buffers_for_module = g_array_index(g_array_index(buffers, GArray *, node_id), GArray *, id_module);
-        GList *waiting_buffers = g_array_index(buffers_for_module, GList *, channel);
-        if (waiting_buffers == 0)
-        {
-    unlock_framework();
-            return;
-        }
-        GList *lookup = waiting_buffers;
-        while (lookup)
-        {
-            channel_data *buffer = (channel_data *)waiting_buffers->data;
-            if (buffer->data == data)
+        do {
+            GArray *buffers_for_module = g_array_index(g_array_index(buffers, GArray *, node_id), GArray *, id_module);
+            if (buffers_for_module == 0) break;
+            GList *waiting_buffers = g_array_index(buffers_for_module, GList *, channel);
+            if (waiting_buffers == 0) break;
+            GList *lookup = waiting_buffers;
+            while (lookup)
             {
-                lookup = decrement_references(waiting_buffers, buffer);
-                if (lookup != waiting_buffers)
-                    g_array_index(buffers_for_module, GList *, channel) = lookup;
-                break;
+                channel_data *buffer = (channel_data *)(lookup->data);
+                if (buffer->data == data)
+                {
+                    lookup = decrement_references(waiting_buffers, buffer);
+                    if (lookup != waiting_buffers)
+                        g_array_index(buffers_for_module, GList *, channel) = lookup;
+                    removed = 1;
+                    break;
+                }
+                lookup = lookup->next;
             }
-            lookup = lookup->next;
+        } while (0);
+        if (!removed)
+        {
+            GList *dcd = dangling_channel_data;
+            while (dcd)
+            {
+                channel_data *buffer = dcd->data;
+                if (buffer->data == data)
+                {
+                    dangling_channel_data = decrement_references(dangling_channel_data, buffer);
+                    break;
+                }
+            }
         }
     unlock_framework();
 }

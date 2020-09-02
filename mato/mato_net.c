@@ -124,13 +124,12 @@ void net_mato_shutdown()
 /// Clean up all traces of a node (and its modules) after it got disconnected.
 static void node_disconnected(int s, int node_id)
 {
-    g_array_index(nodes,node_info*,node_id)->is_online = 0;
+    g_array_index(nodes, node_info *, node_id)->is_online = 0;
     close(s);
     printf("node %d has disconnected\n", node_id);
     lock_framework();
         remove_node_buffers(node_id);
-        //TODO
-        //remove_node_from_subscriptions(node_id);
+        remove_node_from_subscriptions(node_id);
         remove_names_types(node_id);
     unlock_framework();
 }
@@ -201,14 +200,6 @@ static void net_delete_module_buffers(int node_id, int module_id)
     }
 }
 
-/// Soon to be updated...
-void net_delete_module_instance(int node_id, int module_id)
-{
-    // refactorization lossess...
-    g_array_index(g_array_index(module_names, GArray *, node_id), char *, module_id) = 0;
-    g_array_index(g_array_index(module_types, GArray *, node_id), char *, module_id) = 0;
-}
-
 //-------------- handling incoming messages ----------------------
 
 /// Receive and process new module instance message from another node. For the packet format, see net_broadcast_new_module() function.
@@ -235,7 +226,7 @@ static void net_process_delete_module(int s, int sending_node_id)
     )
         return;
     lock_framework();
-        net_delete_module_instance(sending_node_id, module_id);
+        delete_module_instance(sending_node_id, module_id);
     unlock_framework();
 }
 

@@ -138,6 +138,4 @@ void net_send_unsubscribe(int node_id, int module_id, int channel);
 /// ~~~~
 void net_send_global_message(int sending_module_id, int message_id, uint8_t *message_data, int message_length);
 
-void net_delete_module_instance(int node_id, int module_id);
-
 #endif

@@ -17,6 +17,7 @@ GArray *module_types;
 GArray *instance_data;
 GHashTable *module_specifications;
 GArray *buffers;
+GList *dangling_channel_data;
 GArray *subscriptions;
 int post_data_pipe[2];
 //---
@@ -225,57 +226,152 @@ void remove_names_types(int node_id)
     }
 }
 
-/// A remote module has been deleted, we have to make sure it will not appear in the subscriptions anymore.
-static void remove_remote_module_from_subscriptions(GArray *node_subscriptions, int node, int node_id_of_module, int module)
+/// Removes all subscriptions to all channels of the specified module of some node, because
+/// the module is not valid anymore, so all the subscriptions of our local modules to that module channels
+/// should silently disappear.
+static void remove_subscriptions_to_module_channels(int node_id, int module, GArray *node_subscriptions)
 {
-    GArray* module_subscriptions = g_array_index(node_subscriptions, GArray*, module);
-    if (module_subscriptions == 0) return;
-    int channel_number = module_subscriptions->len;
-    for(int channel=0; channel < channel_number; channel++)
+    GArray *module_subscriptions = g_array_index(node_subscriptions, GArray *, module);
+    if (module_subscriptions == 0) return;  // no subscriptions array => module have been deleted already
+    int channels_number = module_subscriptions->len;
+    for (int channel = 0; channel < channels_number; channel++)
     {
-        GArray* channel_subscriptions = g_array_index(module_subscriptions, GArray*, module);
-        if (channel_subscriptions == 0) continue;
-        int subscription_number = channel_subscriptions->len;
-        for(int sub=0; sub < subscription_number; sub++)
+        GArray *channel_subscriptions = g_array_index(module_subscriptions, GArray *, channel);
+        int subscription_count = channel_subscriptions->len;
+        for (int sub = 0; sub < subscription_count; sub++)
         {
-            subscription* subsc = g_array_index(channel_subscriptions, subscription*,sub);
-            if (node == node_id_of_module || subsc->subscriber_node_id == node_id_of_module)
+            subscription *s = g_array_index(channel_subscriptions, subscription *, sub);
+            g_array_index(channel_subscriptions, subscription *, sub) = 0;
+            free(s);
+        }
+        g_array_free(channel_subscriptions, 1);
+        g_array_index(module_subscriptions, GArray *, channel) = 0;
+    }
+    g_array_free(module_subscriptions, 1);
+    g_array_index(node_subscriptions, GArray *, module) = 0;
+}
+
+/// Removes all subscriptions to channels of modules of the specified remote node - because it has just been disconnected.
+/// Also removes all subscriptions of modules of that remote node to channels of local modules
+void remove_node_from_subscriptions(int node_id)
+{
+    // First part: remove all subscriptions to channels of modules of the specified node
+    GArray* node_subscriptions = g_array_index(subscriptions, GArray *, node_id);
+    int modules_number = node_subscriptions->len;
+    for (int module=0; module < modules_number; module++)
+        remove_subscriptions_to_module_channels(node_id, module, node_subscriptions);
+
+    g_array_remove_range(node_subscriptions, 0, modules_number);
+
+    // Second part: remove all subscriptions of the remote node to any local channels
+    node_subscriptions = g_array_index(subscriptions, GArray *, this_node_id);
+    modules_number = node_subscriptions->len;
+    for (int module=0; module < modules_number; module++)
+    {
+        GArray *module_subscriptions = g_array_index(node_subscriptions, GArray *, module);
+        int channels_number = module_subscriptions->len;
+        for (int channel = 0; channel < channels_number; channel++)
+        {
+            GArray *channel_subscriptions = g_array_index(module_subscriptions, GArray *, channel);
+            int subscription_count = channel_subscriptions->len;
+            for (int sub = 0; sub < subscription_count; sub++)
             {
-                remove_subscription(node, module, channel, subsc->subscription_id);
+                subscription *s = g_array_index(channel_subscriptions, subscription *, sub);
+                if (s->subscriber_node_id == node_id)
+                {
+                    g_array_remove_index_fast(channel_subscriptions, sub);
+                    free(s);
+                }
             }
         }
     }
-    g_array_free(g_array_index(g_array_index(subscriptions, GArray *, node_id_of_module), GArray *, module), 1);
-    g_array_index(g_array_index(subscriptions, GArray *, node_id_of_module), subscription *, module) = 0;
 }
 
-void remove_node_from_subscriptions(int node_id)
+/// Pass through all the buffers of the specified module of some remote node, and if any of our local modules
+/// is subscribed to the channel, decrement the reference count for the leading (latest) message,
+/// because the module is not valid anymore, so we will not be providing a most recent message from
+/// this time on.
+static void decrement_references_of_the_last_channel_messages_for_module(int node_id, int module_id)
 {
-    int number_nodes = nodes->len;
-    for(int node=0; node < number_nodes; node++)
+    GArray *module_channels_subscriptions = g_array_index(g_array_index(subscriptions, GArray *, node_id), GArray *, module_id);
+    if (module_channels_subscriptions == 0) // no channels => node must have been removed already
+        return;
+    for (int channel = 0; channel < module_channels_subscriptions->len; channel++)
     {
-        if (g_array_index(nodes, node_info *, node)->is_online == 0) continue;
-        GArray* node_subscriptions = g_array_index(subscriptions, GArray*, node);
-        int module_number = node_subscriptions->len;
-        for(int module=0; module < module_number; module++)
+        if ((node_id == this_node_id) || (g_array_index(module_channels_subscriptions, GArray *, channel)->len > 0))
         {
-            if (g_array_index(g_array_index(module_names, GArray *, node), char *, module) != 0)
-                remove_remote_module_from_subscriptions(node_subscriptions, node, node_id, module);
+            GArray *channels = g_array_index(g_array_index(buffers, GArray *, node_id), GArray *, module_id);
+            GList *bufs = g_array_index(channels, GList *, channel);
+            if (bufs)
+                bufs = decrement_references(bufs, (channel_data *)bufs->data);
+            g_array_index(channels, GList *, channel) = bufs;
         }
     }
 }
 
-/// Soon to be updated...
-void remove_node_buffers(int node_id)
+/// Takes all messages that are still existing in the buffers (i.e. some our module[s] must have borrowed their reference)
+/// and moves them to dangling_channel_data list for later removal, the buffers of this module will be completely cleared and freed from memory.
+static void move_remaining_channel_data_to_dangling(int node_id, int module_id)
 {
-    int length = g_array_index(buffers, GArray*, node_id)->len;
-    for(int module_id = 0; module_id < length; module_id++)
+    GArray *module_channels_subscriptions = g_array_index(g_array_index(subscriptions, GArray *, node_id), GArray *, module_id);
+    if (module_channels_subscriptions == 0) // no channels => node must have been removed already
+        return;
+    for (int channel = 0; channel < module_channels_subscriptions->len; channel++)
     {
-        g_array_index(g_array_index(module_names, GArray *, node_id), char *, module_id) = 0;
-        g_array_index(g_array_index(module_types, GArray *, node_id), char *, module_id) = 0;
+        GList *bufs = g_array_index(g_array_index(g_array_index(buffers, GArray *, node_id), GArray *, module_id), GList *, channel);
+        while (bufs)
+        {
+            dangling_channel_data = g_list_prepend(dangling_channel_data, bufs->data);
+            bufs = bufs->next;
+        }
+        g_list_free(bufs);
     }
+    g_array_free(g_array_index(g_array_index(buffers, GArray *, node_id), GArray *, module_id), 1);
+    g_array_index(g_array_index(buffers, GArray *, node_id), GArray *, module_id) = 0;
 }
 
+/// Removes all channel_data that are not used by some local module anymore. Those that are should
+/// be moved to dangling channel data structure for later removal. The buffers must remain clean
+/// i.e. the buffers[node_id] should be an empty array, and everything else should have been deallocated.
+/// For those channels that are subscribed from us: the leading message can be decremented, if present.
+/// Other channel_data in buffers are not touched, they will disappear eventually when modules stop using them.
+void remove_node_buffers(int node_id)
+{
+    int supr_module_id = g_array_index(buffers, GArray*, node_id)->len;
+    // first pass: decrement references: no more last received data (-1 on the first item in the list)
+    // for the locally subscribed channels
+    for(int module_id = 0; module_id < supr_module_id; module_id++)
+        decrement_references_of_the_last_channel_messages_for_module(node_id, module_id);
+
+    // second pass: everything that remains go to dangling channel data
+    for(int module_id = 0; module_id < supr_module_id; module_id++)
+        move_remaining_channel_data_to_dangling(node_id, module_id);
+
+    g_array_remove_range(g_array_index(buffers, GArray *, node_id), 0, supr_module_id);
+}
+
+/// Deallocate and remove the name and type of a specified module from framework records.
+static void free_name_and_type(int node_id, int module_id)
+{
+    char *module_type = g_array_index(g_array_index(module_types, GArray *, node_id), char *, module_id);
+    char *module_name = g_array_index(g_array_index(module_names, GArray *, node_id), char *, module_id);
+    g_array_index(g_array_index(module_names, GArray *, node_id), char *, module_id) = 0;
+    free(module_name);
+    g_array_index(g_array_index(module_types, GArray *, node_id), char *, module_id) = 0;
+    free(module_type);
+}
+
+void delete_module_instance(int node_id, int module_id)
+{
+    decrement_references_of_the_last_channel_messages_for_module(node_id, module_id);
+    move_remaining_channel_data_to_dangling(node_id, module_id);
+    GArray* node_subscriptions = g_array_index(subscriptions, GArray *, node_id);
+    remove_subscriptions_to_module_channels(node_id, module_id, node_subscriptions);
+    free_name_and_type(node_id, module_id);
+}
+
+/// Another node has just announced its new module, update the structures: store the name, type, create and append
+/// the arrays for buffers and subscriptions.
 void store_new_remote_module(int node_id, int module_id, char *module_name, char *module_type, int number_of_channels)
 {
     lock_framework();
@@ -372,6 +468,7 @@ void core_mato_init()
     module_names = g_array_new(0, 0, sizeof(GArray *));
     module_types = g_array_new(0, 0, sizeof(GArray *));
     buffers = g_array_new(0, 0, sizeof(GArray *));
+    dangling_channel_data = 0;
     subscriptions = g_array_new(0, 0, sizeof(GArray *));
 
     pthread_mutex_init(&framework_mutex, 0);
@@ -428,7 +525,7 @@ void subscribe_channel_from_remote_node(int remote_node_id, int subscribed_modul
 void unsubscribe_channel_from_remote_node(int remote_node_id, int subscribed_module_id, int channel)
 {
     lock_framework();
-        GArray *subscriptions_for_channel = g_array_index(g_array_index(g_array_index(subscriptions, GArray *,this_node_id), GArray *, subscribed_module_id), GArray *, channel);
+        GArray *subscriptions_for_channel = g_array_index(g_array_index(g_array_index(subscriptions, GArray *, this_node_id), GArray *, subscribed_module_id), GArray *, channel);
         int number_of_channel_subscriptions = subscriptions_for_channel->len;
         for (int i = 0; i < number_of_channel_subscriptions; i++)
         {

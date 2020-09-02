@@ -49,7 +49,7 @@
 ///     the mato_inc_thread_count() and mato_dec_thread_count() functions properly.
 ///  -# whenever the module wants to produce data in one of its output channels, it does so by calling mato_post_data()
 ///  -# to get the most recent copy of data from an output channel of another module, call mato_get_data()
-///  -# to subscribe to all messages at some output channel, call mato_subscribe
+///  -# to subscribe to all messages at some output channel, call mato_subscribe()
 ///  -# see more in the mato.h, which is the public interface of the framework for the module designer.
 ///
 /// \section whyc Why C?

@@ -1,10 +1,10 @@
-Test programs for the Mato control framework. 
+Test programs for the Mato control framework.
 
 They are meant to serve also as a short tutorial to the framework.
 
-The first four tests run on a single computational node (a single 
+The first four tests run on a single computational node (a single
 computer), whereas, the fifth test runs in a distributed
-environment: three computers, each starts its own copy of the 
+environment: three computers, each starts its own copy of the
 main program.
 
 Run make to build all tests.
@@ -25,13 +25,13 @@ Run make to build all tests.
   The module of type A:
 
     Has a very simple instance data structure - just to remember its
-    own module_id. When started, it creates its own thread, from 
+    own module_id. When started, it creates its own thread, from
     its thread it posts 10 messages containing simple integer 0..9,
-    then it quits. 
+    then it quits.
     On a global message, it prints its contents.
 
   To notice:
-    - the module type init functino A_init() should register the 
+    - the module type init function A_init() should register the
       module type in the framework using the module type
       specification structure that defines the callback functions
       and the number of channels
@@ -54,25 +54,25 @@ Run make to build all tests.
 02_modules_A_B/
 
   Adding another module type: now we have module types A and B.
-  The main program creates two instances of each type, 
+  The main program creates two instances of each type,
   named A1, A2, B1, B2. Otherwise, it does the same as in the
   previous test.
 
   The modules register to receive messages from another module
-  (so called subscribing). 
+  (so called subscribing).
   They create a subscribe loop: a1 -> b2 -> a2 -> b1 -> a1
   The subscription type is direct_data_ptr, i.e. the message
   callback receives a pointer to read-only data and it is
   expected to finish very fast. After the callback function
   returns, the module is not allowed to access the message data.
   Each module is producing 5 messages, containing a unique integer.
-  Upon receipt of a message from a subscribed channel, 
-  each module with the exception of B2 posts (i.e. forwards) 
+  Upon receipt of a message from a subscribed channel,
+  each module with the exception of B2 posts (i.e. forwards)
   the received message further on after modifying the contained
   integer.
 
   To notice:
-  
+
     - we are using a pipe() mechanism to synchronize the
       startup process, the startup sequence is as follows:
 
@@ -87,11 +87,11 @@ Run make to build all tests.
            notification before they really start to work),
        5. the main program sends a global message that
            is cought by all the modules, consequently
-           notifying their threads (by writing to the 
-           synchronization pipe) that everything is ready 
-           (i.e. all modules have finished subscribing) 
+           notifying their threads (by writing to the
+           synchronization pipe) that everything is ready
+           (i.e. all modules have finished subscribing)
            so that the module threads can start posting the data...
-       
+
 
 03_A_B_with_copy/
 
@@ -99,7 +99,7 @@ Run make to build all tests.
   the subscribed module receives a copy of the data instead
   of read-only pointer. It is expected to deallocate the
   data when it is not needed anymore. In this case, the
-  data are released immediatelly after the integer value 
+  data are released immediatelly after the integer value
   is extracted, but it could have been done any time later.
 
 
@@ -108,7 +108,7 @@ Run make to build all tests.
   In the previous two tests, the module types A and B were
   implemented separately as two file pairs (A.c, A.h) and
   (B.c, B.h). Since they behave very similarly, they were
-  merged into a single pair (AB.c, AB.h), while the 
+  merged into a single pair (AB.c, AB.h), while the
   differences are the names and types of the module instances
   and the modules they are subscribing to.
 
@@ -127,21 +127,21 @@ Run make to build all tests.
   awaken message eating thread consumes the message - i.e.
   forwards it further by posting it with a modified value
   after sleeping some module-specific time, and then notifies
-  the framework that the message is not needed anymore. 
+  the framework that the message is not needed anymore.
 
 
 05_distributed_AB/
 
   This test is run three times from computers according
   to a config file mato_nodes.conf (it can be the same,
-  such as localhost, but it does not matter for 
+  such as localhost, but it does not matter for
   the functionality). The test assumes there are three
-  nodes (i.e. computers) where it is started - with 
-  different single command-line argument 0, 1, or 2. 
-  Each node creates 4 modules (A1, A2, B1, B2), and 
+  nodes (i.e. computers) where it is started - with
+  different single command-line argument 0, 1, or 2.
+  Each node creates 4 modules (A1, A2, B1, B2), and
   the names are prefixed by "nX_", since the module
   names are global across the whole distributed computation
-  environment. 
+  environment.
 
   As in previous tests, there is a subscription loop
   with forwarding with a single exception at the end
@@ -149,7 +149,7 @@ Run make to build all tests.
   subscribed across the computational nodes, even though
   the distribution is transparent for the modules:
   they do not care which computer the other node where
-  the message originates runs. 
+  the message originates runs.
 
   The architecture of the distributed system is fully
   connected: each node is connected to each node.
@@ -158,10 +158,10 @@ Run make to build all tests.
   take care of such situations - in this test we
   assume no disconnections, but the nodes can be
   started in arbitrary order.
-  
+
   The message data are received in the form of
   borrowed pointer and consumed in a separate
-  thread as in the previous test.  
+  thread as in the previous test.
 
   To notice:
 
@@ -184,7 +184,7 @@ Run make to build all tests.
     some other modules are subscribed, and some messages
     could be "lost" - however, it is best practice
     to write modules in such a way that they are
-    not dependent on receiving all messages from 
+    not dependent on receiving all messages from
     the startup, rather to act properly as soon
     as the messages start coming. Another level of
     synchronization barrier could ensure that the

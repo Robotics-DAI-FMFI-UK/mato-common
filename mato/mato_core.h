@@ -96,6 +96,11 @@ extern GHashTable *module_specifications;  // [type_name]
 /// to it and a new message from the module on the same channel has already arrived.
 extern GArray *buffers;  // [node_id][module_id][channel_id] -> g_list (the most recent data buffer is at the beginning)
 
+/// Contains the remains from the buffers after the module has been deleted, but some our local module
+/// still owns a pointer to some of the channel data. They are moved here when the buffers of that channel are cleared,
+/// and disappear as soon as the owning module returns the borrowed pointer to us.
+extern GList *dangling_channel_data;
+
 /// Contains all descriptions of subscriptions, instances of subscription structures.
 /// The GArray is indexed by the module_id and contains GArrays indexed by channel number
 /// Finally, the nested GArray elements are again GArrays containing all subscriptions
@@ -126,6 +131,9 @@ int get_free_module_id();
 /// Returns the next available subscription_id.
 int get_free_subscription_id(); // is not thread-safe
 
+/// Removes a single record about a subscription from the subscriptions structure.
+/// If the subscribed_node_id is remote, and it is the last subscription to that channel from our node,
+/// then also send to the remote node a notification to remove subscription of our node to that remote channel.
 void remove_subscription(int subscribed_node_id, int subscribed_module_id, int channel, int subscription_id);
 
 /// Decrements the number of references to a particular buffer and deallocates the buffer itself as well
@@ -173,5 +181,14 @@ void copy_of_last_data_of_channel(int node_id, int module_id, int channel, int *
 /// reference count and return the pointer to and size of the message in the *data_length and *data variables.
 /// If there is no data posted by that module yet, both *data_length and *data will be 0.
 void borrow_last_data_of_channel(int node_id, int module_id, int channel, int *data_length, uint8_t **data);
+
+/// A remote node has announced that its module has been deleted, or module is deleted locally. We have to:
+/// 1) take care of the buffers of that module - decrement references
+/// if any local module is subscribed, the remaining channel_data should go
+/// to dangling channel data, and 2) take care of subscriptions:
+/// if any local module was subscribed to its channel it will loose these
+/// subscriptions, it should also be removed from the list of module names and types.
+void delete_module_instance(int node_id, int module_id);
+
 
 #endif

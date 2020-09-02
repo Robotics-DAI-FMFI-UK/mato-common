@@ -84,7 +84,9 @@ typedef struct {
     int is_online;
 } node_info;
 
-/// Initializes the framework. It must be the first function of the framework to be called. It should be called only once.
+/// Initializes the framework. It must be the first function of the framework to be called.
+/// It should be called only once. When in distributed environment, the user should assign integers to its nodes,
+/// counting from 0, and each main program should pass its node id to the init function. In a single-machine mode, just pass 0 in the argument.
 void mato_init(int this_node_identifier);
 
 /// Register a new module type. This is typically called from the init() function of each module type, which
