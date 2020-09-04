@@ -16,11 +16,10 @@
 
 #define RED_SWITCH 12
 
-#define US1_TRIG 14  
-#define US1_ECHO 17   // => PCINT11
+// 17 => PC3 - PCINT11, 16 => PC2 - PCINT10, 8 => PB0 - PCINT0, 7 => PD7, PCINT23
 
-#define US2_TRIG 15  
-#define US2_ECHO 16   // => PCINT10
+uint8_t us_trig[4] = {14, 15, 9, 2};
+uint8_t us_echo[4] = {17, 16, 8, 7};
 
 // instead of digitalWrite() we access the ports directly
 // from the ISR for efficiency reasons, so again:
@@ -72,10 +71,12 @@ volatile uint16_t right_wait_for_0_to_1;
 int16_t left_speed;
 int16_t right_speed;
 
-volatile uint16_t us1_dist, us2_dist;
+volatile uint16_t us0_dist, us1_dist, us2_dist, us3_dist;
 
 volatile uint8_t obstacle_blocking = 0;
 volatile uint8_t motors_disabled = 0;
+
+volatile uint8_t us_new_value = 0;
 
 void enable_steppers()
 {
@@ -134,59 +135,113 @@ ISR(TIMER1_COMPA_vect)
 static uint8_t pci1_pinc;
 static uint8_t pci1_xored_pinc;
 static uint8_t pci1_old_pinc = 0;
-static uint32_t us1_start_pulse, us2_start_pulse;
+static uint32_t us0_start_pulse, us1_start_pulse;
 
-ISR(PCINT1_vect)
+static uint8_t pci0_pinb;
+static uint8_t pci0_xored_pinb;
+static uint8_t pci0_old_pinb = 0;
+static uint32_t us2_start_pulse;
+
+static uint8_t pci2_pind;
+static uint8_t pci2_xored_pind;
+static uint8_t pci2_old_pind = 0;
+static uint32_t us3_start_pulse;
+
+ISR(PCINT0_vect)
 {
-   // PC2 = arduino pin 16  - US2_ECHO
-   // PC3 = arduino pin 17  - US1_ECHO
-  pci1_pinc = PINC;
-  pci1_xored_pinc = pci1_pinc ^ pci1_old_pinc;
-  if (pci1_xored_pinc & 0b100)
+   // PB0 = arduino pin 8   - US2_ECHO
+  pci0_pinb = PINB;
+  pci0_xored_pinb = pci0_pinb ^ pci0_old_pinb;
+  if (pci0_xored_pinb & 0b1)
   {
-    if (pci1_pinc & 0b100)  // raising edge on ECHO of US2 
+    if (pci0_pinb & 0b1)  // raising edge on ECHO of US2 
       us2_start_pulse = micros();
     else // falling edge on ECHO of US2
     {
       if (micros() > us2_start_pulse) 
-          //us2_dist = 255;
+      {
           us2_dist = (micros() - us2_start_pulse) / 58;
+          us_new_value = 1;
+      }
+    }
+  }
+  pci0_old_pinb = pci0_pinb;
+}
+
+ISR(PCINT1_vect)
+{
+   // PC2 = arduino pin 16  - US1_ECHO
+   // PC3 = arduino pin 17  - US0_ECHO
+  pci1_pinc = PINC;
+  pci1_xored_pinc = pci1_pinc ^ pci1_old_pinc;
+  if (pci1_xored_pinc & 0b100)
+  {
+    if (pci1_pinc & 0b100)  // raising edge on ECHO of US0
+      us1_start_pulse = micros();
+    else // falling edge on ECHO of US1
+    {
+      if (micros() > us1_start_pulse) 
+      {
+          us1_dist = (micros() - us1_start_pulse) / 58;
+          us_new_value = 1;          
+      }
     }
   }
   if (pci1_xored_pinc & 0b1000)
   {
     if (pci1_pinc & 0b1000)  // raising edge on ECHO of US1 
-      us1_start_pulse = micros();
-    else // falling edge on ECHO of US1
+      us0_start_pulse = micros();
+    else // falling edge on ECHO of US0
     {
-      if (micros() > us1_start_pulse)
-        us1_dist = (micros() - us1_start_pulse) / 58;
+      if (micros() > us0_start_pulse)
+      {
+        us0_dist = (micros() - us0_start_pulse) / 58;
+        us_new_value = 1;
+      }
     }    
   }
   pci1_old_pinc = pci1_pinc;
 }
 
-void both_us_send_pulse()
+ISR(PCINT2_vect)
 {
-  digitalWrite(US1_TRIG, HIGH);
-  digitalWrite(US2_TRIG, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(US1_TRIG, LOW);
-  digitalWrite(US2_TRIG, LOW);
+   // PD7 = arduino pin 7   - US3_ECHO
+  pci2_pind = PIND;
+  pci2_xored_pind = pci2_pind ^ pci2_old_pind;
+  if (pci2_xored_pind & 0b10000000)
+  {
+    if (pci2_pind & 0b10000000)  // raising edge on ECHO of US3 
+      us3_start_pulse = micros();
+    else // falling edge on ECHO of US3
+    {
+      if (micros() > us3_start_pulse) 
+      {
+          us3_dist = (micros() - us3_start_pulse) / 58;
+          us_new_value = 1;
+      }          
+    }
+  }
+  pci2_old_pind = pci2_pind;
 }
 
-void us1_send_pulse()
+void all_us_send_pulse()
 {
-  digitalWrite(US1_TRIG, HIGH);
+  digitalWrite(us_trig[0], HIGH);
+  digitalWrite(us_trig[1], HIGH);
+  digitalWrite(us_trig[2], HIGH);
+  digitalWrite(us_trig[3], HIGH);  
   delayMicroseconds(10);
-  digitalWrite(US1_TRIG, LOW);
+  digitalWrite(us_trig[0], LOW);
+  digitalWrite(us_trig[1], LOW);
+  digitalWrite(us_trig[2], LOW);
+  digitalWrite(us_trig[3], LOW);
 }
 
-void us2_send_pulse()
+void us_send_pulse(uint8_t i)
 {
-  digitalWrite(US2_TRIG, HIGH);
+  digitalWrite(us_trig[i], HIGH);
   delayMicroseconds(10);
-  digitalWrite(US2_TRIG, LOW);
+  digitalWrite(us_trig[i], LOW);
 }
 
 void stepper_speed(uint8_t motor, int speed)
@@ -241,10 +296,10 @@ void setup()
   right_wait_for_0_to_1 = 65535;
   left_position = 0;
   right_position = 0;
+  us0_dist = 255;
   us1_dist = 255;
   us2_dist = 255;
-  
-  Serial.begin(115200);
+  us3_dist = 255;
   
   pinMode(LEFT_STEP, OUTPUT);
   pinMode(LEFT_DIR, OUTPUT);
@@ -259,10 +314,13 @@ void setup()
   digitalWrite(LEFT_DIR, HIGH);
   digitalWrite(RIGHT_STEP, HIGH);
   digitalWrite(RIGHT_DIR, HIGH);
-  pinMode(US1_TRIG, OUTPUT);
-  pinMode(US1_ECHO, INPUT);
-  pinMode(US2_TRIG, OUTPUT);
-  pinMode(US2_ECHO, INPUT);
+  for (int i = 0; i < 4; i++)
+  {
+      pinMode(us_trig[i], OUTPUT);
+      pinMode(us_echo[i], INPUT);    
+  }
+
+  Serial.begin(115200);
   
   // setup timer1 to call ISR every 4 usec
   TCCR1A = 0;
@@ -273,10 +331,12 @@ void setup()
   TIMSK1 = 0b10;
 
   // setup pin change interrupt on US echo pins
+  PCMSK0 |= 1;
   PCMSK1 |= 0b1100;
-  PCICR |= 0b10;
+  PCMSK2 |= 0b10000000;
+  PCICR |= 0b111;
   Serial.println("Robot Mato.\nStartup delay 10s...");
-  delay(10000);
+  // delay(10000);
 }
 
 void change_speed(int new_left_speed, int new_right_speed, int max_duration_in_ms)
@@ -363,7 +423,7 @@ void mato_stop_fast()
 
 void print_position()
 {
-  unsigned long tm = millis();  
+  uint32_t tm = millis();  
   Serial.print(tm);
   Serial.print(" ");
   Serial.print(left_position);
@@ -399,16 +459,20 @@ void handle_red_switch()
 
 void test_ultrasonic()
 {
-  both_us_send_pulse();
+  all_us_send_pulse();
   delay(100);
   while (Serial.available()) Serial.read();
   
   while (!Serial.available())
   {
-    both_us_send_pulse();
+    all_us_send_pulse();
+    Serial.print(us0_dist);
+    Serial.print(" ");
     Serial.print(us1_dist);
     Serial.print(" ");
-    Serial.println(us2_dist);
+    Serial.print(us2_dist);
+    Serial.print(" ");
+    Serial.println(us3_dist);    
     delay(100);
   }
   Serial.read();
@@ -451,30 +515,51 @@ void measure_distance()
   
   if (tm - last_us_measurement > US_MEASUREMENT_PERIOD)
   {
-    both_us_send_pulse();
+    all_us_send_pulse();
+    last_us_measurement = tm;
+    return;
   }
+  if (!us_new_value) return;
+  us_new_value = 0;
+  
+  int u0 = us0_dist;
   int u1 = us1_dist;
   int u2 = us2_dist;
-  
-  if ((u1 < CRITICAL_DISTANCE) || (u2 < CRITICAL_DISTANCE))
+  int u3 = us3_dist;
+
+  if (u2 < CRITICAL_DISTANCE)
+//  if ((u0 < CRITICAL_DISTANCE) || (u1 < CRITICAL_DISTANCE) || (u2 < CRITICAL_DISTANCE) || (u3 < CRITICAL_DISTANCE))
+
+ // if ((u0 < CRITICAL_DISTANCE) || (u1 < CRITICAL_DISTANCE) || (u2 < CRITICAL_DISTANCE) || (u3 < CRITICAL_DISTANCE))
   {
-    if (obstacle_counter < 255) 
+    if (obstacle_counter < 3) 
     {
+      Serial.print("oo ");
+      Serial.println(obstacle_counter);
       obstacle_counter++;
     }
     else if (!obstacle_blocking)
     {
       mato_stop_fast();
       Serial.print("obstacle ");
+      Serial.print(u0);
+      Serial.print(" ");
       Serial.print(u1);
       Serial.print(" ");
-      Serial.println(u2);
+      Serial.print(u2);
+      Serial.print(" ");
+      Serial.println(u3);
       obstacle_blocking = 1;
     }
   }
   else 
   {
-    if (obstacle_counter) obstacle_counter--;
+    if (obstacle_counter) 
+    {
+      obstacle_counter--;
+      Serial.print("nooooo ");
+      Serial.println(obstacle_counter);
+    }
     else if (obstacle_blocking)
     {
       Serial.println("obstacle freed");
