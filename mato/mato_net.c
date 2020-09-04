@@ -304,15 +304,19 @@ static void net_process_subscribed_data(int s, int sending_node_id)
 /// Receive and process a global message from another node. For the packet format see net_send_global_message() function.
 static void net_process_global_message(int s, int sending_node_id)
 {
-    int32_t sending_module_id, message_id, msg_length;
+    int32_t sending_module_id, receiving_module_id, message_id, msg_length;
     uint8_t *message_data;
     if (
         !net_recv_int32t(s, &sending_module_id, sending_node_id) ||
+        !net_recv_int32t(s, &receiving_module_id, sending_node_id) ||
         !net_recv_int32t(s, &message_id, sending_node_id) ||
         !net_recv_bytes(s, &message_data, &msg_length, sending_node_id)
     )
         return;
-    mato_send_global_message(sending_module_id, message_id, msg_length, message_data);
+    if (receiving_module_id == MATO_BROADCAST)
+        mato_send_global_message(sending_module_id, message_id, msg_length, message_data);
+    else
+        mato_send_message(sending_module_id, receiving_module_id, message_id, msg_length, message_data);
 }
 
 /// Receive, unpack, and process a new message arriving from another node from socket s.
@@ -747,12 +751,12 @@ void net_send_global_message(int sending_module_id, int message_id, uint8_t *mes
         if (node_id == this_node_id) continue;
         node_info *ni = g_array_index(nodes, node_info *, node_id);
         if (ni->is_online == 0) continue;
-
         int s = g_array_index(sockets, int, node_id);
 
         if (
             !net_send_int32t(s, MSG_GLOBAL_MESSAGE) ||
             !net_send_int32t(s, sending_module_id) ||
+            !net_send_int32t(s, MATO_BROADCAST) ||
             !net_send_int32t(s, message_id) ||
             !net_send_bytes(s, message_data, message_length)
         )
@@ -761,4 +765,25 @@ void net_send_global_message(int sending_module_id, int message_id, uint8_t *mes
         }
     }
     printf("forwarded message %d to other nodes\n", message_id);
+}
+
+void net_send_message(int sending_module_id, int receiving_node_id, int module_id_receiver, int message_id, uint8_t *message_data, int message_length)
+{
+    node_info *ni = g_array_index(nodes, node_info *, receiving_node_id);
+    if (ni->is_online == 0) return;
+
+    int s = g_array_index(sockets, int, receiving_node_id);
+
+    if (
+        !net_send_int32t(s, MSG_GLOBAL_MESSAGE) ||
+        !net_send_int32t(s, sending_module_id) ||
+        !net_send_int32t(s, module_id_receiver) ||
+        !net_send_int32t(s, message_id) ||
+        !net_send_bytes(s, message_data, message_length)
+    )
+    {
+        node_disconnected(s, receiving_node_id);
+    }
+
+    printf("forwarded message %d to destination module\n", message_id);
 }

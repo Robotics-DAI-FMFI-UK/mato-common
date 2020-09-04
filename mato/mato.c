@@ -226,6 +226,32 @@ int mato_send_global_message(int module_id_sender, int message_id, int msg_lengt
     }
 }
 
+int mato_send_message(int module_id_sender, int module_id_receiver, int message_id, int msg_length, void *message_data)
+{
+    int local_module_id_sender = module_id_sender % NODE_MULTIPLIER;
+    int sending_node_id = module_id_sender / NODE_MULTIPLIER;
+    int receiving_node_id = module_id_receiver / NODE_MULTIPLIER;
+
+    // a message from this node is broadcasted to other nodes
+    if ((sending_node_id == this_node_id) && (receiving_node_id != this_node_id))
+        net_send_message(module_id_sender, receiving_node_id, module_id_receiver, message_id, (uint8_t *)message_data, msg_length);
+    else
+    {
+        int local_module_id_receiver = module_id_receiver % NODE_MULTIPLIER;
+        char *module_type = g_array_index(g_array_index(module_types, GArray *, this_node_id), char *, local_module_id_receiver);
+        if (module_type != 0)
+        {
+            module_specification *spec = (module_specification *)g_hash_table_lookup(module_specifications, module_type);
+            if (spec != 0)
+            {
+                void *modules_instance_data = g_array_index(instance_data, void *, local_module_id_receiver);
+                if (modules_instance_data != 0)
+                    spec->global_message(modules_instance_data, module_id_sender, message_id, msg_length, message_data);
+            }
+        }
+    }
+}
+
 void mato_get_data(int id_module, int channel, int *data_length, void **data)
 {
     lock_framework();

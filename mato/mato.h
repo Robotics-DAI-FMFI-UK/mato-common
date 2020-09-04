@@ -132,6 +132,10 @@ void mato_post_data(int id_of_posting_module, int channel, int data_length, void
 /// thread by calling this function. To send a global message from the main program, use mato_main_program_module_id().
 int mato_send_global_message(int module_id_sender, int message_id, int msg_length, void *message_data);
 
+/// The main program or any module instance can post a message targeted on a single module, it will be immediatelly
+/// handled by the same thread in the receiving module's global message handler.
+int mato_send_message(int module_id_sender, int module_id_receiver, int message_id, int msg_length, void *message_data);
+
 /// Retrieve the most recently posted data of some channel of some module instance. Data is copied into new buffer allocated and its pointer is returned in data variable,
 /// and the length of the data is set to data_length. The calling module should release the memory by calling free() when
 /// it is not needed anymore.

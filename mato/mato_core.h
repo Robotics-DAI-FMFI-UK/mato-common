@@ -21,8 +21,7 @@
 #include "mato.h"
 
 #define NODE_MULTIPLIER          100000L
-#define MATO_MAIN_PROGRAM_MODULE  99999L
-
+#define MATO_MAIN_PROGRAM_MODULE  (NODE_MULTIPLIER - 1)
 
 #define CONFIG_FILENAME "mato_nodes.conf"
 

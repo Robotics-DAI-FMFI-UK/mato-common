@@ -23,6 +23,9 @@
 #define MSG_SUBSCRIBED_DATA 7
 #define MSG_GLOBAL_MESSAGE 8
 
+/// receiving_module_id for broadcast messages
+#define MATO_BROADCAST            (NODE_MULTIPLIER - 2)
+
 /// Id of this computational node.
 extern int32_t this_node_id;
 
@@ -131,11 +134,15 @@ void net_send_unsubscribe(int node_id, int module_id, int channel);
 /// -------------------------------------
 /// MSG_GLOBAL_MESSAGE        int32
 /// sending_module_id         int32
+/// receiving_module_id       int32
 /// message_id                int32
 /// len(message_data)         int32
 /// message_data              variable
 /// -------------------------------------
 /// ~~~~
 void net_send_global_message(int sending_module_id, int message_id, uint8_t *message_data, int message_length);
+
+/// Send an immediate message to a different module. It uses the same MSG_GLOBAL_MESSAGE packet as net_send_global_message().
+void net_send_message(int sending_module_id, int receiving_node_id, int module_id_receiver, int message_id, uint8_t *message_data, int message_length);
 
 #endif
