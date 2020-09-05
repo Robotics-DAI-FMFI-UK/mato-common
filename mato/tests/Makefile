@@ -8,7 +8,7 @@ WITH_DEBUG=-g
 
 MATO_SRCS=../mato.c ../mato_core.c ../mato_net.c 
 
-all: test_two_modules_A test_modules_A_B test_A_B_with_copy test_A_B_with_borrowed_ptr test_distributed_AB
+all: test_two_modules_A test_modules_A_B test_A_B_with_copy test_A_B_with_borrowed_ptr test_distributed_AB test_messages
 
 test_two_modules_A: 01_two_modules_A/test_two_modules_A.c 01_two_modules_A/A.c $(MATO_SRCS)
 	gcc -o test_two_modules_A $^ $(GLIB_INCLUDE) $(GLIB_LIBDIR) $(WITH_DEBUG) $(MATO_LIBS)
@@ -25,8 +25,11 @@ test_A_B_with_borrowed_ptr: 04_A_B_with_borrowed_ptr/test_A_B_with_borrowed_ptr.
 test_distributed_AB: 05_distributed_AB/test_distributed_AB.c 05_distributed_AB/AB.c $(MATO_SRCS)
 	gcc -o test_distributed_AB $^ $(GLIB_INCLUDE) $(GLIB_LIBDIR) $(MATO_LIBS) $(WITH_DEBUG)
 
+test_messages: 06_messages/test_messages.c 06_messages/AB.c $(MATO_SRCS)
+	gcc -o test_messages $^ $(GLIB_INCLUDE) $(GLIB_LIBDIR) $(MATO_LIBS) $(WITH_DEBUG) -lm
+
 clean:
-	rm test_two_modules_A test_modules_A_B test_A_B_with_copy test_A_B_with_borrowed_ptr test_distributed_AB
+	rm test_two_modules_A test_modules_A_B test_A_B_with_copy test_A_B_with_borrowed_ptr test_distributed_AB test_messages
 
 docs:
 	cd .. && doxygen mato.dox && cd tests

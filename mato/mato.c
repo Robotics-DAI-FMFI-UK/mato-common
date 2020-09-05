@@ -206,24 +206,30 @@ int mato_send_global_message(int module_id_sender, int message_id, int msg_lengt
         net_send_global_message(module_id_sender, message_id, (uint8_t *)message_data, msg_length);
 
     // all messages are delivered to all our modules
-    int our_modules_count = g_array_index(module_names, GArray *, this_node_id)->len;
-    for (int module_id = 0; module_id < our_modules_count; module_id++)
-    {
-        char *module_type = g_array_index(g_array_index(module_types, GArray *, this_node_id), char *, module_id);
-        if (module_type != 0)
+    lock_framework();
+        int our_modules_count = g_array_index(module_names, GArray *, this_node_id)->len;
+        for (int module_id = 0; module_id < our_modules_count; module_id++)
         {
-            if (module_id + this_node_id * NODE_MULTIPLIER != module_id_sender)  // not delivering to the msg. originator
+            char *module_type = g_array_index(g_array_index(module_types, GArray *, this_node_id), char *, module_id);
+            if (module_type != 0)
             {
-                module_specification *spec = (module_specification *)g_hash_table_lookup(module_specifications, module_type);
-                if (spec != 0)
+                if (module_id + this_node_id * NODE_MULTIPLIER != module_id_sender)  // not delivering to the msg. originator
                 {
-                    void *modules_instance_data = g_array_index(instance_data, void *, module_id);
-                    if (modules_instance_data != 0)
-                        spec->global_message(modules_instance_data, module_id_sender, message_id, msg_length, message_data);
+                    module_specification *spec = (module_specification *)g_hash_table_lookup(module_specifications, module_type);
+                    if (spec != 0)
+                    {
+                        void *modules_instance_data = g_array_index(instance_data, void *, module_id);
+                        if (modules_instance_data != 0)
+                        {
+    unlock_framework();
+                            spec->global_message(modules_instance_data, module_id_sender, message_id, msg_length, message_data);
+    lock_framework();
+                        }
+                    }
                 }
             }
         }
-    }
+    unlock_framework();
 }
 
 int mato_send_message(int module_id_sender, int module_id_receiver, int message_id, int msg_length, void *message_data)
@@ -238,17 +244,19 @@ int mato_send_message(int module_id_sender, int module_id_receiver, int message_
     else
     {
         int local_module_id_receiver = module_id_receiver % NODE_MULTIPLIER;
-        char *module_type = g_array_index(g_array_index(module_types, GArray *, this_node_id), char *, local_module_id_receiver);
-        if (module_type != 0)
-        {
-            module_specification *spec = (module_specification *)g_hash_table_lookup(module_specifications, module_type);
-            if (spec != 0)
+        lock_framework();
+            char *module_type = g_array_index(g_array_index(module_types, GArray *, this_node_id), char *, local_module_id_receiver);
+            if (module_type != 0)
             {
-                void *modules_instance_data = g_array_index(instance_data, void *, local_module_id_receiver);
-                if (modules_instance_data != 0)
-                    spec->global_message(modules_instance_data, module_id_sender, message_id, msg_length, message_data);
+                module_specification *spec = (module_specification *)g_hash_table_lookup(module_specifications, module_type);
+                if (spec != 0)
+                {
+                    void *modules_instance_data = g_array_index(instance_data, void *, local_module_id_receiver);
+        unlock_framework();
+                    if (modules_instance_data != 0)
+                        spec->global_message(modules_instance_data, module_id_sender, message_id, msg_length, message_data);
+                }
             }
-        }
     }
 }
 

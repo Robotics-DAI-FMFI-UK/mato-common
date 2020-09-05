@@ -191,3 +191,40 @@ Run make to build all tests.
     messages are not sent before all nodes finished
     their subscriptions.
 
+06_messages/
+
+  In the above tests, the scenario of data transmition was
+  based on the fact that the one who receives a message knows
+  where does the data originate and either asks for them
+  directly (mato_get_data()), or subscribes to them.
+  However, in some other scenarios, a module may provide
+  a service, where other (uknown) modules send requests.
+  In this situation we need a mechanism to send a message
+  to a particular destination module.
+  Similarly as the mato_send_global_message() which sends
+  a broadcast to all modules, any module can send any data
+  to any other module using mato_send_message(). 
+  The message is handled immediatelly in the same thread
+  (on the same node, or from communication thread if sent
+  remotely), so precaution need to be taken to avoid delays
+  and possible deadlocks. 
+  The direct messages are received in the same callbacks
+  as the global (broadcast) messages.
+
+  In this example, we assume two compuational nodes (0, and 1),
+  each creating modules A1, A2, B1, B2. The messages received
+  are pushed to queue the same way as in the previous test
+  and handled in a separate thread.
+
+  The demo here is to generate all prime numbers lower than 100
+  in a sequence: each module generates a next prime and sends it
+  further in a message forwarding loop (all 8 modules are 
+  part of this single forwarding loop). Since every module starts
+  with generating 2 and sending it further, the whole generating
+  loop occurs 8 times (at the same time, in parallel, asynchronously,
+  i.e. primes < 100 are generated 8 times). After a module receives
+  a prime that has no follow-up (97 in this case), it will
+  announce it to every other module using a broadcast message.
+  When all modules receive 7(+1) notifications about the end
+  of prime list, they know all lists were generated, and terminate.
+
