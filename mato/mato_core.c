@@ -607,3 +607,19 @@ void borrow_last_data_of_channel(int node_id, int module_id, int channel, int *d
     }
     else *data = 0;
 }
+
+long long msec()
+{
+  struct timeval tv;
+  gettimeofday(&tv, 0);
+  return 1000L * tv.tv_sec + tv.tv_usec / 1000L;
+}
+
+long long usec()
+{
+  struct timeval tv;
+  gettimeofday(&tv, 0);
+  return (1000000L * (long long)tv.tv_sec) + tv.tv_usec;
+}
+
+

@@ -16,6 +16,7 @@
 #include <errno.h>
 #include <inttypes.h>
 #include <sys/types.h>
+#include <sys/time.h>
 #include <sys/stat.h>
 
 #include "mato.h"
@@ -188,6 +189,12 @@ void borrow_last_data_of_channel(int node_id, int module_id, int channel, int *d
 /// if any local module was subscribed to its channel it will loose these
 /// subscriptions, it should also be removed from the list of module names and types.
 void delete_module_instance(int node_id, int module_id);
+
+/// return current time in milliseconds
+long long msec();
+
+/// return current time in usec
+long long usec();
 
 
 #endif
