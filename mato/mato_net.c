@@ -59,6 +59,7 @@ static int read_mato_config()
     FILE *f = fopen(CONFIG_FILENAME, "r");
     while (fgets(config_line, 255, f))
     {
+        if (config_line[0] == '#') continue;
         char *comma = strchr(config_line, ',');
         if (comma == 0) return config_error(ln);
         *comma = 0;
