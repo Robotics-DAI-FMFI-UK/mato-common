@@ -3,3 +3,4 @@ test_modules_A_B
 test_two_modules_A
 test_A_B_with_borrowed_ptr
 test_distributed_AB
+test_messages
