@@ -3,12 +3,18 @@
 #include "mato.h"
 #include "mato_core.h"
 #include "mato_net.h"
+#include "mato_logs.h"
+
+#define PRINT_ALL_LOGS_TO_CONSOLE 1
+#define PRINT_DEBUG_LOGS 1
+#define LOGS_PATH "logs/"
 
 /// \file mato.c
 /// Implementation of the Mato control framework: public functions.
 
 void mato_init(int this_node_identifier)
 {
+    mato_logs_init(PRINT_ALL_LOGS_TO_CONSOLE, PRINT_DEBUG_LOGS, LOGS_PATH);
     net_mato_init(this_node_identifier);
     core_mato_init();
 

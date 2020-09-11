@@ -28,7 +28,7 @@ test_distributed_AB: 05_distributed_AB/test_distributed_AB.c 05_distributed_AB/A
 test_messages: 06_messages/test_messages.c 06_messages/AB.c $(MATO_SRCS)
 	gcc -o test_messages $^ $(GLIB_INCLUDE) $(GLIB_LIBDIR) $(MATO_LIBS) $(WITH_DEBUG) -lm
 
-test_logs_with_distributed_AB: 07_logs_with_distributed_AB/test_logs_with_distributed_AB.c 07_distributed_AB/AB.c $(MATO_SRCS)
+test_logs_with_distributed_AB: 07_logs_with_distributed_AB/test_logs_with_distributed_AB.c 07_logs_with_distributed_AB/AB.c $(MATO_SRCS)
 	gcc -o test_logs_with_distributed_AB $^ $(GLIB_INCLUDE) $(GLIB_LIBDIR) $(MATO_LIBS) $(WITH_DEBUG)
 
 clean:

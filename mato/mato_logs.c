@@ -23,10 +23,10 @@ static char *log_type_str[4] = { "INFO", "WARN", " ERR", "DEBG" };
 
 static FILE *try_opening_log()
 {
-  FILE *f = fopen(log_filename, "a+");
-  if (!f)
-      perror("mato:logs try_opening_log");
-  return f;
+    FILE *f = fopen(log_filename, "a+");
+    if (!f)
+        perror("mato:logs try_opening_log");
+    return f;
 }
 
 char *read_next_line_from_pipe()
@@ -71,13 +71,15 @@ static void *mato_logs_thread(void *arg)
 }
 
 //  /usr/local/logs/mato/
-void init_mato_logs(int print_all_logs_to_console, int print_debug_logs, const char *log_path)
+void mato_logs_init(int print_all_logs_to_console, int print_debug_logs, const char *log_path)
 {
-  char *filename_str = "%s/%ld_%s";
-// !!!!!!!! TODO:
-  char *lastlog = "/usr/local/logs/mato/last";
-  char *filename_base = "mato.log";
-  char *log_filename;
+    char *filename_str = "%s/%ld_%s";
+    char *lastlog;
+    char *filename_base = "mato.log";
+    char *log_filename;
+
+    lastlog = (char *)malloc(strlen(log_path) + 6);
+    sprintf(lastlog, "%s/last", log_path);
 
   start_time = msec();
   print_to_console = print_all_logs_to_console;
@@ -123,7 +125,7 @@ void init_mato_logs(int print_all_logs_to_console, int print_debug_logs, const c
   mato_log(ML_INFO, ctm);
 }
 
-void shutdown_mato_logs()
+void mato_logs_shutdown()
 {
     free(log_filename);
     log_filename = 0;

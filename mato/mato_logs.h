@@ -7,7 +7,8 @@
 #define ML_WARN 1
 #define ML_INFO 0
 
-void init_mato_logs();
+void mato_logs_init(int print_all_logs_to_console, int print_debug_logs, const char *log_path);
+void mato_logs_shutdown();
 void mato_log(unsigned int log_type, char *log_msg);
 void mato_log_str(unsigned int log_type, char *log_msg, const char *log_msg2);
 void mato_log_val(unsigned int log_type, char *log_msg, int val);
