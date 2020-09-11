@@ -42,8 +42,11 @@ static void notify_about_hello_starting_message(module_B_instance_data *data)
 
 void *module_B_thread(void *arg)
 {
-    mato_inc_thread_count();
+    char myname[13];
     module_B_instance_data *data = (module_B_instance_data *)arg;
+    sprintf(myname, "B%d", data->module_id);
+    mato_inc_thread_count(myname);
+
     wait_for_hello_starting_message(data);
     sleep(2 * (data->module_id % 5));
     for (int i = 0; program_runs && (i < 5); i++)

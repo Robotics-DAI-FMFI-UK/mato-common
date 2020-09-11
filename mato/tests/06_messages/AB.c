@@ -80,8 +80,11 @@ void *module_AB_thread(void *arg)
 {
     time_t tm;
     time(&tm);
-    mato_inc_thread_count();
+
+    char myname[13];
     module_AB_instance_data *data = (module_AB_instance_data *)arg;
+    sprintf(myname, "%c%d", data->type, data->module_id);
+    mato_inc_thread_count(myname);
 
     printf("%u module_%c_thread (%d) enters barrier...\n", (unsigned int)(tm - tm0), data->type, data->module_id);
 
@@ -123,8 +126,12 @@ void check_job_done(module_AB_instance_data *my_data)
 void *module_AB_msg_eating_thread(void *arg)
 {
     time_t tm;
-    mato_inc_thread_count();
+
+    char myname[13];
     module_AB_instance_data *data = (module_AB_instance_data *)arg;
+    sprintf(myname, "%c%d_eat", data->type, data->module_id);
+    mato_inc_thread_count(myname);
+
     int val2 = 1;
     while (program_runs)
     {

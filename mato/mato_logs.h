@@ -12,6 +12,7 @@ void mato_logs_shutdown();
 void mato_log(unsigned int log_type, char *log_msg);
 void mato_log_str(unsigned int log_type, char *log_msg, const char *log_msg2);
 void mato_log_val(unsigned int log_type, char *log_msg, int val);
+void mato_log_str_val(unsigned int log_type, char *log_msg, const char *log_msg2, int val);
 void mato_log_val2(unsigned int log_type, char *log_msg, int val, int val2);
 void mato_log_double(unsigned int log_type, char *log_msg, double val);
 void mato_log_double2(unsigned int log_type, char *log_msg, double val, double val2);

@@ -5,15 +5,17 @@
 #include "mato_net.h"
 #include "mato_logs.h"
 
+// will go to framework config to appear soon
 #define PRINT_ALL_LOGS_TO_CONSOLE 1
 #define PRINT_DEBUG_LOGS 1
-#define LOGS_PATH "logs/"
+#define LOGS_PATH "logs"
 
 /// \file mato.c
 /// Implementation of the Mato control framework: public functions.
 
 void mato_init(int this_node_identifier)
 {
+    core_mato_init_data();
     mato_logs_init(PRINT_ALL_LOGS_TO_CONSOLE, PRINT_DEBUG_LOGS, LOGS_PATH);
     net_mato_init(this_node_identifier);
     core_mato_init();
@@ -381,6 +383,7 @@ void mato_release_data(int id_module, int channel, void *data)
                     dangling_channel_data = decrement_references(dangling_channel_data, buffer);
                     break;
                 }
+                dcd = dcd->next;
             }
         }
     unlock_framework();
@@ -455,10 +458,11 @@ void mato_data_buffer_usage(int module_id, int channel, int *number_of_allocated
     unlock_framework();
 }
 
-void mato_inc_thread_count()
+void mato_inc_thread_count(char *short_thread_name)
 {
     lock_framework();
         threads_started++;
+        core_register_thread(short_thread_name);
     unlock_framework();
 }
 
@@ -482,5 +486,10 @@ void mato_shutdown()
 int mato_main_program_module_id()
 {
     return this_node_id * NODE_MULTIPLIER + MATO_MAIN_PROGRAM_MODULE;
+}
+
+char *this_thread_name()
+{
+    return core_thread_name();
 }
 

@@ -60,8 +60,11 @@ static void notify_about_hello_starting_message(module_AB_instance_data *data)
 void *module_AB_thread(void *arg)
 {
     time_t tm;
-    mato_inc_thread_count();
+    char myname[13];
     module_AB_instance_data *data = (module_AB_instance_data *)arg;
+    sprintf(myname, "%c%d", data->type, data->module_id);
+    mato_inc_thread_count(myname);
+
     wait_for_hello_starting_message(data);
     sleep(2 * (data->module_id % 5));
     for (int i = 0; program_runs && (i < 5); i++)
@@ -85,8 +88,11 @@ void *module_AB_thread(void *arg)
 void *module_AB_msg_eating_thread(void *arg)
 {
     time_t tm;
-    mato_inc_thread_count();
+    char myname[13];
     module_AB_instance_data *data = (module_AB_instance_data *)arg;
+    sprintf(myname, "%c%d_eat", data->type, data->module_id);
+    mato_inc_thread_count(myname);
+
     while (program_runs)
     {
         int *val_ptr;

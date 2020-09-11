@@ -23,8 +23,10 @@ void *A_create_instance(int module_id)
 
 void *module_A_thread(void *arg)
 {
-    mato_inc_thread_count();
+    char myname[13];
     module_A_instance_data *data = (module_A_instance_data *)arg;
+    sprintf(myname, "A%d", data->module_id);
+    mato_inc_thread_count(myname);
     sleep(2 * (data->module_id % 5));
     for (int i = 0; program_runs && (i < 10); i++)
     {

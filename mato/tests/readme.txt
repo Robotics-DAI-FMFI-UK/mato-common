@@ -228,3 +228,12 @@ Run make to build all tests.
   When all modules receive 7(+1) notifications about the end
   of prime list, they know all lists were generated, and terminate.
 
+07_logs_with_distributed/
+
+  This is the very same test as 05_distributed, however, it now
+  uses logging, instead of printing to console using printf().
+  Mato framework has a simple logging system, where all messages
+  are printed to the console (if required) and saved to a file
+  with a timestamp, name of the thread that produces the message,
+  and the log severity level. 
+

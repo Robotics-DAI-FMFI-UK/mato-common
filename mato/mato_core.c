@@ -3,6 +3,7 @@
 #include "mato.h"
 #include "mato_net.h"
 #include "mato_core.h"
+#include "mato_logs.h"
 
 /// \file mato_core.c
 /// Implementation of the Mato control framework - internal data structures and algorithms.
@@ -16,6 +17,7 @@ GArray *module_names;
 GArray *module_types;
 GArray *instance_data;
 GHashTable *module_specifications;
+GHashTable *thread_names;
 GArray *buffers;
 GList *dangling_channel_data;
 GArray *subscriptions;
@@ -30,13 +32,17 @@ static int next_free_subscription_id;
 
 /// Used for mutual exclusion when accessing framework structures from functions that can be called from different threads.
 static pthread_mutex_t framework_mutex;
+static pthread_mutex_t threads_mutex;
 
 void core_mato_shutdown()
 {
     close(post_data_pipe[1]);
+    while (mato_system_threads_running() > 1) { usleep(10000); }
+    mato_logs_shutdown();
     while (mato_system_threads_running() > 0) { usleep(10000); }
     close(post_data_pipe[0]);
     pthread_mutex_destroy(&framework_mutex);
+    pthread_mutex_destroy(&threads_mutex);
 }
 
 void lock_framework()
@@ -49,10 +55,11 @@ void unlock_framework()
     pthread_mutex_unlock(&framework_mutex);
 }
 
-void mato_inc_system_thread_count()
+void mato_inc_system_thread_count(char *short_thread_name)
 {
     lock_framework();
         system_threads_started++;
+        core_register_thread(short_thread_name);
     unlock_framework();
 }
 
@@ -84,7 +91,7 @@ GList *decrement_references(GList *data_buffers, channel_data *to_be_decremented
 static void *mato_core_thread(void *arg)
 {
     channel_data *cd;
-    mato_inc_system_thread_count();
+    mato_inc_system_thread_count("core");
     while (program_runs)
     {
         int retval = read(post_data_pipe[0], &cd, sizeof(channel_data *));
@@ -403,7 +410,7 @@ void store_new_remote_module(int node_id, int module_id, char *module_name, char
         }
     unlock_framework();
 
-    printf("got info about new module %d from node %d (%s|%s) with %d channels\n", module_id, node_id, module_name, module_type, number_of_channels);
+    //printf("got info about new module %d from node %d (%s|%s) with %d channels\n", module_id, node_id, module_name, module_type, number_of_channels);
 }
 
 int get_free_module_id() // is not thread-safe
@@ -450,10 +457,10 @@ module_info *new_module_info(int node_id, int module_id, char *module_name, char
 static void intHandler(int signum)
 {
     program_runs = 0;
-    printf("...CTRL-C hit, terminating\n");
+    mato_log(ML_WARN, "...CTRL-C hit, terminating\n");
 }
 
-void core_mato_init()
+void core_mato_init_data()
 {
     signal(SIGINT, intHandler);
 
@@ -464,6 +471,7 @@ void core_mato_init()
 
     instance_data = g_array_new(0, 0, sizeof(void *));
     module_specifications = g_hash_table_new(g_str_hash, g_str_equal);
+    thread_names = g_hash_table_new(g_int64_hash, g_int64_equal);
 
     module_names = g_array_new(0, 0, sizeof(GArray *));
     module_types = g_array_new(0, 0, sizeof(GArray *));
@@ -472,7 +480,11 @@ void core_mato_init()
     subscriptions = g_array_new(0, 0, sizeof(GArray *));
 
     pthread_mutex_init(&framework_mutex, 0);
+    pthread_mutex_init(&threads_mutex, 0);
+}
 
+void core_mato_init()
+{
     for(int i=0;i<nodes->len;i++)
     {
         GArray * names = g_array_new(0, 0, sizeof(char *));
@@ -610,16 +622,36 @@ void borrow_last_data_of_channel(int node_id, int module_id, int channel, int *d
 
 long long msec()
 {
-  struct timeval tv;
-  gettimeofday(&tv, 0);
-  return 1000L * tv.tv_sec + tv.tv_usec / 1000L;
+    struct timeval tv;
+    gettimeofday(&tv, 0);
+    return 1000L * tv.tv_sec + tv.tv_usec / 1000L;
 }
 
 long long usec()
 {
-  struct timeval tv;
-  gettimeofday(&tv, 0);
-  return (1000000L * (long long)tv.tv_sec) + tv.tv_usec;
+    struct timeval tv;
+    gettimeofday(&tv, 0);
+    return (1000000L * (long long)tv.tv_sec) + tv.tv_usec;
 }
 
+void core_register_thread(char *short_thread_name)
+{
+    int64_t *tid = (int64_t *)malloc(sizeof(int64_t));
+    *tid = (int64_t)pthread_self();
+    if (strlen(short_thread_name) > 12) short_thread_name = "TOOLONGNAME";
+    char *name = malloc(strlen(short_thread_name) + 1);
+    strcpy(name, short_thread_name);
+    pthread_mutex_lock(&threads_mutex);
+        g_hash_table_insert(thread_names, tid, name);
+    pthread_mutex_unlock(&threads_mutex);
+}
 
+char *core_thread_name()
+{
+    int64_t tid = (int64_t)pthread_self();
+    pthread_mutex_lock(&threads_mutex);
+        char *thread_name = g_hash_table_lookup(thread_names, &tid);
+    pthread_mutex_unlock(&threads_mutex);
+    if (thread_name == 0) thread_name = "noname";
+    return thread_name;
+}

@@ -113,7 +113,11 @@ extern GArray *subscriptions;  // [node_id][module_id][channel_id][subscription_
 /// each subscriber callback to be called in a separate thread taken from a thread pool.
 extern int post_data_pipe[2];
 
-/// Initialize data structures maintained by the core.
+/// Initialize data structures maintained by the core (should be called first, has no dependence)
+void core_mato_init_data();
+
+/// Initialize the more detailed data structures maintained by the core 
+/// (should be called after net is already initialized, uses number of nodes that comes from net config).
 void core_mato_init();
 
 /// Release resources used by the core.
@@ -190,11 +194,16 @@ void borrow_last_data_of_channel(int node_id, int module_id, int channel, int *d
 /// subscriptions, it should also be removed from the list of module names and types.
 void delete_module_instance(int node_id, int module_id);
 
-/// return current time in milliseconds
+/// Return current time in milliseconds.
 long long msec();
 
-/// return current time in usec
+/// Return current time in usec.
 long long usec();
 
+/// Registers the name of the thread for better debugging/logging support.
+void core_register_thread(char *short_thread_name);
+
+/// Returns the name of this thread that was previously registered with core_register_thread() function.
+char *core_thread_name();
 
 #endif

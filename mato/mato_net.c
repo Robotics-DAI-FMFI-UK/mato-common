@@ -3,6 +3,7 @@
 #include "mato.h"
 #include "mato_net.h"
 #include "mato_core.h"
+#include "mato_logs.h"
 
 /// \file mato_net.c
 /// Implementation of the Mato control framework - networking with other nodes.
@@ -27,7 +28,7 @@ static int select_wakeup_pipe[2];
 /// Print error about reading config at the specified line
 static int config_error(int ln)
 {
-    printf("Could not parse nodes config file, error at line %d\n", ln);
+    mato_log_val(ML_ERR, "Could not parse nodes config file, error at line", ln);
     return 0;
 }
 
@@ -102,7 +103,7 @@ void net_mato_init(int this_node_identifier)
     this_node_id = this_node_identifier;
     if (!read_mato_config())
     {
-        printf("Error loading nodes config file\n");
+        mato_log_val(ML_ERR, "Error loading nodes config file", errno);
         exit(1);
     }
 }
@@ -113,7 +114,7 @@ void net_mato_shutdown()
     program_runs = 0;
 
     if (write(select_wakeup_pipe[1], &wakeup_byte, 1) < 0)
-        perror("could not wakeup networking thread");
+        mato_log_val(ML_ERR, "could not wakeup networking thread", errno);
 
     core_mato_shutdown();
 
@@ -127,7 +128,7 @@ static void node_disconnected(int s, int node_id)
 {
     g_array_index(nodes, node_info *, node_id)->is_online = 0;
     close(s);
-    printf("node %d has disconnected\n", node_id);
+    mato_log_val(ML_WARN, "node has disconnected", node_id);
     lock_framework();
         remove_node_buffers(node_id);
         remove_node_from_subscriptions(node_id);
@@ -144,7 +145,7 @@ static int net_recv_int32t(int s, int32_t *num, int sending_node_id)
     int retval = recv(s, num, sizeof(int32_t), MSG_WAITALL);
     if(retval<0)
     {
-        perror("reading from socket");
+        mato_log_val(ML_ERR, "reading from socket", errno);
         return 0;
     }
     else if (retval == 0) // node disconnected
@@ -163,7 +164,6 @@ static int net_recv_bytes(int s, uint8_t **str, int32_t *str_len, int sending_no
 {
     if (!net_recv_int32t(s, str_len, sending_node_id))
         return 0;
-//    printf("----strlen=%d\n", *str_len);
     if (*str_len == 0)
     {
         *str = 0;
@@ -171,10 +171,9 @@ static int net_recv_bytes(int s, uint8_t **str, int32_t *str_len, int sending_no
     }
     *str = (uint8_t *)malloc(*str_len);
     int retval = recv(s, *str, *str_len, MSG_WAITALL);
-//    printf("----retval=%d\n", retval);
     if (retval < 0)
     {
-        perror("reading from socket");
+        mato_log_val(ML_ERR, "reading from socket", errno);
         return 0;
     }
     else if (retval == 0) // node disconnected
@@ -182,7 +181,6 @@ static int net_recv_bytes(int s, uint8_t **str, int32_t *str_len, int sending_no
         node_disconnected(s, sending_node_id);
         return 0;
     }
-//    printf("---str=%s\n", *str);
     return 1;
 }
 
@@ -247,7 +245,6 @@ static void net_process_subscribe_module(int s, int sending_node_id)
         !net_recv_int32t(s, &channel, sending_node_id)
     )
         return;
-    //printf("%d received subscribe(%d,%d) from %d\n", this_node_id, subscribed_module_id, channel, sending_node_id);
     subscribe_channel_from_remote_node(sending_node_id, subscribed_module_id, channel);
 }
 
@@ -328,11 +325,9 @@ static void net_process_global_message(int s, int sending_node_id)
 /// Receive, unpack, and process a new message arriving from another node from socket s.
 static void process_node_message(int s, int sending_node_id)
 {
-    //printf("message from node %d\n", sending_node_id);
     int32_t message_type;
     if (!net_recv_int32t(s, &message_type, sending_node_id))
         return;
-    //printf("message_type=%d\n", message_type);
 
     switch(message_type){
         case MSG_NEW_MODULE_INSTANCE:
@@ -383,19 +378,18 @@ static void *reconnecting_thread(void *arg)
 {
     struct sockaddr_in my_addr;
 
-    mato_inc_system_thread_count();
+    mato_inc_system_thread_count("connect");
 
-    while (program_runs){
+    while (program_runs)
+    {
         for(int node_id = this_node_id + 1; node_id < nodes->len; node_id++)
         {
             if (g_array_index(nodes, node_info*, node_id)->is_online == 0)
             {
-                printf("trying to connect to node %d, constructing socket...\n", node_id);
-
                 int s = socket(AF_INET, SOCK_STREAM, 0);
                 if (s < 0)
                 {
-                    perror("could not create socket");
+                    mato_log_val(ML_ERR, "could not create socket", errno);
                     return 0;
                 }
                 char *IP = g_array_index(nodes, node_info*, node_id)->IP;
@@ -405,35 +399,33 @@ static void *reconnecting_thread(void *arg)
                 my_addr.sin_port = htons(port);
                 if (inet_pton(AF_INET, IP, &my_addr.sin_addr) <= 0)
                 {
-                    printf("Invalid ip address (%s:%d)\n", IP, port);
+                    mato_log_str_val(ML_ERR, "Invalid ip address", IP, port);
                     continue;
                 }
-                printf("calling connect (%s:%d)...\n", IP, port);
                 if (connect(s, (struct sockaddr *)&my_addr, sizeof(struct sockaddr_in)) < 0)
                     continue;
-                printf("sending my node_id\n");
                 int retval = send(s, &this_node_id, sizeof(int32_t), 0);
                 if (retval < 0)
                 {
-                    perror("Could not send this node id");
+                    mato_log_val(ML_ERR, "Could not send this node id", errno);
                     close(s);
                     continue;
                 }
                 g_array_index(sockets, int, node_id) = s;
                 g_array_index(nodes, node_info*, node_id)->is_online = 1;
-                printf("connected to %d\n", node_id);
+                mato_log_val(ML_INFO, "connected to ", node_id);
 
                 uint8_t wakeup_byte = 123;
                 if (write(select_wakeup_pipe[1], &wakeup_byte, 1) < 0)
-                    perror("could not wakeup networking thread");
+                    mato_log_val(ML_ERR, "could not wakeup networking thread", errno);
 
                 inform_about_our_modules(node_id);
                 continue;
             }
         }
-        for (int i = 0; i < 10; i++)
-            if (!program_runs) break;
-                else sleep(1);
+        //for (int i = 0; i < 10; i++)
+        //    if (!program_runs) break;
+                sleep(1);
     }
     mato_dec_system_thread_count();
 }
@@ -451,14 +443,12 @@ static void fill_select_fd_set(fd_set *rfds, int *nfd)
             int s = g_array_index(sockets, int, i);
             FD_SET(s, rfds);
             if (s > *nfd) *nfd = s;
-            printf("selected fd(%d) of node %d\n", s, i);
         }
     }
     FD_SET(listening_socket, rfds);
     if (listening_socket > *nfd) *nfd = listening_socket;
     FD_SET(select_wakeup_pipe[0], rfds);
     if (select_wakeup_pipe[0] > *nfd) *nfd = select_wakeup_pipe[0];
-    printf("calling select...\n");
     (*nfd)++;
 }
 
@@ -468,7 +458,6 @@ static void handle_incomming_connections(fd_set *rfds)
 {
     if (FD_ISSET(listening_socket, rfds))
     {
-        printf("Connection ...\n");
         struct sockaddr_in incomming;
         socklen_t size = sizeof(struct sockaddr_in);
         int s = accept(listening_socket, (struct sockaddr *)&incomming, &size);
@@ -476,10 +465,10 @@ static void handle_incomming_connections(fd_set *rfds)
         int retval = recv(s, &new_node_id, sizeof(int32_t), MSG_WAITALL);
         if(retval < 0)
         {
-            perror("reading from socket");
+            mato_log_val(ML_ERR, "reading from socket", errno);
             return;
         }
-        printf("...from node %d\n", new_node_id);
+        mato_log_val(ML_INFO, "connection from node", new_node_id);
         g_array_index(sockets, int, new_node_id) = s;
         g_array_index(nodes, node_info*, new_node_id)->is_online = 1;
         inform_about_our_modules(new_node_id);
@@ -512,10 +501,9 @@ static void handle_messages_from_other_nodes(fd_set *rfds)
 static int wait_on_select(fd_set *rfds, int nfd)
 {
     int retval = select(nfd, rfds, 0, 0, 0);
-    printf("select() returns %d\n", retval);
     if (retval < 0)
     {
-        perror("Select error");
+        mato_log_val(ML_ERR, "Select error", errno);
         return 0;
     }
     return 1;
@@ -525,7 +513,7 @@ static int wait_on_select(fd_set *rfds, int nfd)
 /// Dispatches the arriving messages to the process_node_message() function.
 static void *communication_thread(void *arg)
 {
-    mato_inc_system_thread_count();
+    mato_inc_system_thread_count("comm");
     fd_set rfds;
     int nfd = 0;
     while (program_runs){
@@ -549,7 +537,7 @@ void start_networking()
 
     listening_socket = socket(AF_INET, SOCK_STREAM, 0);
     if (listening_socket == -1)
-       perror("socket");
+       mato_log_val(ML_ERR, "socket", errno);
 
     memset(&my_addr, 0, sizeof(struct sockaddr_in));
     my_addr.sin_family = AF_INET;
@@ -559,7 +547,7 @@ void start_networking()
     int i = 0;
     do {
         if (bind(listening_socket, (struct sockaddr *) &my_addr, sizeof(struct sockaddr_in)) == -1)
-            perror("bind, will retry...");
+            mato_log_val(ML_WARN, "bind, will retry...", errno);
         else break;
         sleep(6);
     } while (program_runs && (++i < 20));
@@ -568,21 +556,21 @@ void start_networking()
     int rv = listen(listening_socket, MAX_PENDINGS_CONNECTIONS);
     if (rv < 0)
     {
-        perror("listen");
+        mato_log_val(ML_ERR, "listen", errno);
         return;
     }
 
     if (pipe(select_wakeup_pipe) < 0)
     {
-        perror("could not create pipe for select");
+        mato_log_val(ML_ERR, "could not create pipe for select", errno);
         return;
     }
 
     pthread_t t;
     if (pthread_create(&t, 0, reconnecting_thread, 0) != 0)
-          perror("could not create reconnecting thread for framework");
+          mato_log_val(ML_ERR, "could not create reconnecting thread for framework", errno);
     if (pthread_create(&t, 0, communication_thread, 0) != 0)
-          perror("could not create communication thread for framework");
+          mato_log_val(ML_ERR, "could not create communication thread for framework", errno);
 }
 
 //-------------- low-level outgoing data sending ----------------------
@@ -593,10 +581,8 @@ void start_networking()
 static int net_send_string(int socket, char *str)
 {
     int32_t len = strlen(str) + 1;
-    //printf("sending %d...\n", len);
     if (write(socket, &len, sizeof(int32_t)) < 0)
         return 0;
-    //printf("sending %s...\n", str);
     if (write(socket, str, len) < 0)
         return 0;
     return 1;
@@ -664,7 +650,6 @@ void net_broadcast_new_module(int module_id)
         if (ni->is_online == 0) continue;
         net_send_new_module(node_id, module_id);
     }
-    printf("announced new module %d to other nodes\n", module_id);
 }
 
 void net_send_new_module(int node_id, int module_id)
@@ -719,13 +704,10 @@ void net_send_delete_module(int module_id)
             node_disconnected(s, node_id);
         }
     }
-    printf("announced deleted module %d to other nodes\n", module_id);
 }
 
 void net_send_subscribe(int node_id, int module_id, int channel)
 {
-    //printf("%d sending subscribe(%d,%d) to %d\n", this_node_id, module_id, channel, node_id);
-
     int s = g_array_index(sockets, int, node_id);
     if (
       !net_send_int32t(s, MSG_SUBSCRIBE)  ||
@@ -772,7 +754,6 @@ void net_send_global_message(int sending_module_id, int message_id, uint8_t *mes
             }
         }
     unlock_framework();
-    printf("forwarded message %d to other nodes\n", message_id);
 }
 
 void net_send_message(int sending_module_id, int receiving_node_id, int module_id_receiver, int message_id, uint8_t *message_data, int message_length)
@@ -794,6 +775,4 @@ void net_send_message(int sending_module_id, int receiving_node_id, int module_i
             node_disconnected(s, receiving_node_id);
         }
     unlock_framework();
-
-    printf("forwarded message %d to destination module\n", message_id);
 }

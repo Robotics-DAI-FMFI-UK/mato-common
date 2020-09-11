@@ -5,8 +5,10 @@
 #include <unistd.h>
 #include <inttypes.h>
 #include <time.h>
+#include <errno.h>
 
 #include "../../mato.h"
+#include "../../mato_logs.h"
 #include "AB.h"
 
 #define NUMBER_OF_HELLOs_TO_WAIT_FOR 3
@@ -21,9 +23,14 @@ typedef struct {
             int hello_count;
             pthread_mutex_t lock;
             int forwarder;
+            char *log_posting;
+            char *log_eating;
+            char *log_other;
         } module_AB_instance_data;
 
 static time_t tm0;
+
+char logmsg[1000];
 
 void *AB_create_instance(int module_id, char type)
 {
@@ -33,11 +40,15 @@ void *AB_create_instance(int module_id, char type)
     data->type = type;
     data->hello_count = 0;
     data->forwarder = 1;
+    data->log_posting = (char *)malloc(1000);
+    data->log_eating = (char *)malloc(1000);
+    data->log_other = (char *)malloc(1000);
     if (pipe(data->starting_pipe) < 0)
-        perror("could not create starting pipe");
+        mato_log_val(ML_ERR, "could not create starting pipe, errno:", errno);
     pthread_mutex_init(&data->lock, 0);
     time(&tm);
-    printf("%u created a new instance of module %c (%d) at %" PRIuPTR "\n", (unsigned int)(tm - tm0), type, module_id, (uintptr_t)data);
+    sprintf(logmsg, "%u created a new instance of module %c (%d) at %" PRIuPTR, (unsigned int)(tm - tm0), type, module_id, (uintptr_t)data);
+    mato_log(ML_INFO, logmsg);
     return data;
 }
 
@@ -65,29 +76,34 @@ static void wait_for_hello_messages(module_AB_instance_data *data)
 {
     uint8_t b;
     if (read(data->starting_pipe[0], &b, 1) < 0)
-        printf("could not write to starting pipe");
+        mato_log_val(ML_ERR, "could not read from starting pipe, errno:", errno);
 }
 
 static void notify_about_hello_messages(module_AB_instance_data *data)
 {
     uint8_t b = 123;
     if (write(data->starting_pipe[1], &b, 1) < 0)
-        perror("could not write to starting pipe");
+        mato_log_val(ML_ERR, "could not write to starting pipe, errno:", errno);
 }
 
 void *module_AB_thread(void *arg)
 {
     time_t tm;
     time(&tm);
-    mato_inc_thread_count();
-    module_AB_instance_data *data = (module_AB_instance_data *)arg;
 
-    printf("%u module_%c_thread (%d) enters barrier...\n", (unsigned int)(tm - tm0), data->type, data->module_id);
+    char myname[13];
+    module_AB_instance_data *data = (module_AB_instance_data *)arg;
+    sprintf(myname, "%c%d", data->type, data->module_id);
+    mato_inc_thread_count(myname);
+
+    sprintf(data->log_posting, "%u module_%c_thread (%d) enters barrier...", (unsigned int)(tm - tm0), data->type, data->module_id);
+    mato_log(ML_DEBUG, data->log_posting);
 
     // all modules barrier
     wait_for_hello_messages(data);
 
-    printf("%u module_%c_thread (%d) leaves barrier...\n", (unsigned int)(tm - tm0), data->type, data->module_id);
+    sprintf(data->log_posting, "%u module_%c_thread (%d) leaves barrier...", (unsigned int)(tm - tm0), data->type, data->module_id);
+    mato_log(ML_DEBUG, data->log_posting);
 
     sleep(1 + 2 * (data->module_id % 5));
     for (int i = 0; program_runs && (i < 5); i++)
@@ -98,12 +114,13 @@ void *module_AB_thread(void *arg)
         sleep(2);
     }
     time(&tm);
-    printf("%u module_%c_thread done (%d), unsubscribing...\n", (unsigned int)(tm - tm0), data->type, data->module_id);
+    sprintf(data->log_posting, "%u module_%c_thread done (%d), unsubscribing...", (unsigned int)(tm - tm0), data->type, data->module_id);
+    mato_log(ML_DEBUG, data->log_posting);
     mato_unsubscribe(data->subscribed_to_module_id, 0, data->my_subscription_id);
-    printf("%u module_%c_thread terminates (%d)\n", (unsigned int)(tm - tm0), data->type, data->module_id);
+    sprintf(data->log_posting, "%u module_%c_thread terminates (%d)", (unsigned int)(tm - tm0), data->type, data->module_id);
+    mato_log(ML_DEBUG, data->log_posting);
 
     close(data->msg_queue[1]);
-    close(data->msg_queue[0]);
 
     mato_dec_thread_count();
 }
@@ -111,31 +128,40 @@ void *module_AB_thread(void *arg)
 void *module_AB_msg_eating_thread(void *arg)
 {
     time_t tm;
-    mato_inc_thread_count();
+
+    char myname[13];
     module_AB_instance_data *data = (module_AB_instance_data *)arg;
+    sprintf(myname, "%c%d_eat", data->type, data->module_id);
+    mato_inc_thread_count(myname);
+
     while (program_runs)
     {
         int *val_ptr;
         int rv = read(data->msg_queue[0], &val_ptr, sizeof(void *));
-        if (rv == -1) break;
+        if (rv <= 0) break;
         int val = *val_ptr;
         time(&tm);
-        printf("%u %c(%d) retrieves message %d from queue\n", (unsigned int)(tm - tm0), data->type, data->module_id, val);
+        sprintf(data->log_eating, "%u %c(%d) retrieves message %d from queue", (unsigned int)(tm - tm0), data->type, data->module_id, val);
+        mato_log(ML_INFO, data->log_eating);
         int *fwd_val = mato_get_data_buffer(sizeof(int));
         *fwd_val = val + 100;
         sleep(data->module_id % 5);
         time(&tm);
-        printf("%u %c(%d) returns borrowed ptr to message %d\n", (unsigned int)(tm - tm0), data->type, data->module_id, val);
+        sprintf(data->log_eating, "%u %c(%d) returns borrowed ptr to message %d", (unsigned int)(tm - tm0), data->type, data->module_id, val);
+        mato_log(ML_DEBUG, data->log_eating);
         mato_release_data(data->subscribed_to_module_id, 0, val_ptr);
 
         if (data->forwarder)
         {
-            printf("%u %c(%d) post-forwards message %d as %d\n", (unsigned int)(tm - tm0), data->type, data->module_id, val, *fwd_val);
+            sprintf(data->log_eating, "%u %c(%d) post-forwards message %d as %d", (unsigned int)(tm - tm0), data->type, data->module_id, val, *fwd_val);
+            mato_log(ML_DEBUG, data->log_eating);
             mato_post_data(data->module_id, 0, sizeof(int), fwd_val);
         }
     }
     time(&tm);
-    printf("%u %c(%d) msg queue closed, msg eating thread terminates\n", (unsigned int)(tm - tm0), data->type, data->module_id);
+    sprintf(data->log_eating, "%u %c(%d) msg queue closed, msg eating thread terminates", (unsigned int)(tm - tm0), data->type, data->module_id);
+    close(data->msg_queue[0]);
+    mato_log(ML_DEBUG, data->log_eating);
     mato_dec_thread_count();
 }
 
@@ -146,7 +172,8 @@ void message_from_other(void *instance_data, int sender_module_id, int data_leng
     int val = *((int *)new_data_ptr);
     char other_type = 'B' - (data->type - 'A');
     time(&tm);
-    printf("%u %c(%d) receives message from %c(%d): %d, pushed to queue\n", (unsigned int)(tm - tm0), data->type, data->module_id, other_type, sender_module_id, val);
+    sprintf(data->log_other, "%u %c(%d) receives message from %c(%d): %d, pushed to queue", (unsigned int)(tm - tm0), data->type, data->module_id, other_type, sender_module_id, val);
+    mato_log(ML_DEBUG, data->log_other);
     write(data->msg_queue[1], &new_data_ptr, sizeof(void *));
 }
 
@@ -169,7 +196,8 @@ void AB_start(void *instance_data)
             {
                sprintf(module_name, "n%d_%c%d", node_id, type, ord);
                module_ids[node_id][type - 'A'][ord] = mato_get_module_id(module_name);
-               printf("# %s is %d\n", module_name, module_ids[node_id][type - 'A'][ord]);
+               sprintf(logmsg, "# %s is %d", module_name, module_ids[node_id][type - 'A'][ord]);
+               mato_log(ML_DEBUG, logmsg);
             }
     int my_node = my_name[1] - '0';
     char my_type = my_name[3];
@@ -182,20 +210,22 @@ void AB_start(void *instance_data)
 
     if (pipe(data->msg_queue) < 0)
     {
-        perror("could not create pipe for msg queue");
+        mato_log_val(ML_ERR, "could not create pipe for msg queue, errno:", errno);
         return;
     }
 
-    printf("module %s(%d) subscribing to module (%d)...\n", my_name, module_id, data->subscribed_to_module_id);
+    sprintf(logmsg, "module %s(%d) subscribing to module (%d)...", my_name, module_id, data->subscribed_to_module_id);
+    mato_log(ML_DEBUG, logmsg);
     data->my_subscription_id = mato_subscribe(module_id, data->subscribed_to_module_id, 0, message_from_other, borrowed_pointer);
 
     pthread_t t;
     time(&tm);
-    printf("%u starting module %c(%d)..\n", (unsigned int)(tm - tm0), data->type, data->module_id);
+    sprintf(logmsg, "%u starting module %c(%d)..", (unsigned int)(tm - tm0), data->type, data->module_id);
+    mato_log(ML_DEBUG, logmsg);
     if (pthread_create(&t, 0, module_AB_thread, data) != 0)
-        perror("could not create thread for module");
+        mato_log_val(ML_ERR, "could not create thread for module, errno:", errno);
     if (pthread_create(&t, 0, module_AB_msg_eating_thread, data) != 0)
-        perror("could not create msg eating thread for module");
+        mato_log_val(ML_ERR, "could not create msg eating thread for module, errno:", errno);
 }
 
 void AB_delete(void *instance_data)
@@ -205,8 +235,12 @@ void AB_delete(void *instance_data)
     time(&tm);
     close(data->starting_pipe[0]);
     close(data->starting_pipe[1]);
+    free(data->log_posting);
+    free(data->log_eating);
     pthread_mutex_destroy(&data->lock);
-    printf("%u deleting module instance (%d) = %" PRIuPTR "\n", (unsigned int)(tm - tm0), data->module_id, (uintptr_t)data);
+    sprintf(data->log_other, "%u deleting module instance (%d) = %" PRIuPTR, (unsigned int)(tm - tm0), data->module_id, (uintptr_t)data);
+    mato_log(ML_INFO, data->log_other);
+    free(data->log_other);
     free(data);
 }
 
@@ -218,7 +252,8 @@ void AB_global_message(void *instance_data, int module_id_sender, int message_id
     time(&tm);
     if (message_id == MESSAGE_HELLO)
     {
-        printf("%u module %c(%d) received global HELLO messsage: '%s' from %d\n", (unsigned int)(tm - tm0), my_data->type, my_data->module_id, data, module_id_sender);
+        sprintf(my_data->log_eating, "%u module %c(%d) received global HELLO messsage: '%s' from %d", (unsigned int)(tm - tm0), my_data->type, my_data->module_id, data, module_id_sender);
+        mato_log(ML_DEBUG, my_data->log_eating);
         AB_lock(my_data);
             my_data->hello_count++;
             if (my_data->hello_count == NUMBER_OF_HELLOs_TO_WAIT_FOR)
@@ -233,13 +268,13 @@ static module_specification B_specification = { B_create_instance, AB_start, AB_
 void A_init()
 {
     time(&tm0);
-    printf("initializing module type A...\n");
+    mato_log(ML_DEBUG, "initializing module type A...");
     mato_register_new_type_of_module("A", &A_specification);
 }
 
 void B_init()
 {
-    printf("initializing module type B...\n");
+    mato_log(ML_DEBUG, "initializing module type B...");
     mato_register_new_type_of_module("B", &B_specification);
 }
 

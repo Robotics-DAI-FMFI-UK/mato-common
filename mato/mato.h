@@ -172,11 +172,17 @@ void mato_data_buffer_usage(int module_id, int channel, int *number_of_allocated
 
 /// Each module instance (or other part of the program) that creates a new thread should call this funciton for each newly
 /// created thread. Increments the number of threads running. This should be called from each thread that has been started.
-void mato_inc_thread_count();
+/// The short thread name provided is associated with the thread id and can later be retrieved by this_thread_name() function.
+void mato_inc_thread_count(char *short_thread_name);
 
 /// Each thread that terminates should call this function just before it quits.
 /// Decrement the number of threads running. It should be called by each thread that terminates.
 void mato_dec_thread_count();
+
+/// Retrieve the name of the thread that is calling the function that was previously registered 
+/// with mato_inc_thread_count() function. If the thread that is calling has not been registered, 
+/// it will return the string "noname"
+char *this_thread_name();
 
 /// The number of threads currently running in the system
 int mato_threads_running();
