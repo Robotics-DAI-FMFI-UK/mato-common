@@ -9,7 +9,6 @@
 
 #include "mato_core.h"
 #include "mato_logs.h"
-// #include "../../bites/util.h"
 
 static char *log_filename;
 static long long start_time;
@@ -81,48 +80,48 @@ void mato_logs_init(int print_all_logs_to_console, int print_debug_logs, const c
     lastlog = (char *)malloc(strlen(log_path) + 6);
     sprintf(lastlog, "%s/last", log_path);
 
-  start_time = msec();
-  print_to_console = print_all_logs_to_console;
-  print_debug = print_debug_logs;
-
-  log_filename = (char *)malloc(strlen(log_path) + strlen(filename_str) + 20 + strlen(filename_base));
-  if (log_filename == 0)
-  {
-    perror("mato:logs malloc");
-    exit(1);
-  }
-
-  time_t tm;
-  time(&tm);
-  sprintf(log_filename, filename_str, log_path, tm, filename_base);
-
-  FILE *f = fopen(log_filename, "w+");
-  if (f == 0)
-  {
-    perror("mato:logs");
-    printf("Could not open log file %s\n", log_filename);
-    exit(1);
-  }
-  fclose(f);
-
-  unlink(lastlog);
-  symlink(log_filename, lastlog);
-
-  if (pipe(log_queue) < 0)
-  {
-      perror("init_mato_logs: pipe");
-      exit(-1);
-  }
-
-  pthread_t t;
-  if (pthread_create(&t, 0, mato_logs_thread, 0) != 0)
-      perror("could not create thread for logs");
-
-  if (print_to_console) mato_log(ML_INFO, "printing all logs to console");
-  char ctm[40];
-  sprintf(ctm, "%s", ctime(&tm));
-  ctm[strlen(ctm) - 1] = 0;
-  mato_log(ML_INFO, ctm);
+    start_time = msec();
+    print_to_console = print_all_logs_to_console;
+    print_debug = print_debug_logs;
+  
+    log_filename = (char *)malloc(strlen(log_path) + strlen(filename_str) + 20 + strlen(filename_base));
+    if (log_filename == 0)
+    {
+        perror("mato:logs malloc");
+        exit(1);
+    }
+  
+    time_t tm;
+    time(&tm);
+    sprintf(log_filename, filename_str, log_path, tm, filename_base);
+  
+    FILE *f = fopen(log_filename, "w+");
+    if (f == 0)
+    {
+        perror("mato:logs");
+        printf("Could not open log file %s\n", log_filename);
+        exit(1);
+    }
+    fclose(f);
+  
+    unlink(lastlog);
+    symlink(log_filename, lastlog);
+  
+    if (pipe(log_queue) < 0)
+    {
+        perror("init_mato_logs: pipe");
+        exit(-1);
+    }
+  
+    pthread_t t;
+    if (pthread_create(&t, 0, mato_logs_thread, 0) != 0)
+        perror("could not create thread for logs");
+  
+    if (print_to_console) mato_log(ML_INFO, "printing all logs to console");
+    char ctm[40];
+    sprintf(ctm, "%s", ctime(&tm));
+    ctm[strlen(ctm) - 1] = 0;
+    mato_log(ML_INFO, ctm);
 }
 
 void mato_logs_shutdown()
@@ -133,12 +132,12 @@ void mato_logs_shutdown()
 
 long get_run_time()
 {
-  return (long)(msec() - start_time);
+    return (long)(msec() - start_time);
 }
 
 static void log_pipe_error()
 {
-   perror("writing to log pipe");
+    perror("writing to log pipe");
 }
 
 int check_log_type(int *log_type)
@@ -154,84 +153,84 @@ int check_log_type(int *log_type)
 
 void mato_log(unsigned int log_type, char *log_msg)
 {
-  if (!check_log_type(&log_type)) return;
-  long run_time = get_run_time();
-
-  char *log_full_msg = (char *)malloc(strlen(log_msg) + 20);
-  sprintf(log_full_msg, "%05ld.%03d %s: %s\n", run_time / 1000L, (int)(run_time % 1000L), log_type_str[log_type], log_msg);
-  if (write(log_queue[1], &log_full_msg, sizeof(char *)) < 0)
-    log_pipe_error();
-
-  if (print_to_console)
-    printf("%s: %s\n", log_type_str[log_type], log_msg);
+    if (!check_log_type(&log_type)) return;
+    long run_time = get_run_time();
+  
+    char *log_full_msg = (char *)malloc(strlen(log_msg) + 20);
+    sprintf(log_full_msg, "%05ld.%03d %s: %s\n", run_time / 1000L, (int)(run_time % 1000L), log_type_str[log_type], log_msg);
+    if (write(log_queue[1], &log_full_msg, sizeof(char *)) < 0)
+        log_pipe_error();
+  
+    if (print_to_console)
+        printf("%s: %s\n", log_type_str[log_type], log_msg);
 }
 
 void mato_log_str(unsigned int log_type, char *log_msg, const char *log_msg2)
 {
-  if (!check_log_type(&log_type)) return;
-  long run_time = get_run_time();
-
-  char *log_full_msg = (char *)malloc(strlen(log_msg) + strlen(log_msg2) + 20);
-  sprintf(log_full_msg, "%05ld.%03d %s: %s%s\n", run_time / 1000L, (int)(run_time % 1000L), log_type_str[log_type], log_msg, log_msg2);
-  if (write(log_queue[1], &log_full_msg, sizeof(char *)) < 0)
-    log_pipe_error();
-
-  if (print_to_console)
-    printf("%s: %s%s\n", log_type_str[log_type], log_msg, log_msg2);
+    if (!check_log_type(&log_type)) return;
+    long run_time = get_run_time();
+  
+    char *log_full_msg = (char *)malloc(strlen(log_msg) + strlen(log_msg2) + 20);
+    sprintf(log_full_msg, "%05ld.%03d %s: %s%s\n", run_time / 1000L, (int)(run_time % 1000L), log_type_str[log_type], log_msg, log_msg2);
+    if (write(log_queue[1], &log_full_msg, sizeof(char *)) < 0)
+        log_pipe_error();
+  
+    if (print_to_console)
+        printf("%s: %s%s\n", log_type_str[log_type], log_msg, log_msg2);
 }
 
 void mato_log_val2(unsigned int log_type, char *log_msg, int val, int val2)
 {
-  if (!check_log_type(&log_type)) return;
-  long run_time = get_run_time();
+    if (!check_log_type(&log_type)) return;
+    long run_time = get_run_time();
 
-  char *log_full_msg = (char *)malloc(strlen(log_msg) + 40);
-  sprintf(log_full_msg, "%05ld.%03d %s: %s %d %d\n", run_time / 1000L, (int)(run_time % 1000L), log_type_str[log_type], log_msg, val, val2);
-  if (write(log_queue[1], &log_full_msg, sizeof(char *)) < 0)
-    log_pipe_error();
+    char *log_full_msg = (char *)malloc(strlen(log_msg) + 40);
+    sprintf(log_full_msg, "%05ld.%03d %s: %s %d %d\n", run_time / 1000L, (int)(run_time % 1000L), log_type_str[log_type], log_msg, val, val2);
+    if (write(log_queue[1], &log_full_msg, sizeof(char *)) < 0)
+        log_pipe_error();
 
-  if (print_to_console)
-    printf("%s: %s %d %d\n", log_type_str[log_type], log_msg, val, val2);
+    if (print_to_console)
+        printf("%s: %s %d %d\n", log_type_str[log_type], log_msg, val, val2);
 }
 
 void mato_log_double2(unsigned int log_type, char *log_msg, double val, double val2)
 {
-  if (!check_log_type(&log_type)) return;
-  long run_time = get_run_time();
+    if (!check_log_type(&log_type)) return;
+    long run_time = get_run_time();
 
-  char *log_full_msg = (char *)malloc(strlen(log_msg) + 100);
-  sprintf(log_full_msg, "%05ld.%03d %s: %s %16.8G %16.6G\n", run_time / 1000L, (int)(run_time % 1000L), log_type_str[log_type], log_msg, val, val2);
-  if (write(log_queue[1], &log_full_msg, sizeof(char *)) < 0)
-    log_pipe_error();
+    char *log_full_msg = (char *)malloc(strlen(log_msg) + 100);
+    sprintf(log_full_msg, "%05ld.%03d %s: %s %16.8G %16.6G\n", run_time / 1000L, (int)(run_time % 1000L), log_type_str[log_type], log_msg, val, val2);
+    if (write(log_queue[1], &log_full_msg, sizeof(char *)) < 0)
+        log_pipe_error();
 
-  if (print_to_console)
-    printf("%s: %s %e %e\n", log_type_str[log_type], log_msg, val, val2);
+    if (print_to_console)
+        printf("%s: %s %e %e\n", log_type_str[log_type], log_msg, val, val2);
 }
 
 void mato_log_val(unsigned int log_type, char *log_msg, int val)
 {
-  if (!check_log_type(&log_type)) return;
-  long run_time = get_run_time();
+    if (!check_log_type(&log_type)) return;
+    long run_time = get_run_time();
 
-  char *log_full_msg = (char *)malloc(strlen(log_msg) + 30);
-  sprintf(log_full_msg, "%05ld.%03d %s: %s %d\n", run_time / 1000L, (int)(run_time % 1000L), log_type_str[log_type], log_msg, val);
-  if (write(log_queue[1], &log_full_msg, sizeof(char *)) < 0)
-    log_pipe_error();
+    char *log_full_msg = (char *)malloc(strlen(log_msg) + 30);
+    sprintf(log_full_msg, "%05ld.%03d %s: %s %d\n", run_time / 1000L, (int)(run_time % 1000L), log_type_str[log_type], log_msg, val);
+    if (write(log_queue[1], &log_full_msg, sizeof(char *)) < 0)
+        log_pipe_error();
 
-  if (print_to_console)
-    printf("%s: %s %d\n", log_type_str[log_type], log_msg, val);
+    if (print_to_console)
+        printf("%s: %s %d\n", log_type_str[log_type], log_msg, val);
 }
 
 void mato_log_double(unsigned int log_type, char *log_msg, double val)
 {
-  if (!check_log_type(&log_type)) return;
-  long run_time = get_run_time();
-
-  char *log_full_msg = (char *)malloc(strlen(log_msg) + 50);
-  sprintf(log_full_msg, "%05ld.%03d %s: %s %16.8G\n", run_time / 1000L, (int)(run_time % 1000L), log_type_str[log_type], log_msg, val);
-  if (write(log_queue[1], &log_full_msg, sizeof(char *)) < 0)
-    log_pipe_error();
-
-  if (print_to_console)
-    printf("%s: %s %e\n", log_type_str[log_type], log_msg, val);
+    if (!check_log_type(&log_type)) return;
+    long run_time = get_run_time();
+  
+    char *log_full_msg = (char *)malloc(strlen(log_msg) + 50);
+    sprintf(log_full_msg, "%05ld.%03d %s: %s %16.8G\n", run_time / 1000L, (int)(run_time % 1000L), log_type_str[log_type], log_msg, val);
+    if (write(log_queue[1], &log_full_msg, sizeof(char *)) < 0)
+        log_pipe_error();
+  
+    if (print_to_console)
+        printf("%s: %s %e\n", log_type_str[log_type], log_msg, val);
 }
