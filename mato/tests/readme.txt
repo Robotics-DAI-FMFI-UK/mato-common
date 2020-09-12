@@ -237,3 +237,15 @@ Run make to build all tests.
   with a timestamp, name of the thread that produces the message,
   and the log severity level. 
 
+08_mato_config/
+
+  Mato framework contains a simple text-file based config file
+  parser. You can use a your config file to configure the framework
+  and your application with a text config file, where lines take
+  the form 
+   variable: value
+  The parser recognizes values of type int, double, and char *,
+  and everything behind a # character is treated as a comment
+  at the same line. This example uses an example config file
+  test_config.cfg to demonstrate how to use this feature.
+

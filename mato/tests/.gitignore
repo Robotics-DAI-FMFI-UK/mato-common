@@ -4,3 +4,5 @@ test_two_modules_A
 test_A_B_with_borrowed_ptr
 test_distributed_AB
 test_messages
+test_logs_with_distributed_AB
+test_mato_config

@@ -2,10 +2,12 @@
 #define __MATO_H__
 
 #include <glib.h>
+#include "mato_logs.h"
+#include "mato_config.h"
 
 /// \file mato.h
 /// Mato control framework - main header file. Declarations of the public interface of the framework
-/// (see also mato_logs.h file for more).
+/// (see also mato_logs.h and mato_config.h files for more).
 /// The framework manages the data flow between modules of the control architecture.
 /// Modules have types and names. There can be multiple instances of the same type of module, having different names.
 /// Module instances should only keep their local data inside of one structure that is created for each

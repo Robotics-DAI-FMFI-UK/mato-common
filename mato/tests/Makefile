@@ -6,9 +6,9 @@ MATO_LIBS=-lglib-2.0 -lpthread
 WITH_DEBUG=-g
 # WITH_DEBUG=
 
-MATO_SRCS=../mato.c ../mato_core.c ../mato_net.c  ../mato_logs.c
+MATO_SRCS=../mato.c ../mato_core.c ../mato_net.c ../mato_logs.c ../mato_config.c
 
-all: test_two_modules_A test_modules_A_B test_A_B_with_copy test_A_B_with_borrowed_ptr test_distributed_AB test_messages test_logs_with_distributed_AB
+all: test_two_modules_A test_modules_A_B test_A_B_with_copy test_A_B_with_borrowed_ptr test_distributed_AB test_messages test_logs_with_distributed_AB test_mato_config
 
 test_two_modules_A: 01_two_modules_A/test_two_modules_A.c 01_two_modules_A/A.c $(MATO_SRCS)
 	gcc -o test_two_modules_A $^ $(GLIB_INCLUDE) $(GLIB_LIBDIR) $(WITH_DEBUG) $(MATO_LIBS)
@@ -31,8 +31,11 @@ test_messages: 06_messages/test_messages.c 06_messages/AB.c $(MATO_SRCS)
 test_logs_with_distributed_AB: 07_logs_with_distributed_AB/test_logs_with_distributed_AB.c 07_logs_with_distributed_AB/AB.c $(MATO_SRCS)
 	gcc -o test_logs_with_distributed_AB $^ $(GLIB_INCLUDE) $(GLIB_LIBDIR) $(MATO_LIBS) $(WITH_DEBUG)
 
+test_mato_config: 08_mato_config/test_mato_config.c $(MATO_SRCS)
+	gcc -o test_mato_config $^ $(GLIB_INCLUDE) $(GLIB_LIBDIR) $(MATO_LIBS) $(WITH_DEBUG)
+
 clean:
-	rm test_two_modules_A test_modules_A_B test_A_B_with_copy test_A_B_with_borrowed_ptr test_distributed_AB test_messages test_logs_with_distributed_AB
+	rm test_two_modules_A test_modules_A_B test_A_B_with_copy test_A_B_with_borrowed_ptr test_distributed_AB test_messages test_logs_with_distributed_AB test_mato_config
 
 docs:
 	cd .. && doxygen mato.dox && cd tests
