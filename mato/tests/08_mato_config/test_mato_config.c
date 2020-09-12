@@ -4,7 +4,7 @@
 
 int main()
 {
-    void *cfg = mato_config_read("08_mato_config/test_config.cfg");
+    void *cfg = mato_config_read("08_mato_config/config_test.cfg");
     printf("abc='%s'\n", mato_config_get_strval(cfg, "abc", "xx"));
     printf("def='%s'\n", mato_config_get_strval(cfg, "def", "xx"));
     printf("ghi='%d'\n", mato_config_get_intval(cfg, "ghi", 777));

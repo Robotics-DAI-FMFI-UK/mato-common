@@ -57,7 +57,7 @@ static int read_mato_config()
     int port;
     char *name;
 
-    FILE *f = fopen(CONFIG_FILENAME, "r");
+    FILE *f = fopen(NODES_CONFIG_FILENAME, "r");
     while (fgets(config_line, 255, f))
     {
         if (config_line[0] == '#') continue;

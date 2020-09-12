@@ -17,12 +17,10 @@
 #define ML_INFO 0
 
 /// Init must be called before the first message is logged. The file name is generated based on the time
-/// the init is called (time in seconds since epoch), with the specified suffix.
-/// \param print_all_logs_to_console when this flag is 0, nothing is printed out to the terminal, only to the file.
-/// \param print_debug_logs 0 specifies that messages with the level ML_DEBUG are ignored
-/// \param log_path points to a folder where the log file will be created, should not end with '/'
-/// \param log_filename_suffix is the last part of the log filename, specify 0 for the default 'mato.log'.
-void mato_logs_init(int print_all_logs_to_console, int print_debug_logs, const char *log_path, const char *log_filename_suffix);
+/// the init is called (time in seconds since epoch), with the specified suffix. Use the variables
+/// print_all_logs_to_console, print_debug_logs, log_path, and log_filename_suffix to control 
+/// the behavior and log file location.
+void mato_logs_init();
 
 /// Can be called to release some resources used by the logs when they are not going to be used anymore.
 void mato_logs_shutdown();

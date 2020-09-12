@@ -39,7 +39,7 @@ int main(int argc, char **argv)
     printf("----\nThis test is to be run from three different terminals:\n  ./test_distributed_AB 0\n  ./test_distributed_AB 1\n  ./test_distributed_AB 2\n----\n\n");
 
     printf("initializing framework...\n");
-    mato_init(this_node_id);
+    mato_init(this_node_id, 0);
 
     do {
         mato_log(ML_DEBUG, "initializing module types...");

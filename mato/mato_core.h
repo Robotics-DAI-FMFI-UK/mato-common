@@ -24,7 +24,18 @@
 #define NODE_MULTIPLIER          100000L
 #define MATO_MAIN_PROGRAM_MODULE  (NODE_MULTIPLIER - 1)
 
-#define CONFIG_FILENAME "mato_nodes.conf"
+#define NODES_CONFIG_FILENAME "mato_nodes.conf"
+
+/// configurable variables of the mato framework are stored in this structure
+typedef struct {
+    int print_all_logs_to_console;
+    int print_debug_logs;
+    char *logs_path;
+    char *log_filename_suffix;
+} mato_config_structure;
+
+/// holds the configurable variables loaded from config file
+extern mato_config_structure mato_config;
 
 /// The structure describes a single individual subscription to some channel of some module.
 /// Each subscription is identified by a computational node unique identifier (id_subscription)

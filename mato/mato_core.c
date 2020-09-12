@@ -22,6 +22,7 @@ GArray *buffers;
 GList *dangling_channel_data;
 GArray *subscriptions;
 int post_data_pipe[2];
+mato_config_structure mato_config;
 //---
 
 /// A counter for assigning a new module_id for newly created module instances.
@@ -460,9 +461,29 @@ static void intHandler(int signum)
     mato_log(ML_WARN, "...CTRL-C hit, terminating\n");
 }
 
-void core_mato_init_data()
+/// default values of the framework config 
+#define DEFAULT_PRINT_ALL_LOGS_TO_CONSOLE 1
+#define DEFAULT_PRINT_DEBUG_LOGS 1
+#define DEFAULT_LOGS_PATH "logs"
+#define DEFAULT_LOG_FILENAME_SUFFIX "mato.log"
+
+/// load framework variables from the config file (see mato.cnf file for the list)
+static void load_mato_config(char *mato_config_filename)
+{
+    void *cfg = mato_config_read(mato_config_filename);
+
+    mato_config.print_all_logs_to_console = mato_config_get_intval(cfg, "print_all_logs_to_console", DEFAULT_PRINT_ALL_LOGS_TO_CONSOLE);
+    mato_config.print_debug_logs = mato_config_get_intval(cfg, "print_debug_logs", DEFAULT_PRINT_DEBUG_LOGS);
+    mato_config.logs_path = mato_config_get_alloc_strval(cfg, "logs_path", DEFAULT_LOGS_PATH);
+    mato_config.log_filename_suffix = mato_config_get_alloc_strval(cfg, "log_filename_suffix", DEFAULT_LOG_FILENAME_SUFFIX);
+
+    mato_config_dispose(cfg);
+}
+
+void core_mato_init_data(char *mato_config_filename)
 {
     signal(SIGINT, intHandler);
+    load_mato_config(mato_config_filename);
 
     program_runs = 1;
     threads_started = 0;

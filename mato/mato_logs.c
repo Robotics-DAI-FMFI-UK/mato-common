@@ -85,20 +85,17 @@ static void *mato_logs_thread(void *arg)
     mato_dec_system_thread_count();
 }
 
-void mato_logs_init(int print_all_logs_to_console, int print_debug_logs, const char *log_path, const char *log_filename_suffix)
+void mato_logs_init()
 {
     char *filename_str = "%s/%ld_%s";
     char *lastlog;
-    if (log_filename_suffix == 0) log_filename_suffix = "mato.log";
 
-    lastlog = (char *)malloc(strlen(log_path) + 6);
-    sprintf(lastlog, "%s/last", log_path);
+    lastlog = (char *)malloc(strlen(mato_config.logs_path) + 6);
+    sprintf(lastlog, "%s/last", mato_config.logs_path);
 
     start_time = msec();
-    print_to_console = print_all_logs_to_console;
-    print_debug = print_debug_logs;
   
-    log_filename = (char *)malloc(strlen(log_path) + strlen(filename_str) + 20 + strlen(log_filename_suffix));
+    log_filename = (char *)malloc(strlen(mato_config.logs_path) + strlen(filename_str) + 20 + strlen(mato_config.log_filename_suffix));
     if (log_filename == 0)
     {
         perror("mato:logs malloc");
@@ -107,7 +104,7 @@ void mato_logs_init(int print_all_logs_to_console, int print_debug_logs, const c
   
     time_t tm;
     time(&tm);
-    sprintf(log_filename, filename_str, log_path, tm, log_filename_suffix);
+    sprintf(log_filename, filename_str, mato_config.logs_path, tm, mato_config.log_filename_suffix);
   
     FILE *f = try_opening_log();
     if (f == 0)
@@ -130,7 +127,7 @@ void mato_logs_init(int print_all_logs_to_console, int print_debug_logs, const c
     if (pthread_create(&t, 0, mato_logs_thread, 0) != 0)
         perror("could not create thread for logs");
   
-    if (print_to_console) mato_log(ML_INFO, "printing all logs to console");
+    if (mato_config.print_all_logs_to_console) mato_log(ML_INFO, "printing all logs to console");
     char ctm[40];
     sprintf(ctm, "%s", ctime(&tm));
     ctm[strlen(ctm) - 1] = 0;
@@ -164,7 +161,7 @@ int check_log_type(int *log_type)
         printf("WARN: unrecognized log type %d\n", log_type);
         *log_type = ML_ERR;
     }
-    else if ((*log_type == ML_DEBUG) && !print_debug) return 0;
+    else if ((*log_type == ML_DEBUG) && !mato_config.print_debug_logs) return 0;
     return 1;
 }
 
@@ -179,7 +176,7 @@ void mato_log(unsigned int log_type, char *log_msg)
     if (write(log_queue[1], &log_full_msg, sizeof(char *)) < 0)
         log_pipe_error();
   
-    if (print_to_console)
+    if (mato_config.print_all_logs_to_console)
         printf("%s %s: %s\n", log_type_str[log_type], thread_name, log_msg);
 }
 
@@ -194,7 +191,7 @@ void mato_log_str(unsigned int log_type, char *log_msg, const char *log_msg2)
     if (write(log_queue[1], &log_full_msg, sizeof(char *)) < 0)
         log_pipe_error();
   
-    if (print_to_console)
+    if (mato_config.print_all_logs_to_console)
         printf("%s %s: %s%s\n", log_type_str[log_type], thread_name, log_msg, log_msg2);
 }
 
@@ -209,7 +206,7 @@ void mato_log_str_val(unsigned int log_type, char *log_msg, const char *log_msg2
     if (write(log_queue[1], &log_full_msg, sizeof(char *)) < 0)
         log_pipe_error();
   
-    if (print_to_console)
+    if (mato_config.print_all_logs_to_console)
         printf("%s: %s %s%s %d\n", log_type_str[log_type], thread_name, log_msg, log_msg2, val);
 }
 
@@ -224,7 +221,7 @@ void mato_log_val2(unsigned int log_type, char *log_msg, int val, int val2)
     if (write(log_queue[1], &log_full_msg, sizeof(char *)) < 0)
         log_pipe_error();
 
-    if (print_to_console)
+    if (mato_config.print_all_logs_to_console)
         printf("%s %s: %s %d %d\n", log_type_str[log_type], thread_name, log_msg, val, val2);
 }
 
@@ -239,7 +236,7 @@ void mato_log_double2(unsigned int log_type, char *log_msg, double val, double v
     if (write(log_queue[1], &log_full_msg, sizeof(char *)) < 0)
         log_pipe_error();
 
-    if (print_to_console)
+    if (mato_config.print_all_logs_to_console)
         printf("%s %s: %s %e %e\n", log_type_str[log_type], thread_name, log_msg, val, val2);
 }
 
@@ -254,7 +251,7 @@ void mato_log_val(unsigned int log_type, char *log_msg, int val)
     if (write(log_queue[1], &log_full_msg, sizeof(char *)) < 0)
         log_pipe_error();
 
-    if (print_to_console)
+    if (mato_config.print_all_logs_to_console)
         printf("%s %s: %s %d\n", log_type_str[log_type], thread_name, log_msg, val);
 }
 
@@ -269,7 +266,7 @@ void mato_log_double(unsigned int log_type, char *log_msg, double val)
     if (write(log_queue[1], &log_full_msg, sizeof(char *)) < 0)
         log_pipe_error();
   
-    if (print_to_console)
+    if (mato_config.print_all_logs_to_console)
         printf("%s %s: %s %e\n", log_type_str[log_type], thread_name, log_msg, val);
 }
 

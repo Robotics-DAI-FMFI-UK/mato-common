@@ -35,7 +35,7 @@ int main(int argc, char **argv)
     if (argc > 1) sscanf(argv[1], "%d", &this_node_id);
     
     printf("initializing framework...\n");
-    mato_init(this_node_id);
+    mato_init(this_node_id, 0);
 
     printf("initializing module types...\n");
     A_init();

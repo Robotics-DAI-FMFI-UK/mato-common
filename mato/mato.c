@@ -5,19 +5,20 @@
 #include "mato_net.h"
 #include "mato_logs.h"
 
-// will go to framework config to appear soon
-#define PRINT_ALL_LOGS_TO_CONSOLE 1
-#define PRINT_DEBUG_LOGS 1
-#define LOGS_PATH "logs"
-#define LOGSUFFIX "mato.log"
+// default values go to framework config to appear soon
+#define DEFAULT_PRINT_ALL_LOGS_TO_CONSOLE 1
+#define DEFAULT_PRINT_DEBUG_LOGS 1
+#define DEFAULT_LOGS_PATH "logs"
+#define DEFAULT_LOGSUFFIX "mato.log"
 
 /// \file mato.c
 /// Implementation of the Mato control framework: public functions.
 
-void mato_init(int this_node_identifier)
+
+void mato_init(int this_node_identifier, char *mato_config_filename)
 {
-    core_mato_init_data();
-    mato_logs_init(PRINT_ALL_LOGS_TO_CONSOLE, PRINT_DEBUG_LOGS, LOGS_PATH, LOGSUFFIX);
+    core_mato_init_data(mato_config_filename);
+    mato_logs_init();
     net_mato_init(this_node_identifier);
     core_mato_init();
 

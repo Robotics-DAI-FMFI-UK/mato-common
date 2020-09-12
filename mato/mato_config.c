@@ -165,10 +165,10 @@ static void parse_config(config_data *first, char *buf, long config_size)
 
 void *mato_config_read(char *filename)
 {
-    mato_config_var_val_pair *first;
+    mato_config_var_val_pair *first = 0;
 
     do {
-        first = 0;
+        if (!filename) break;
         struct stat sb;
         if (stat(filename, &sb) == -1) break;
       
