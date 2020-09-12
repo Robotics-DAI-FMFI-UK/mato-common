@@ -1,3 +1,6 @@
+/// \file mato_logs.c
+/// Mato control framework - debug logging to a file/console - implementation.
+
 #include <stdio.h>
 #include <unistd.h>
 #include <time.h>
@@ -10,16 +13,25 @@
 #include "mato_core.h"
 #include "mato_logs.h"
 
+/// the init will generate a pointer to the logfile filename here
 static char *log_filename;
+
+/// all messages are leading with the time elapsed since the init was called
 static long long start_time;
 
+/// flags specified in the init are stored here: suppress output to the terminal?
 static int print_to_console = 0;
+/// flags specified in the init are stored here: suppress ML_DEBUG messages?
 static int print_debug = 0;
 
+/// all log messages are passed to the log-writing thread through this pipe (a pointer to a character string)
 static int log_queue[2];
 
+/// character string representations of the severity levels
 static char *log_type_str[4] = { "INFO", "WARN", " ERR", "DEBG" };
 
+/// before each burst of log messages to be saved to log file, the file is opened (and then closed again)
+/// so that no messages are lost in cache in case of crash
 static FILE *try_opening_log()
 {
     FILE *f = fopen(log_filename, "a+");
@@ -28,6 +40,7 @@ static FILE *try_opening_log()
     return f;
 }
 
+/// retrieve the chracter string passed from logging functions to the log-saving stream through a pipe
 char *read_next_line_from_pipe()
 {
     char *logmsg;
@@ -72,11 +85,11 @@ static void *mato_logs_thread(void *arg)
     mato_dec_system_thread_count();
 }
 
-void mato_logs_init(int print_all_logs_to_console, int print_debug_logs, const char *log_path)
+void mato_logs_init(int print_all_logs_to_console, int print_debug_logs, const char *log_path, const char *log_filename_suffix)
 {
     char *filename_str = "%s/%ld_%s";
     char *lastlog;
-    char *filename_base = "mato.log";
+    if (log_filename_suffix == 0) log_filename_suffix = "mato.log";
 
     lastlog = (char *)malloc(strlen(log_path) + 6);
     sprintf(lastlog, "%s/last", log_path);
@@ -85,7 +98,7 @@ void mato_logs_init(int print_all_logs_to_console, int print_debug_logs, const c
     print_to_console = print_all_logs_to_console;
     print_debug = print_debug_logs;
   
-    log_filename = (char *)malloc(strlen(log_path) + strlen(filename_str) + 20 + strlen(filename_base));
+    log_filename = (char *)malloc(strlen(log_path) + strlen(filename_str) + 20 + strlen(log_filename_suffix));
     if (log_filename == 0)
     {
         perror("mato:logs malloc");
@@ -94,7 +107,7 @@ void mato_logs_init(int print_all_logs_to_console, int print_debug_logs, const c
   
     time_t tm;
     time(&tm);
-    sprintf(log_filename, filename_str, log_path, tm, filename_base);
+    sprintf(log_filename, filename_str, log_path, tm, log_filename_suffix);
   
     FILE *f = try_opening_log();
     if (f == 0)
@@ -131,16 +144,19 @@ void mato_logs_shutdown()
     close(log_queue[1]);
 }
 
-long get_run_time()
+/// utility function to calculate the time since the init was called
+static long get_run_time()
 {
     return (long)(msec() - start_time);
 }
 
+/// report error with pipe
 static void log_pipe_error()
 {
     perror("writing to log pipe");
 }
 
+/// filter out disabled or illegal log_types
 int check_log_type(int *log_type)
 {
     if ((*log_type < 0) || (*log_type > ML_MAX_TYPE))

@@ -4,7 +4,8 @@
 #include <glib.h>
 
 /// \file mato.h
-/// Mato control framework - main header file. Declarations of the public interface of the framework.
+/// Mato control framework - main header file. Declarations of the public interface of the framework
+/// (see also mato_logs.h file for more).
 /// The framework manages the data flow between modules of the control architecture.
 /// Modules have types and names. There can be multiple instances of the same type of module, having different names.
 /// Module instances should only keep their local data inside of one structure that is created for each
@@ -30,7 +31,16 @@
 ///  the data of the message the module is sending. The framework deallocates the data buffers when they are
 ///  not needed anymore automatically, unless the copy_mode is specified.
 
-typedef enum subscription_type_enum {direct_data_ptr = 1, data_copy = 2, borrowed_pointer = 3} subscription_type;
+/// type of subscription to a module output channel:
+typedef enum subscription_type_enum {
+    /// the subscriber callback receives a pointer that is valid only for the scope of the callback,
+    direct_data_ptr = 1, 
+    /// the subscriber callback receives a pointer to a fresh copy of the data, and the module can
+    /// keep it until it needs it, finally release by the standard free() deallocation function,
+    data_copy = 2, 
+    /// the subscriber callback receives a pointer that is valid until the module will release it
+    /// by calling the release_data() function.
+    borrowed_pointer = 3} subscription_type;
 
 /// Create instance data of a module and initialize it. Each module should define this callback.
 /// This instance will be from now on always referred by the module_id passed in the argument.
@@ -83,6 +93,10 @@ typedef struct {
     char *name;
     int is_online;
 } node_info;
+
+/// This variable is set to non-zero when the program is about to terminate.
+/// All threads should terminate at the earliest possbility
+extern volatile int program_runs;
 
 /// Initializes the framework. It must be the first function of the framework to be called.
 /// It should be called only once. When in distributed environment, the user should assign integers to its nodes,
@@ -192,9 +206,5 @@ void mato_shutdown();
 
 /// Returns a module id for the "main program module", which can be used in mato_send_global_message() function.
 int mato_main_program_module_id();
-
-/// This variable is set to non-zero when the program is about to terminate.
-/// All threads should terminate at the earliest possbility
-extern volatile int program_runs;
 
 #endif
