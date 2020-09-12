@@ -109,9 +109,7 @@ void mato_delete_module_instance(int module_id)
 
     lock_framework();
 
-//    printf("%d: instance_data->len=%d\n", module_id, instance_data->len);
         char *module_type = g_array_index(g_array_index(module_types, GArray *, this_node_id), char *, module_id);
-        char *module_name = g_array_index(g_array_index(module_names, GArray *, this_node_id), char *, module_id);
         void *data = g_array_index(instance_data, void *, module_id);
 
         module_specification *spec = (module_specification *)g_hash_table_lookup(module_specifications, module_type);
@@ -206,9 +204,8 @@ void mato_post_data(int id_of_posting_module, int channel, int data_length, void
     write(post_data_pipe[1], &cd, sizeof(channel_data *));
 }
 
-int mato_send_global_message(int module_id_sender, int message_id, int msg_length, void *message_data)
+void mato_send_global_message(int module_id_sender, int message_id, int msg_length, void *message_data)
 {
-    int local_module_id_sender = module_id_sender % NODE_MULTIPLIER;
     int sending_node_id = module_id_sender / NODE_MULTIPLIER;
 
     // a message from this node is broadcasted to other nodes
@@ -242,9 +239,8 @@ int mato_send_global_message(int module_id_sender, int message_id, int msg_lengt
     unlock_framework();
 }
 
-int mato_send_message(int module_id_sender, int module_id_receiver, int message_id, int msg_length, void *message_data)
+void mato_send_message(int module_id_sender, int module_id_receiver, int message_id, int msg_length, void *message_data)
 {
-    int local_module_id_sender = module_id_sender % NODE_MULTIPLIER;
     int sending_node_id = module_id_sender / NODE_MULTIPLIER;
     int receiving_node_id = module_id_receiver / NODE_MULTIPLIER;
 

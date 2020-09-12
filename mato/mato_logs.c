@@ -19,11 +19,6 @@ static char *log_filename;
 /// all messages are leading with the time elapsed since the init was called
 static long long start_time;
 
-/// flags specified in the init are stored here: suppress output to the terminal?
-static int print_to_console = 0;
-/// flags specified in the init are stored here: suppress ML_DEBUG messages?
-static int print_debug = 0;
-
 /// all log messages are passed to the log-writing thread through this pipe (a pointer to a character string)
 static int log_queue[2];
 
@@ -83,6 +78,7 @@ static void *mato_logs_thread(void *arg)
     }
     close(log_queue[0]);
     mato_dec_system_thread_count();
+    return 0;
 }
 
 void mato_logs_init()
@@ -158,14 +154,14 @@ int check_log_type(int *log_type)
 {
     if ((*log_type < 0) || (*log_type > ML_MAX_TYPE))
     {
-        printf("WARN: unrecognized log type %d\n", log_type);
+        printf("WARN: unrecognized log type %d\n", *log_type);
         *log_type = ML_ERR;
     }
     else if ((*log_type == ML_DEBUG) && !mato_config.print_debug_logs) return 0;
     return 1;
 }
 
-void mato_log(unsigned int log_type, char *log_msg)
+void mato_log(int log_type, char *log_msg)
 {
     if (!check_log_type(&log_type)) return;
     long run_time = get_run_time();
@@ -180,7 +176,7 @@ void mato_log(unsigned int log_type, char *log_msg)
         printf("%s %s: %s\n", log_type_str[log_type], thread_name, log_msg);
 }
 
-void mato_log_str(unsigned int log_type, char *log_msg, const char *log_msg2)
+void mato_log_str(int log_type, char *log_msg, const char *log_msg2)
 {
     if (!check_log_type(&log_type)) return;
     long run_time = get_run_time();
@@ -195,7 +191,7 @@ void mato_log_str(unsigned int log_type, char *log_msg, const char *log_msg2)
         printf("%s %s: %s%s\n", log_type_str[log_type], thread_name, log_msg, log_msg2);
 }
 
-void mato_log_str_val(unsigned int log_type, char *log_msg, const char *log_msg2, int val)
+void mato_log_str_val(int log_type, char *log_msg, const char *log_msg2, int val)
 {
     if (!check_log_type(&log_type)) return;
     long run_time = get_run_time();
@@ -210,7 +206,7 @@ void mato_log_str_val(unsigned int log_type, char *log_msg, const char *log_msg2
         printf("%s: %s %s%s %d\n", log_type_str[log_type], thread_name, log_msg, log_msg2, val);
 }
 
-void mato_log_val2(unsigned int log_type, char *log_msg, int val, int val2)
+void mato_log_val2(int log_type, char *log_msg, int val, int val2)
 {
     if (!check_log_type(&log_type)) return;
     long run_time = get_run_time();
@@ -225,7 +221,7 @@ void mato_log_val2(unsigned int log_type, char *log_msg, int val, int val2)
         printf("%s %s: %s %d %d\n", log_type_str[log_type], thread_name, log_msg, val, val2);
 }
 
-void mato_log_double2(unsigned int log_type, char *log_msg, double val, double val2)
+void mato_log_double2(int log_type, char *log_msg, double val, double val2)
 {
     if (!check_log_type(&log_type)) return;
     long run_time = get_run_time();
@@ -240,7 +236,7 @@ void mato_log_double2(unsigned int log_type, char *log_msg, double val, double v
         printf("%s %s: %s %e %e\n", log_type_str[log_type], thread_name, log_msg, val, val2);
 }
 
-void mato_log_val(unsigned int log_type, char *log_msg, int val)
+void mato_log_val(int log_type, char *log_msg, int val)
 {
     if (!check_log_type(&log_type)) return;
     long run_time = get_run_time();
@@ -255,7 +251,7 @@ void mato_log_val(unsigned int log_type, char *log_msg, int val)
         printf("%s %s: %s %d\n", log_type_str[log_type], thread_name, log_msg, val);
 }
 
-void mato_log_double(unsigned int log_type, char *log_msg, double val)
+void mato_log_double(int log_type, char *log_msg, double val)
 {
     if (!check_log_type(&log_type)) return;
     long run_time = get_run_time();
@@ -269,4 +265,19 @@ void mato_log_double(unsigned int log_type, char *log_msg, double val)
     if (mato_config.print_all_logs_to_console)
         printf("%s %s: %s %e\n", log_type_str[log_type], thread_name, log_msg, val);
 }
+
+long long msec()
+{
+    struct timeval tv;
+    gettimeofday(&tv, 0);
+    return 1000L * tv.tv_sec + tv.tv_usec / 1000L;
+}
+
+long long usec()
+{
+    struct timeval tv;
+    gettimeofday(&tv, 0);
+    return (1000000L * (long long)tv.tv_sec) + tv.tv_usec;
+}
+
 

@@ -184,32 +184,12 @@ static int net_recv_bytes(int s, uint8_t **str, int32_t *str_len, int sending_no
     return 1;
 }
 
-//-------------- to be fixed ----------------------
-
-/// Gently delete buffers of the module: that is only decrement the reference of the "last valid" packet if we have one.
-/// But this is not a good idea, it will go away soon.
-static void net_delete_module_buffers(int node_id, int module_id)
-{
-    GArray *module_buffers = g_array_index(g_array_index(buffers,GArray *,node_id), GArray *, module_id);
-    int number_of_channels = module_buffers -> len;
-    for (int i = 0; i < number_of_channels; i++)
-    {
-        GList *channel_list = g_array_index(module_buffers, GList *, i);
-        if (channel_list)
-        {
-            channel_list = decrement_references(channel_list, (channel_data *)(channel_list->data));
-            if (channel_list == 0)
-                g_array_index(module_buffers, GList *, i) = 0;
-        }
-    }
-}
-
 //-------------- handling incoming messages ----------------------
 
 /// Receive and process new module instance message from another node. For the packet format, see net_broadcast_new_module() function.
 static void net_process_new_module(int s, int sending_node_id)
 {
-    int32_t node_id, module_id, number_of_channels, ignore;
+    int32_t module_id, number_of_channels, ignore;
     char *module_name, *module_type;
     if (
         !net_recv_int32t(s, &module_id, sending_node_id) ||
@@ -224,7 +204,7 @@ static void net_process_new_module(int s, int sending_node_id)
 /// Receive and process a delete module message from another node. For the packet format see net_send_delete_module() function.
 static void net_process_delete_module(int s, int sending_node_id)
 {
-    int32_t node_id, module_id;
+    int32_t module_id;
     if (
         !net_recv_int32t(s, &module_id, sending_node_id)
     )
@@ -238,8 +218,6 @@ static void net_process_delete_module(int s, int sending_node_id)
 static void net_process_subscribe_module(int s, int sending_node_id)
 {
     int32_t subscribed_module_id, channel;
-    char *module_name, *module_type;
-    subscriber_callback callback;
     if (
         !net_recv_int32t(s, &subscribed_module_id, sending_node_id) ||
         !net_recv_int32t(s, &channel, sending_node_id)
@@ -428,6 +406,7 @@ static void *reconnecting_thread(void *arg)
                 sleep(1);
     }
     mato_dec_system_thread_count();
+    return 0;
 }
 
 /// Fills the set of "read" file descriptor sets for the communication_thread() function.
@@ -528,12 +507,12 @@ static void *communication_thread(void *arg)
         handle_messages_from_other_nodes(&rfds);
     }
     mato_dec_system_thread_count();
+    return 0;
 }
 
 void start_networking()
 {
-    struct sockaddr_in my_addr, peer_addr;
-    socklen_t peer_addr_size;
+    struct sockaddr_in my_addr;
 
     listening_socket = socket(AF_INET, SOCK_STREAM, 0);
     if (listening_socket == -1)

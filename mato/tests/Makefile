@@ -3,7 +3,7 @@ GLIB_INCLUDE=-I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/includ
 GLIB_LIBDIR=-L/usr/lib/aarch64-linux-gnu -L/usr/lib/x86_64_linux-gnu -L/usr/lib/arm-linux-gnueabihf
 MATO_LIBS=-lglib-2.0 -lpthread
 
-WITH_DEBUG=-g
+WITH_DEBUG=-g -Wall
 # WITH_DEBUG=
 
 MATO_SRCS=../mato.c ../mato_core.c ../mato_net.c ../mato_logs.c ../mato_config.c

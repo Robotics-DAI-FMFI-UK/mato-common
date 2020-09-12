@@ -123,6 +123,7 @@ void *module_AB_thread(void *arg)
     close(data->msg_queue[1]);
 
     mato_dec_thread_count();
+    return 0;
 }
 
 void *module_AB_msg_eating_thread(void *arg)
@@ -163,6 +164,7 @@ void *module_AB_msg_eating_thread(void *arg)
     close(data->msg_queue[0]);
     mato_log(ML_DEBUG, data->log_eating);
     mato_dec_thread_count();
+    return 0;
 }
 
 void message_from_other(void *instance_data, int sender_module_id, int data_length, void *new_data_ptr)

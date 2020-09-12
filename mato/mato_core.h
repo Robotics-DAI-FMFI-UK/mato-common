@@ -205,12 +205,6 @@ void borrow_last_data_of_channel(int node_id, int module_id, int channel, int *d
 /// subscriptions, it should also be removed from the list of module names and types.
 void delete_module_instance(int node_id, int module_id);
 
-/// Return current time in milliseconds.
-long long msec();
-
-/// Return current time in usec.
-long long usec();
-
 /// Registers the name of the thread for better debugging/logging support.
 void core_register_thread(char *short_thread_name);
 

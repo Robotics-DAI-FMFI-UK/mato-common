@@ -38,6 +38,7 @@ void *module_A_thread(void *arg)
     }
     mato_dec_thread_count();
     printf("module_A_thread done (%d)\n", data->module_id);
+    return 0;
 }
 
 void A_start(void *instance_data)

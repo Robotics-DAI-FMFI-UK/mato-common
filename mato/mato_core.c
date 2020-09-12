@@ -214,6 +214,7 @@ static void *mato_core_thread(void *arg)
         unlock_framework();
     }
     mato_dec_system_thread_count();
+    return 0;
 }
 
 /// Essentially removes traces about names and types of all modules of a particular node that has just disconnected.
@@ -639,20 +640,6 @@ void borrow_last_data_of_channel(int node_id, int module_id, int channel, int *d
         cd->references++;
     }
     else *data = 0;
-}
-
-long long msec()
-{
-    struct timeval tv;
-    gettimeofday(&tv, 0);
-    return 1000L * tv.tv_sec + tv.tv_usec / 1000L;
-}
-
-long long usec()
-{
-    struct timeval tv;
-    gettimeofday(&tv, 0);
-    return (1000000L * (long long)tv.tv_sec) + tv.tv_usec;
 }
 
 void core_register_thread(char *short_thread_name)

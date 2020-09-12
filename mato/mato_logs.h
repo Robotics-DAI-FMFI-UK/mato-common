@@ -26,28 +26,34 @@ void mato_logs_init();
 void mato_logs_shutdown();
 
 /// Append a specified character string message with the specified severity level to the log.
-void mato_log(unsigned int log_type, char *log_msg);
+void mato_log(int log_type, char *log_msg);
 
 /// Append a specified character string followed by another character string 
 /// with the specified severity level to the log.
-void mato_log_str(unsigned int log_type, char *log_msg, const char *log_msg2);
+void mato_log_str(int log_type, char *log_msg, const char *log_msg2);
 
 /// Append the specified character string followed by a space and an integer to the log and with the
 /// specified severity level string representation.
-void mato_log_val(unsigned int log_type, char *log_msg, int val);
+void mato_log_val(int log_type, char *log_msg, int val);
 
 /// Append the specified two character strings followed by a space and an integer to the log, the 
 /// message is prepended as all other messages with the current time to the precision of milliseconds, 
 /// severity level, and thread name.
-void mato_log_str_val(unsigned int log_type, char *log_msg, const char *log_msg2, int val);
+void mato_log_str_val(int log_type, char *log_msg, const char *log_msg2, int val);
 
 /// Append the specified character string followed by two space-separated integer values to the log.
-void mato_log_val2(unsigned int log_type, char *log_msg, int val, int val2);
+void mato_log_val2(int log_type, char *log_msg, int val, int val2);
 
 /// Append the specified character string followed by a floating point value (in format %16.8G) to the log.
-void mato_log_double(unsigned int log_type, char *log_msg, double val);
+void mato_log_double(int log_type, char *log_msg, double val);
 
 /// Append the specified character string followed by two space-separated floating point values to the log.
-void mato_log_double2(unsigned int log_type, char *log_msg, double val, double val2);
+void mato_log_double2(int log_type, char *log_msg, double val, double val2);
+
+/// Return current time in milliseconds.
+long long msec();
+
+/// Return current time in usec.
+long long usec();
 
 #endif

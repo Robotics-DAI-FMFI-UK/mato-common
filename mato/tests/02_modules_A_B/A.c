@@ -62,6 +62,7 @@ void *module_A_thread(void *arg)
     printf("module_A_thread terminates (%d)\n", data->module_id);
 
     mato_dec_thread_count();
+    return 0;
 }
 
 void message_from_B(void *instance_data, int sender_module_id, int data_length, void *new_data_ptr)

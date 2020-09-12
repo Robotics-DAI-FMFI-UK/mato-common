@@ -101,6 +101,7 @@ void *module_AB_thread(void *arg)
     printf("%u module_%c_thread terminates (%d)\n", (unsigned int)(tm - tm0), data->type, data->module_id);
 
     mato_dec_thread_count();
+    return 0;
 }
 
 int is_prime(int x)
@@ -168,6 +169,7 @@ void *module_AB_msg_eating_thread(void *arg)
     printf("%u %c(%d) all primes generated, msg eating thread terminates\n", (unsigned int)(tm - tm0), data->type, data->module_id);
 
     mato_dec_thread_count();
+    return 0;
 }
 
 void AB_start(void *instance_data)
