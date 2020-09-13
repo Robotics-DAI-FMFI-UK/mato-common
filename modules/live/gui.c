@@ -11,10 +11,8 @@
 #include <string.h>
 #include <pthread.h>
 
-#include "../../bites/mikes.h"
-#include "../../bites/util.h"
-#include "../passive/mikes_logs.h"
-#include "core/config_mikes.h"
+#include "../../mato/mato.h"
+#include "core/config_mato.h"
 #include "gui.h"
 
 #define MAX_GUI_CONTEXTS_COUNT 10
@@ -141,7 +139,7 @@ cairo_surface_t *gui_cairo_create_x11_surface(int *x, int *y, int win)
     {
         if ((dsp = XOpenDisplay(0)) == 0)
         {
-            mikes_log(ML_WARN, "could not open X display, will not use graphics");
+            mato_log(ML_WARN, "could not open X display, will not use graphics");
             return 0;
         }
         screen = DefaultScreen(dsp);
@@ -196,8 +194,8 @@ void gui_set_window_title(int window_handle, char *title)
     
     if (title && strlen(title) > 40)
     {
-        mikes_log(ML_ERR, "windows title too long:");
-        mikes_log(ML_ERR, title);
+        mato_log(ML_ERR, "windows title too long:");
+        mato_log(ML_ERR, title);
     }
     window_names[window_handle] = title;
     draw_windows_title(window_handle);
@@ -241,7 +239,7 @@ int gui_open_window(gui_draw_callback paint, int width, int height, int update_p
 
 void gui_close_window(int window_handle)
 {
-    if (!mikes_config.with_gui) return;
+    if (!mato_config.with_gui) return;
     
     pthread_mutex_lock(&gui_lock);
     
@@ -280,14 +278,14 @@ void gui_add_key_listener(char *context, gui_key_callback callback)
 {
     if (strlen(context) > 40) 
     {
-        mikes_log(ML_ERR, "context name too long:");
-        mikes_log(ML_ERR, context);
+        mato_log(ML_ERR, "context name too long:");
+        mato_log(ML_ERR, context);
         return;
     }
 
     if (contexts_count == MAX_GUI_CONTEXTS_COUNT)
     {
-        mikes_log(ML_ERR, "gui contexts full!");
+        mato_log(ML_ERR, "gui contexts full!");
         return;
     }
     
@@ -328,14 +326,14 @@ void system_gui_context_callback(int win, int key)
 {
     switch(key) {
        case GUI_ESC_KEY: program_runs = 0;
-                         mikes_log(ML_INFO, "quit by ESC");
+                         mato_log(ML_INFO, "quit by ESC");
                          break;
     }
 }
     
 void shutdown_gui()
 {
-    if (!mikes_config.with_gui) return;
+    if (!mato_config.with_gui) return;
  
     pthread_mutex_lock(&gui_lock);
     
@@ -455,16 +453,16 @@ void *gui_thread(void *arg)
             usleep((long)(next_update - tm));     
     }
 
-    mikes_log(ML_INFO, "gui quits.");
-    threads_running_add(-1);
+    mato_log(ML_INFO, "gui quits.");
+    mato_dec_thread_count();
     return 0;
 }
 
 void init_gui()
 {
-    if (!mikes_config.with_gui)
+    if (!mato_config.with_gui)
     {
-        mikes_log(ML_INFO, "gui supressed by config.");
+        mato_log(ML_INFO, "gui supressed by config.");
         return;
     }
     x_opened = 0;
@@ -489,10 +487,10 @@ void init_gui()
     pthread_t t;
     if (pthread_create(&t, 0, gui_thread, 0) != 0)
     {
-        perror("mikes:gui");
-        mikes_log(ML_ERR, "creating gui thread");
+        perror("mato:gui");
+        mato_log(ML_ERR, "creating gui thread");
     }
-    else threads_running_add(1);
+    else mato_inc_thread_count("gui");
 }
 
 char *get_current_gui_context()
@@ -521,7 +519,7 @@ double draw_svg_to_cairo(cairo_t *w, int x, int y, char *filename, int max_width
     RsvgHandle *rsvg_handle = rsvg_handle_new_from_file(filename, &gerror);
     if (rsvg_handle == 0)
     {
-      mikes_log_str(ML_ERR, "could not load svg file: ", filename);
+      mato_log_str(ML_ERR, "could not load svg file: ", filename);
       return -1;
     }
     RsvgDimensionData dimensions;
@@ -535,7 +533,7 @@ double draw_svg_to_cairo(cairo_t *w, int x, int y, char *filename, int max_width
 
     if (!rsvg_handle_render_cairo(rsvg_handle, w))
     {
-      mikes_log_str(ML_ERR, "could not render svg file: ", filename);
+      mato_log_str(ML_ERR, "could not render svg file: ", filename);
       g_object_unref(rsvg_handle);
       return -1;
     }

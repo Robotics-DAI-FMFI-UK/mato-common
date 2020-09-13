@@ -3,10 +3,8 @@
 #include <unistd.h>
 #include <string.h>
 
-#include "../../bites/mikes.h"
-#include "../passive/mikes_logs.h"
-#include "core/config_mikes.h"
-#include "../../bites/util.h"
+#include "../../mato/mato.h"
+#include "core/config_mato.h"
 #include "ncurses_control.h"
 
 #define KEY_TAB             9
@@ -106,7 +104,7 @@ int initialize_curses()
 {
     if ((mainwin = initscr()) == 0)
     {
-      mikes_log(ML_WARN, "Error initializing ncurses, not using ncurses");
+      mato_log(ML_WARN, "Error initializing ncurses, not using ncurses");
       return 0;
     }
     noecho();                  //  Turn off key echoing
@@ -402,8 +400,8 @@ void *ncurses_control_thread(void *arg)
     endwin();
     refresh();
 
-    mikes_log(ML_INFO, "ncurses quits.");
-    threads_running_add(-1);
+    mato_log(ML_INFO, "ncurses quits.");
+    mato_dec_thread_count(-1);
 
     return 0;
 }
@@ -412,7 +410,7 @@ void system_context_callback(int key)
 {
     switch(key) {
        case KEY_ESC: program_runs = 0;
-                     mikes_log(ML_INFO, "quit by ESC");
+                     mato_log(ML_INFO, "quit by ESC");
                      break;
     }
 }
@@ -427,17 +425,17 @@ void init_ncurses_control()
        window_in_use[i] = 0;
     active_window = -1;
 
-    if (!mikes_config.use_ncurses_control) return;
+    if (!mato_config.use_ncurses_control) return;
 
     ncurses_thread_started = 0;
     pthread_t t;
     if (pthread_create(&t, 0, ncurses_control_thread, 0) != 0)
     {
-        perror("mikes:ncurses");
-        mikes_log(ML_ERR, "creating ncurses thread");
+        perror("mato:ncurses");
+        mato_log(ML_ERR, "creating ncurses thread");
         while (ncurses_thread_started == 0) usleep(10000);
     }
-    else threads_running_add(1);
+    else mato_inc_thread_count("ncurses");
 }
 
 

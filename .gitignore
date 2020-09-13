@@ -4,6 +4,8 @@ core/*.o
 modules/live/*.o
 modules/passive/*.o
 tests/*.o
+new-tests/*.o
+logs/*.log
 test_astar
 test_base
 test_gui
@@ -41,3 +43,5 @@ nxt/TestMonoBrick
 test_shake
 retired_to_be_deleted
 last
+test_mato_base
+
