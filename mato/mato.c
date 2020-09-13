@@ -37,10 +37,10 @@ int mato_create_new_module_instance(const char *module_type, const char *module_
     lock_framework();
 
         int module_id = get_free_module_id();
-        char *name = malloc(strlen(module_name + 1));
+        char *name = malloc(strlen(module_name) + 1);
         strcpy(name, module_name);
         g_array_append_val(g_array_index(module_names, GArray *, this_node_id), name);
-        char *type = malloc(strlen(module_name + 1));
+        char *type = malloc(strlen(module_name) + 1);
         strcpy(type, module_type);
         g_array_append_val(g_array_index(module_types, GArray *, this_node_id), type);
 

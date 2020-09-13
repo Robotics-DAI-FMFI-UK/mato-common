@@ -35,7 +35,7 @@ typedef struct {
 } mato_config_structure;
 
 /// holds the configurable variables loaded from config file
-extern mato_config_structure mato_config;
+extern mato_config_structure mato_core_config;
 
 /// The structure describes a single individual subscription to some channel of some module.
 /// Each subscription is identified by a computational node unique identifier (id_subscription)

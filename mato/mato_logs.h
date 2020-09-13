@@ -32,6 +32,10 @@ void mato_log(int log_type, char *log_msg);
 /// with the specified severity level to the log.
 void mato_log_str(int log_type, char *log_msg, const char *log_msg2);
 
+/// Append a specified character string followed by another two character strings
+/// with the specified severity level to the log.
+void mato_log_str2(int log_type, char *log_msg, const char *log_msg2, const char *log_msg3);
+
 /// Append the specified character string followed by a space and an integer to the log and with the
 /// specified severity level string representation.
 void mato_log_val(int log_type, char *log_msg, int val);
